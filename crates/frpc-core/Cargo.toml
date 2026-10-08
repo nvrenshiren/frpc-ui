@@ -1,0 +1,19 @@
+[package]
+name = "frpc-core"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow = "1"
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tempfile = "3"
+tokio = { version = "1", features = ["rt", "macros", "process", "io-util", "sync", "time"] }
+toml = "0.9"
+uuid = { version = "1", features = ["v4"] }
+url = "2"
+percent-encoding = "2"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "net"] }

@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main-window",
+  "description": "Local desktop window with native frpc picker; no frontend shell or unrestricted filesystem access.",
+  "windows": ["main"],
+  "permissions": ["core:default", "dialog:allow-open"]
+}

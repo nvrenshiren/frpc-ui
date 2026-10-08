@@ -1,0 +1,891 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-08T12:28:11.409Z",
+  "title": "Design System: frpc-ui",
+  "extensions": {
+    "colorMeta": {
+      "primary-dark": {
+        "role": "primary",
+        "displayName": "暗色运行绿",
+        "tonalRamp": [
+          "oklch(15.00% 0.19201 149.58)",
+          "oklch(26.43% 0.19201 149.58)",
+          "oklch(37.86% 0.19201 149.58)",
+          "oklch(49.29% 0.19201 149.58)",
+          "oklch(60.71% 0.19201 149.58)",
+          "oklch(72.14% 0.19201 149.58)",
+          "oklch(83.57% 0.19201 149.58)",
+          "oklch(95.00% 0.19201 149.58)"
+        ]
+      },
+      "primary-hover-dark": {
+        "role": "primary",
+        "displayName": "暗色悬停绿",
+        "tonalRamp": [
+          "oklch(15.00% 0.19131 151.06)",
+          "oklch(26.43% 0.19131 151.06)",
+          "oklch(37.86% 0.19131 151.06)",
+          "oklch(49.29% 0.19131 151.06)",
+          "oklch(60.71% 0.19131 151.06)",
+          "oklch(72.14% 0.19131 151.06)",
+          "oklch(83.57% 0.19131 151.06)",
+          "oklch(95.00% 0.19131 151.06)"
+        ]
+      },
+      "primary-foreground-dark": {
+        "role": "primary",
+        "displayName": "暗色按钮前景",
+        "tonalRamp": [
+          "oklch(15.00% 0.02698 153.59)",
+          "oklch(26.43% 0.02698 153.59)",
+          "oklch(37.86% 0.02698 153.59)",
+          "oklch(49.29% 0.02698 153.59)",
+          "oklch(60.71% 0.02698 153.59)",
+          "oklch(72.14% 0.02698 153.59)",
+          "oklch(83.57% 0.02698 153.59)",
+          "oklch(95.00% 0.02698 153.59)"
+        ]
+      },
+      "primary-light": {
+        "role": "primary",
+        "displayName": "亮色运行绿",
+        "tonalRamp": [
+          "oklch(15.00% 0.16991 149.21)",
+          "oklch(26.43% 0.16991 149.21)",
+          "oklch(37.86% 0.16991 149.21)",
+          "oklch(49.29% 0.16991 149.21)",
+          "oklch(60.71% 0.16991 149.21)",
+          "oklch(72.14% 0.16991 149.21)",
+          "oklch(83.57% 0.16991 149.21)",
+          "oklch(95.00% 0.16991 149.21)"
+        ]
+      },
+      "primary-hover-light": {
+        "role": "primary",
+        "displayName": "亮色主题悬停绿",
+        "tonalRamp": [
+          "oklch(15.00% 0.13710 150.07)",
+          "oklch(26.43% 0.13710 150.07)",
+          "oklch(37.86% 0.13710 150.07)",
+          "oklch(49.29% 0.13710 150.07)",
+          "oklch(60.71% 0.13710 150.07)",
+          "oklch(72.14% 0.13710 150.07)",
+          "oklch(83.57% 0.13710 150.07)",
+          "oklch(95.00% 0.13710 150.07)"
+        ]
+      },
+      "action-primary-light": {
+        "role": "primary",
+        "displayName": "亮色动作绿",
+        "tonalRamp": [
+          "oklch(15.00% 0.13710 150.07)",
+          "oklch(26.43% 0.13710 150.07)",
+          "oklch(37.86% 0.13710 150.07)",
+          "oklch(49.29% 0.13710 150.07)",
+          "oklch(60.71% 0.13710 150.07)",
+          "oklch(72.14% 0.13710 150.07)",
+          "oklch(83.57% 0.13710 150.07)",
+          "oklch(95.00% 0.13710 150.07)"
+        ]
+      },
+      "action-primary-hover-light": {
+        "role": "primary",
+        "displayName": "亮色动作悬停绿",
+        "tonalRamp": [
+          "oklch(15.00% 0.10832 151.33)",
+          "oklch(26.43% 0.10832 151.33)",
+          "oklch(37.86% 0.10832 151.33)",
+          "oklch(49.29% 0.10832 151.33)",
+          "oklch(60.71% 0.10832 151.33)",
+          "oklch(72.14% 0.10832 151.33)",
+          "oklch(83.57% 0.10832 151.33)",
+          "oklch(95.00% 0.10832 151.33)"
+        ]
+      },
+      "success-text-light": {
+        "role": "primary",
+        "displayName": "亮色成功文字",
+        "tonalRamp": [
+          "oklch(15.00% 0.10832 151.33)",
+          "oklch(26.43% 0.10832 151.33)",
+          "oklch(37.86% 0.10832 151.33)",
+          "oklch(49.29% 0.10832 151.33)",
+          "oklch(60.71% 0.10832 151.33)",
+          "oklch(72.14% 0.10832 151.33)",
+          "oklch(83.57% 0.10832 151.33)",
+          "oklch(95.00% 0.10832 151.33)"
+        ]
+      },
+      "background-dark": {
+        "role": "neutral",
+        "displayName": "深蓝工作底",
+        "tonalRamp": [
+          "oklch(15.00% 0.03089 263.38)",
+          "oklch(26.43% 0.03089 263.38)",
+          "oklch(37.86% 0.03089 263.38)",
+          "oklch(49.29% 0.03089 263.38)",
+          "oklch(60.71% 0.03089 263.38)",
+          "oklch(72.14% 0.03089 263.38)",
+          "oklch(83.57% 0.03089 263.38)",
+          "oklch(95.00% 0.03089 263.38)"
+        ]
+      },
+      "foreground-dark": {
+        "role": "neutral",
+        "displayName": "暗色主文字",
+        "tonalRamp": [
+          "oklch(15.00% 0.00453 258.32)",
+          "oklch(26.43% 0.00453 258.32)",
+          "oklch(37.86% 0.00453 258.32)",
+          "oklch(49.29% 0.00453 258.32)",
+          "oklch(60.71% 0.00453 258.32)",
+          "oklch(72.14% 0.00453 258.32)",
+          "oklch(83.57% 0.00453 258.32)",
+          "oklch(95.00% 0.00453 258.32)"
+        ]
+      },
+      "surface-dark": {
+        "role": "neutral",
+        "displayName": "暗色记录表面",
+        "tonalRamp": [
+          "oklch(15.00% 0.03176 264.66)",
+          "oklch(26.43% 0.03176 264.66)",
+          "oklch(37.86% 0.03176 264.66)",
+          "oklch(49.29% 0.03176 264.66)",
+          "oklch(60.71% 0.03176 264.66)",
+          "oklch(72.14% 0.03176 264.66)",
+          "oklch(83.57% 0.03176 264.66)",
+          "oklch(95.00% 0.03176 264.66)"
+        ]
+      },
+      "secondary-dark": {
+        "role": "neutral",
+        "displayName": "暗色次级底",
+        "tonalRamp": [
+          "oklch(15.00% 0.03134 260.42)",
+          "oklch(26.43% 0.03134 260.42)",
+          "oklch(37.86% 0.03134 260.42)",
+          "oklch(49.29% 0.03134 260.42)",
+          "oklch(60.71% 0.03134 260.42)",
+          "oklch(72.14% 0.03134 260.42)",
+          "oklch(83.57% 0.03134 260.42)",
+          "oklch(95.00% 0.03134 260.42)"
+        ]
+      },
+      "muted-foreground-dark": {
+        "role": "neutral",
+        "displayName": "暗色辅助文字",
+        "tonalRamp": [
+          "oklch(15.00% 0.02264 259.19)",
+          "oklch(26.43% 0.02264 259.19)",
+          "oklch(37.86% 0.02264 259.19)",
+          "oklch(49.29% 0.02264 259.19)",
+          "oklch(60.71% 0.02264 259.19)",
+          "oklch(72.14% 0.02264 259.19)",
+          "oklch(83.57% 0.02264 259.19)",
+          "oklch(95.00% 0.02264 259.19)"
+        ]
+      },
+      "border-dark": {
+        "role": "neutral",
+        "displayName": "暗色边界",
+        "tonalRamp": [
+          "oklch(15.00% 0.03062 259.73)",
+          "oklch(26.43% 0.03062 259.73)",
+          "oklch(37.86% 0.03062 259.73)",
+          "oklch(49.29% 0.03062 259.73)",
+          "oklch(60.71% 0.03062 259.73)",
+          "oklch(72.14% 0.03062 259.73)",
+          "oklch(83.57% 0.03062 259.73)",
+          "oklch(95.00% 0.03062 259.73)"
+        ]
+      },
+      "border-strong-dark": {
+        "role": "neutral",
+        "displayName": "暗色强边界",
+        "tonalRamp": [
+          "oklch(15.00% 0.03173 260.26)",
+          "oklch(26.43% 0.03173 260.26)",
+          "oklch(37.86% 0.03173 260.26)",
+          "oklch(49.29% 0.03173 260.26)",
+          "oklch(60.71% 0.03173 260.26)",
+          "oklch(72.14% 0.03173 260.26)",
+          "oklch(83.57% 0.03173 260.26)",
+          "oklch(95.00% 0.03173 260.26)"
+        ]
+      },
+      "background-light": {
+        "role": "neutral",
+        "displayName": "明净工作底",
+        "tonalRamp": [
+          "oklch(15.00% 0.00170 247.84)",
+          "oklch(26.43% 0.00170 247.84)",
+          "oklch(37.86% 0.00170 247.84)",
+          "oklch(49.29% 0.00170 247.84)",
+          "oklch(60.71% 0.00170 247.84)",
+          "oklch(72.14% 0.00170 247.84)",
+          "oklch(83.57% 0.00170 247.84)",
+          "oklch(95.00% 0.00170 247.84)"
+        ]
+      },
+      "foreground-light": {
+        "role": "neutral",
+        "displayName": "亮色主文字",
+        "tonalRamp": [
+          "oklch(15.00% 0.03982 265.75)",
+          "oklch(26.43% 0.03982 265.75)",
+          "oklch(37.86% 0.03982 265.75)",
+          "oklch(49.29% 0.03982 265.75)",
+          "oklch(60.71% 0.03982 265.75)",
+          "oklch(72.14% 0.03982 265.75)",
+          "oklch(83.57% 0.03982 265.75)",
+          "oklch(95.00% 0.03982 265.75)"
+        ]
+      },
+      "surface-light": {
+        "role": "neutral",
+        "displayName": "亮色记录表面",
+        "tonalRamp": [
+          "oklch(15.00% 0.00000 89.88)",
+          "oklch(26.43% 0.00000 89.88)",
+          "oklch(37.86% 0.00000 89.88)",
+          "oklch(49.29% 0.00000 89.88)",
+          "oklch(60.71% 0.00000 89.88)",
+          "oklch(72.14% 0.00000 89.88)",
+          "oklch(83.57% 0.00000 89.88)",
+          "oklch(95.00% 0.00000 89.88)"
+        ]
+      },
+      "primary-foreground-light": {
+        "role": "primary",
+        "displayName": "浅色按钮前景",
+        "tonalRamp": [
+          "oklch(15.00% 0.00000 89.88)",
+          "oklch(26.43% 0.00000 89.88)",
+          "oklch(37.86% 0.00000 89.88)",
+          "oklch(49.29% 0.00000 89.88)",
+          "oklch(60.71% 0.00000 89.88)",
+          "oklch(72.14% 0.00000 89.88)",
+          "oklch(83.57% 0.00000 89.88)",
+          "oklch(95.00% 0.00000 89.88)"
+        ]
+      },
+      "secondary-light": {
+        "role": "neutral",
+        "displayName": "亮色次级底",
+        "tonalRamp": [
+          "oklch(15.00% 0.00342 247.86)",
+          "oklch(26.43% 0.00342 247.86)",
+          "oklch(37.86% 0.00342 247.86)",
+          "oklch(49.29% 0.00342 247.86)",
+          "oklch(60.71% 0.00342 247.86)",
+          "oklch(72.14% 0.00342 247.86)",
+          "oklch(83.57% 0.00342 247.86)",
+          "oklch(95.00% 0.00342 247.86)"
+        ]
+      },
+      "muted-foreground-light": {
+        "role": "neutral",
+        "displayName": "亮色辅助文字",
+        "tonalRamp": [
+          "oklch(15.00% 0.03745 257.28)",
+          "oklch(26.43% 0.03745 257.28)",
+          "oklch(37.86% 0.03745 257.28)",
+          "oklch(49.29% 0.03745 257.28)",
+          "oklch(60.71% 0.03745 257.28)",
+          "oklch(72.14% 0.03745 257.28)",
+          "oklch(83.57% 0.03745 257.28)",
+          "oklch(95.00% 0.03745 257.28)"
+        ]
+      },
+      "border-light": {
+        "role": "neutral",
+        "displayName": "亮色边界",
+        "tonalRamp": [
+          "oklch(15.00% 0.00934 258.34)",
+          "oklch(26.43% 0.00934 258.34)",
+          "oklch(37.86% 0.00934 258.34)",
+          "oklch(49.29% 0.00934 258.34)",
+          "oklch(60.71% 0.00934 258.34)",
+          "oklch(72.14% 0.00934 258.34)",
+          "oklch(83.57% 0.00934 258.34)",
+          "oklch(95.00% 0.00934 258.34)"
+        ]
+      },
+      "border-strong-light": {
+        "role": "neutral",
+        "displayName": "亮色强边界",
+        "tonalRamp": [
+          "oklch(15.00% 0.03511 256.79)",
+          "oklch(26.43% 0.03511 256.79)",
+          "oklch(37.86% 0.03511 256.79)",
+          "oklch(49.29% 0.03511 256.79)",
+          "oklch(60.71% 0.03511 256.79)",
+          "oklch(72.14% 0.03511 256.79)",
+          "oklch(83.57% 0.03511 256.79)",
+          "oklch(95.00% 0.03511 256.79)"
+        ]
+      },
+      "info-dark": {
+        "role": "semantic",
+        "displayName": "暗色信息蓝",
+        "tonalRamp": [
+          "oklch(15.00% 0.14338 254.62)",
+          "oklch(26.43% 0.14338 254.62)",
+          "oklch(37.86% 0.14338 254.62)",
+          "oklch(49.29% 0.14338 254.62)",
+          "oklch(60.71% 0.14338 254.62)",
+          "oklch(72.14% 0.14338 254.62)",
+          "oklch(83.57% 0.14338 254.62)",
+          "oklch(95.00% 0.14338 254.62)"
+        ]
+      },
+      "info-light": {
+        "role": "semantic",
+        "displayName": "亮色信息蓝",
+        "tonalRamp": [
+          "oklch(15.00% 0.21521 262.88)",
+          "oklch(26.43% 0.21521 262.88)",
+          "oklch(37.86% 0.21521 262.88)",
+          "oklch(49.29% 0.21521 262.88)",
+          "oklch(60.71% 0.21521 262.88)",
+          "oklch(72.14% 0.21521 262.88)",
+          "oklch(83.57% 0.21521 262.88)",
+          "oklch(95.00% 0.21521 262.88)"
+        ]
+      },
+      "warning-dark": {
+        "role": "semantic",
+        "displayName": "暗色警告",
+        "tonalRamp": [
+          "oklch(15.00% 0.16466 70.08)",
+          "oklch(26.43% 0.16466 70.08)",
+          "oklch(37.86% 0.16466 70.08)",
+          "oklch(49.29% 0.16466 70.08)",
+          "oklch(60.71% 0.16466 70.08)",
+          "oklch(72.14% 0.16466 70.08)",
+          "oklch(83.57% 0.16466 70.08)",
+          "oklch(95.00% 0.16466 70.08)"
+        ]
+      },
+      "warning-light": {
+        "role": "semantic",
+        "displayName": "亮色警告",
+        "tonalRamp": [
+          "oklch(15.00% 0.12015 62.73)",
+          "oklch(26.43% 0.12015 62.73)",
+          "oklch(37.86% 0.12015 62.73)",
+          "oklch(49.29% 0.12015 62.73)",
+          "oklch(60.71% 0.12015 62.73)",
+          "oklch(72.14% 0.12015 62.73)",
+          "oklch(83.57% 0.12015 62.73)",
+          "oklch(95.00% 0.12015 62.73)"
+        ]
+      },
+      "destructive-dark": {
+        "role": "semantic",
+        "displayName": "暗色破坏语义",
+        "tonalRamp": [
+          "oklch(15.00% 0.20785 25.33)",
+          "oklch(26.43% 0.20785 25.33)",
+          "oklch(37.86% 0.20785 25.33)",
+          "oklch(49.29% 0.20785 25.33)",
+          "oklch(60.71% 0.20785 25.33)",
+          "oklch(72.14% 0.20785 25.33)",
+          "oklch(83.57% 0.20785 25.33)",
+          "oklch(95.00% 0.20785 25.33)"
+        ]
+      },
+      "destructive-light": {
+        "role": "semantic",
+        "displayName": "亮色破坏语义",
+        "tonalRamp": [
+          "oklch(15.00% 0.21516 27.33)",
+          "oklch(26.43% 0.21516 27.33)",
+          "oklch(37.86% 0.21516 27.33)",
+          "oklch(49.29% 0.21516 27.33)",
+          "oklch(60.71% 0.21516 27.33)",
+          "oklch(72.14% 0.21516 27.33)",
+          "oklch(83.57% 0.21516 27.33)",
+          "oklch(95.00% 0.21516 27.33)"
+        ]
+      },
+      "danger-text-dark": {
+        "role": "semantic",
+        "displayName": "暗色危险文字",
+        "tonalRamp": [
+          "oklch(15.00% 0.16615 22.22)",
+          "oklch(26.43% 0.16615 22.22)",
+          "oklch(37.86% 0.16615 22.22)",
+          "oklch(49.29% 0.16615 22.22)",
+          "oklch(60.71% 0.16615 22.22)",
+          "oklch(72.14% 0.16615 22.22)",
+          "oklch(83.57% 0.16615 22.22)",
+          "oklch(95.00% 0.16615 22.22)"
+        ]
+      },
+      "danger-text-light": {
+        "role": "semantic",
+        "displayName": "亮色危险文字",
+        "tonalRamp": [
+          "oklch(15.00% 0.19049 27.52)",
+          "oklch(26.43% 0.19049 27.52)",
+          "oklch(37.86% 0.19049 27.52)",
+          "oklch(49.29% 0.19049 27.52)",
+          "oklch(60.71% 0.19049 27.52)",
+          "oklch(72.14% 0.19049 27.52)",
+          "oklch(83.57% 0.19049 27.52)",
+          "oklch(95.00% 0.19049 27.52)"
+        ]
+      },
+      "action-danger": {
+        "role": "semantic",
+        "displayName": "危险动作",
+        "tonalRamp": [
+          "oklch(15.00% 0.21516 27.33)",
+          "oklch(26.43% 0.21516 27.33)",
+          "oklch(37.86% 0.21516 27.33)",
+          "oklch(49.29% 0.21516 27.33)",
+          "oklch(60.71% 0.21516 27.33)",
+          "oklch(72.14% 0.21516 27.33)",
+          "oklch(83.57% 0.21516 27.33)",
+          "oklch(95.00% 0.21516 27.33)"
+        ]
+      },
+      "action-danger-hover": {
+        "role": "semantic",
+        "displayName": "危险动作悬停",
+        "tonalRamp": [
+          "oklch(15.00% 0.19049 27.52)",
+          "oklch(26.43% 0.19049 27.52)",
+          "oklch(37.86% 0.19049 27.52)",
+          "oklch(49.29% 0.19049 27.52)",
+          "oklch(60.71% 0.19049 27.52)",
+          "oklch(72.14% 0.19049 27.52)",
+          "oklch(83.57% 0.19049 27.52)",
+          "oklch(95.00% 0.19049 27.52)"
+        ]
+      },
+      "success-soft-dark": {
+        "role": "primary",
+        "displayName": "暗色成功柔和底",
+        "tonalRamp": [
+          "oklch(15.00% 0.19201 149.58 / 0.09)",
+          "oklch(26.43% 0.19201 149.58 / 0.09)",
+          "oklch(37.86% 0.19201 149.58 / 0.09)",
+          "oklch(49.29% 0.19201 149.58 / 0.09)",
+          "oklch(60.71% 0.19201 149.58 / 0.09)",
+          "oklch(72.14% 0.19201 149.58 / 0.09)",
+          "oklch(83.57% 0.19201 149.58 / 0.09)",
+          "oklch(95.00% 0.19201 149.58 / 0.09)"
+        ]
+      },
+      "success-soft-light": {
+        "role": "primary",
+        "displayName": "亮色成功柔和底",
+        "tonalRamp": [
+          "oklch(15.00% 0.16991 149.21 / 0.08)",
+          "oklch(26.43% 0.16991 149.21 / 0.08)",
+          "oklch(37.86% 0.16991 149.21 / 0.08)",
+          "oklch(49.29% 0.16991 149.21 / 0.08)",
+          "oklch(60.71% 0.16991 149.21 / 0.08)",
+          "oklch(72.14% 0.16991 149.21 / 0.08)",
+          "oklch(83.57% 0.16991 149.21 / 0.08)",
+          "oklch(95.00% 0.16991 149.21 / 0.08)"
+        ]
+      },
+      "warning-soft-dark": {
+        "role": "semantic",
+        "displayName": "暗色警告柔和底",
+        "tonalRamp": [
+          "oklch(15.00% 0.16466 70.08 / 0.1)",
+          "oklch(26.43% 0.16466 70.08 / 0.1)",
+          "oklch(37.86% 0.16466 70.08 / 0.1)",
+          "oklch(49.29% 0.16466 70.08 / 0.1)",
+          "oklch(60.71% 0.16466 70.08 / 0.1)",
+          "oklch(72.14% 0.16466 70.08 / 0.1)",
+          "oklch(83.57% 0.16466 70.08 / 0.1)",
+          "oklch(95.00% 0.16466 70.08 / 0.1)"
+        ]
+      },
+      "warning-soft-light": {
+        "role": "semantic",
+        "displayName": "亮色警告柔和底",
+        "tonalRamp": [
+          "oklch(15.00% 0.16466 70.08 / 0.08)",
+          "oklch(26.43% 0.16466 70.08 / 0.08)",
+          "oklch(37.86% 0.16466 70.08 / 0.08)",
+          "oklch(49.29% 0.16466 70.08 / 0.08)",
+          "oklch(60.71% 0.16466 70.08 / 0.08)",
+          "oklch(72.14% 0.16466 70.08 / 0.08)",
+          "oklch(83.57% 0.16466 70.08 / 0.08)",
+          "oklch(95.00% 0.16466 70.08 / 0.08)"
+        ]
+      },
+      "danger-soft-dark": {
+        "role": "semantic",
+        "displayName": "暗色危险柔和底",
+        "tonalRamp": [
+          "oklch(15.00% 0.20785 25.33 / 0.1)",
+          "oklch(26.43% 0.20785 25.33 / 0.1)",
+          "oklch(37.86% 0.20785 25.33 / 0.1)",
+          "oklch(49.29% 0.20785 25.33 / 0.1)",
+          "oklch(60.71% 0.20785 25.33 / 0.1)",
+          "oklch(72.14% 0.20785 25.33 / 0.1)",
+          "oklch(83.57% 0.20785 25.33 / 0.1)",
+          "oklch(95.00% 0.20785 25.33 / 0.1)"
+        ]
+      },
+      "danger-soft-light": {
+        "role": "semantic",
+        "displayName": "亮色危险柔和底",
+        "tonalRamp": [
+          "oklch(15.00% 0.20785 25.33 / 0.06)",
+          "oklch(26.43% 0.20785 25.33 / 0.06)",
+          "oklch(37.86% 0.20785 25.33 / 0.06)",
+          "oklch(49.29% 0.20785 25.33 / 0.06)",
+          "oklch(60.71% 0.20785 25.33 / 0.06)",
+          "oklch(72.14% 0.20785 25.33 / 0.06)",
+          "oklch(83.57% 0.20785 25.33 / 0.06)",
+          "oklch(95.00% 0.20785 25.33 / 0.06)"
+        ]
+      },
+      "scrollbar-thumb-dark": {
+        "role": "neutral",
+        "displayName": "暗色滚动条滑块"
+      },
+      "scrollbar-thumb-hover-dark": {
+        "role": "neutral",
+        "displayName": "暗色滚动条悬停滑块"
+      },
+      "scrollbar-thumb-active-dark": {
+        "role": "neutral",
+        "displayName": "暗色滚动条拖动滑块"
+      },
+      "scrollbar-track-dark": {
+        "role": "neutral",
+        "displayName": "暗色滚动条轨道"
+      },
+      "scrollbar-thumb-light": {
+        "role": "neutral",
+        "displayName": "亮色滚动条滑块"
+      },
+      "scrollbar-thumb-hover-light": {
+        "role": "neutral",
+        "displayName": "亮色滚动条悬停滑块"
+      },
+      "scrollbar-thumb-active-light": {
+        "role": "neutral",
+        "displayName": "亮色滚动条拖动滑块"
+      },
+      "scrollbar-track-light": {
+        "role": "neutral",
+        "displayName": "亮色滚动条轨道"
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "页面标题",
+        "purpose": "主要页面标题，直接建立工作区层级。"
+      },
+      "headline-compact": {
+        "displayName": "紧凑页面标题",
+        "purpose": "窄视口中的页面标题。"
+      },
+      "title": {
+        "displayName": "对话框标题",
+        "purpose": "编辑与确认层的短标题。"
+      },
+      "title-record": {
+        "displayName": "记录标题",
+        "purpose": "连接对象名。"
+      },
+      "body": {
+        "displayName": "正文",
+        "purpose": "界面的基础正文角色。"
+      },
+      "body-compact": {
+        "displayName": "紧凑正文",
+        "purpose": "登记表、短说明与辅助段落。"
+      },
+      "label": {
+        "displayName": "操作标签",
+        "purpose": "按钮及主要操作标签。"
+      },
+      "label-compact": {
+        "displayName": "紧凑标签",
+        "purpose": "徽标、辅助状态和短说明。"
+      },
+      "mono": {
+        "displayName": "技术等宽",
+        "purpose": "主机、端口、版本、日志等技术值，使用等宽数字。"
+      },
+      "mono-index": {
+        "displayName": "对象编号",
+        "purpose": "导航、记录和列中的技术索引。"
+      },
+      "mono-editor": {
+        "displayName": "配置编辑文本",
+        "purpose": "TOML 文本的可读等宽排版。"
+      }
+    },
+    "shadows": [
+      {
+        "name": "dialog-dark",
+        "value": "0 18px 48px rgb(0 0 0 / 0.36)",
+        "purpose": "暗色对话框的临时编辑层。"
+      },
+      {
+        "name": "dialog-light",
+        "value": "0 18px 48px rgb(15 23 42 / 0.12)",
+        "purpose": "亮色对话框的临时编辑层。"
+      },
+      {
+        "name": "primary-hover",
+        "value": "0 0 12px var(--success-soft)",
+        "purpose": "主按钮悬停的柔和反馈，主题绑定。"
+      },
+      {
+        "name": "input-focus",
+        "value": "0 0 0 3px var(--success-soft)",
+        "purpose": "字段焦点的柔和环，配合主题色边界。"
+      },
+      {
+        "name": "record-selected",
+        "value": "inset 0 2px var(--primary)",
+        "purpose": "选中连接记录的顶部内侧标记。"
+      },
+      {
+        "name": "select-dark",
+        "value": "0 8px 24px rgb(0 0 0 / 0.28)",
+        "purpose": "暗色选择菜单的轻量浮层投影。"
+      },
+      {
+        "name": "select-light",
+        "value": "0 8px 24px rgb(15 23 42 / 0.12)",
+        "purpose": "亮色选择菜单的轻量浮层投影。"
+      }
+    ],
+    "motion": [
+      {
+        "name": "button-state",
+        "value": "background-color 0.15s, border-color 0.15s, box-shadow 0.15s",
+        "purpose": "按钮悬停的短促视觉反馈。"
+      },
+      {
+        "name": "input-state",
+        "value": "border-color 0.15s, box-shadow 0.15s",
+        "purpose": "输入悬停与焦点反馈。"
+      },
+      {
+        "name": "press-offset",
+        "value": "translateY(1px)",
+        "purpose": "按钮按下的轻微位移；禁用时移除。"
+      },
+      {
+        "name": "dialog-enter",
+        "value": "fade-in 0.15s",
+        "purpose": "对话框与遮罩由 opacity 0 到 1。"
+      },
+      {
+        "name": "pending-spin",
+        "value": "spin 1s linear infinite",
+        "purpose": "启动、停止或版本安装进行中的加载图标。"
+      },
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "选择菜单与展开箭头的短促反馈。"
+      },
+      {
+        "name": "select-open",
+        "value": "170ms var(--ease-out); opacity 0 → 1; translate 4px → 0; scale 0.98 → 1",
+        "purpose": "菜单按 data-side 从触发器方向展开，transform-origin 由 Radix 定位提供。"
+      },
+      {
+        "name": "select-close",
+        "value": "110ms ease-in; opacity 1 → 0; translate 0 → 4px; scale 1 → 0.98",
+        "purpose": "关闭后保留短暂淡出，期间禁止指针交互。"
+      },
+      {
+        "name": "select-icon",
+        "value": "transform 160ms var(--ease-out); rotate(0deg) → rotate(180deg)",
+        "purpose": "箭头反馈展开与收起状态。"
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce → animation: none; transition: none; scroll-behavior: auto",
+        "purpose": "用户减少运动偏好下停用动画和过渡。"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide-alignment",
+        "value": "min-width: 1600px"
+      },
+      {
+        "name": "medium-records",
+        "value": "max-width: 1050px"
+      },
+      {
+        "name": "compact-workspace",
+        "value": "max-width: 700px"
+      },
+      {
+        "name": "single-column-forms",
+        "value": "max-width: 560px"
+      },
+      {
+        "name": "single-column-records",
+        "value": "max-width: 420px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "主按钮",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "页面关键动作，主题语义与亮色可读性 token 分别生效。",
+      "html": "<button class=\"ds-btn-primary\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v14M5 12h14\"></path></svg>新建隧道</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: var(--font-body, \"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif); height: 36px; padding: 0 13px; border: 1px solid transparent; border-radius: var(--radius, 8px); font-size: 13px; line-height: 1.5; font-weight: 500; white-space: nowrap; cursor: pointer; transition: background-color .15s, border-color .15s, box-shadow .15s; } .ds-btn-primary:active { transform: translateY(1px); } .ds-btn-primary:disabled { opacity: .45; cursor: not-allowed; transform: none; } .ds-btn-primary:focus-visible { outline: 2px solid var(--ring, #22c55e); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-btn-primary { transition: none; } } .ds-btn-primary { background: var(--action-primary, #22c55e); color: var(--primary-foreground, #06130a); } .ds-btn-primary:hover { background: var(--action-primary-hover, #34d672); box-shadow: 0 0 12px var(--success-soft, rgba(34, 197, 94, .09)); }"
+    },
+    {
+      "name": "边界按钮",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "默认次级动作，悬停通过次级底色与强边界反馈。",
+      "html": "<button class=\"ds-btn-outline\">应用配置</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: var(--font-body, \"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif); height: 36px; padding: 0 13px; border: 1px solid transparent; border-radius: var(--radius, 8px); font-size: 13px; line-height: 1.5; font-weight: 500; white-space: nowrap; cursor: pointer; transition: background-color .15s, border-color .15s, box-shadow .15s; } .ds-btn-outline:active { transform: translateY(1px); } .ds-btn-outline:disabled { opacity: .45; cursor: not-allowed; transform: none; } .ds-btn-outline:focus-visible { outline: 2px solid var(--ring, #22c55e); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-btn-outline { transition: none; } } .ds-btn-outline { background: transparent; color: var(--foreground, #f5f7fa); border-color: var(--border, #374151); } .ds-btn-outline:hover { background: var(--secondary, #1a2332); border-color: var(--border-strong, #5b6678); }"
+    },
+    {
+      "name": "轻量按钮",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "记录内辅助动作，默认不增加边界。",
+      "html": "<button class=\"ds-btn-ghost\">编辑连接</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: var(--font-body, \"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif); height: 36px; padding: 0 13px; border: 1px solid transparent; border-radius: var(--radius, 8px); font-size: 13px; line-height: 1.5; font-weight: 500; white-space: nowrap; cursor: pointer; transition: background-color .15s, border-color .15s, box-shadow .15s; } .ds-btn-ghost:active { transform: translateY(1px); } .ds-btn-ghost:disabled { opacity: .45; cursor: not-allowed; transform: none; } .ds-btn-ghost:focus-visible { outline: 2px solid var(--ring, #22c55e); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-btn-ghost { transition: none; } } .ds-btn-ghost { background: transparent; color: var(--foreground, #f5f7fa); } .ds-btn-ghost:hover { background: var(--secondary, #1a2332); }"
+    },
+    {
+      "name": "危险按钮",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "破坏性确认使用独立动作红及浅色文字。",
+      "html": "<button class=\"ds-btn-danger\">删除连接</button>",
+      "css": ".ds-btn-danger { display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: var(--font-body, \"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif); height: 36px; padding: 0 13px; border: 1px solid transparent; border-radius: var(--radius, 8px); font-size: 13px; line-height: 1.5; font-weight: 500; white-space: nowrap; cursor: pointer; transition: background-color .15s, border-color .15s, box-shadow .15s; } .ds-btn-danger:active { transform: translateY(1px); } .ds-btn-danger:disabled { opacity: .45; cursor: not-allowed; transform: none; } .ds-btn-danger:focus-visible { outline: 2px solid var(--ring, #22c55e); outline-offset: 3px; } @media (prefers-reduced-motion: reduce) { .ds-btn-danger { transition: none; } } .ds-btn-danger { background: var(--action-danger, #dc2626); color: #fff; } .ds-btn-danger:hover { background: var(--action-danger-hover, #b91c1c); }"
+    },
+    {
+      "name": "输入字段",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "搜索与表单共用的紧凑字段，保留悬停、错误、禁用和绿色焦点环。",
+      "html": "<input class=\"ds-input\" aria-label=\"连接名称\" placeholder=\"输入连接名称\" value=\"东京 · 开发环境\">",
+      "css": ".ds-input { font-family: var(--font-body, \"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif); width: 100%; height: 36px; padding: 0 11px; border: 1px solid var(--border, #374151); border-radius: var(--radius, 8px); background: var(--secondary, #1a2332); color: var(--foreground, #f5f7fa); font-size: 13px; line-height: 1.5; transition: border-color .15s, box-shadow .15s; } .ds-input::placeholder { color: var(--muted-foreground, #a1aab8); } .ds-input:hover { border-color: var(--border-strong, #5b6678); } .ds-input:focus-visible { outline: none; border-color: var(--primary, #22c55e); box-shadow: 0 0 0 3px var(--success-soft, rgba(34, 197, 94, .09)); } .ds-input[aria-invalid=\"true\"] { border-color: var(--destructive, #ef4444); } .ds-input:disabled { opacity: .5; cursor: not-allowed; } @media (prefers-reduced-motion: reduce) { .ds-input { transition: none; } }"
+    },
+    {
+      "name": "动画选择菜单",
+      "kind": "custom",
+      "refersTo": "select-trigger",
+      "description": "受控 Radix Select 的展开视觉预览；键盘、空值映射、禁用和 Portal 行为由应用组件实现。",
+      "html": "<div class=\"ds-select\"><button type=\"button\" class=\"ds-select-trigger\" aria-expanded=\"true\" aria-haspopup=\"listbox\"><span>全部连接</span><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m6 15 6-6 6 6\"></path></svg></button><div class=\"ds-select-panel\" role=\"listbox\" aria-label=\"选择连接\"><div class=\"ds-select-viewport\"><div class=\"ds-select-item ds-select-checked\" role=\"option\" aria-selected=\"true\">全部连接<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m20 6-11 11-5-5\"></path></svg></div><div class=\"ds-select-item\" role=\"option\" aria-selected=\"false\">东京 · 开发环境</div><div class=\"ds-select-item\" role=\"option\" aria-selected=\"false\">上海 · 测试环境</div><div class=\"ds-select-item\" role=\"option\" aria-selected=\"false\">香港 · 公共入口</div><div class=\"ds-select-item ds-select-disabled\" role=\"option\" aria-selected=\"false\" aria-disabled=\"true\">不可用连接</div></div></div></div>",
+      "css": ".ds-select { width: min(280px, 100%); font-family: var(--font-body, \"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif); color: var(--foreground, #f5f7fa); } .ds-select-trigger { display: flex; align-items: center; justify-content: space-between; gap: 9px; width: 100%; height: 36px; padding: 0 10px 0 11px; border: 1px solid var(--ring, #22c55e); border-radius: var(--radius, 8px); background: var(--secondary, #1a2332); color: inherit; box-shadow: 0 0 0 3px var(--success-soft, rgba(34, 197, 94, .09)); font: inherit; font-size: 13px; text-align: left; cursor: pointer; } .ds-select-trigger > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ds-select-trigger svg { flex-shrink: 0; color: var(--muted-foreground, #a1aab8); } .ds-select-trigger:hover { border-color: var(--border-strong, #5b6678); } .ds-select-trigger:focus-visible { outline: 2px solid var(--ring, #22c55e); outline-offset: 3px; } .ds-select-panel { margin-top: 6px; overflow: hidden; border: 1px solid var(--border, #374151); border-radius: var(--radius, 8px); background: var(--popover, #111827); box-shadow: var(--select-shadow, 0 8px 24px rgb(0 0 0 / .28)); animation: ds-select-open 170ms var(--ease-out, cubic-bezier(.16, 1, .3, 1)); transform-origin: top left; } .ds-select-viewport { padding: 4px; max-height: 128px; overflow-y: auto; scrollbar-gutter: stable; scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb, #697b92) var(--scrollbar-track, rgb(26 35 50 / .45)); } .ds-select-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 32px; padding: 6px 10px; border-radius: 5px; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; cursor: pointer; } .ds-select-item:hover { background: var(--secondary, #1a2332); color: var(--foreground, #f5f7fa); } .ds-select-checked { background: var(--success-soft, rgba(34, 197, 94, .09)); color: var(--success-text, #22c55e); } .ds-select-disabled { opacity: .5; color: var(--muted-foreground, #a1aab8); cursor: not-allowed; } @keyframes ds-select-open { from { opacity: 0; transform: translateY(-4px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } } @media (prefers-reduced-motion: reduce) { .ds-select-panel { animation: none; } }"
+    },
+    {
+      "name": "编号导航",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "当前页使用文字与底部标记，并保留 aria-current。",
+      "html": "<nav class=\"ds-nav\" aria-label=\"主导航\"><button class=\"ds-nav-item ds-nav-active\" aria-current=\"page\"><span class=\"ds-nav-index\">01</span>工作台</button><button class=\"ds-nav-item\"><span class=\"ds-nav-index\">02</span>连接</button><button class=\"ds-nav-item\"><span class=\"ds-nav-index\">03</span>隧道</button></nav>",
+      "css": ".ds-nav { display: flex; height: 51px; gap: 6px; overflow-x: auto; border-bottom: 1px solid var(--border, #374151); } .ds-nav-item { font-family: var(--font-body, \"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif); display: flex; align-items: center; gap: 9px; border: 0; border-bottom: 2px solid transparent; padding: 0 18px; background: transparent; color: var(--muted-foreground, #a1aab8); font-size: 13px; line-height: 1.5; white-space: nowrap; cursor: pointer; } .ds-nav-item:hover { color: var(--foreground, #f5f7fa); background: var(--secondary, #1a2332); } .ds-nav-active { color: var(--foreground, #f5f7fa); border-bottom-color: var(--primary, #22c55e); } .ds-nav-index { font-family: var(--font-mono, \"JetBrains Mono\", \"Cascadia Code\", Consolas, monospace); font-variant-numeric: tabular-nums; font-size: 10px; color: var(--muted-foreground, #a1aab8); } .ds-nav-active .ds-nav-index { color: var(--primary, #22c55e); } .ds-nav-item:focus-visible { outline: 2px solid var(--ring, #22c55e); outline-offset: 3px; }"
+    },
+    {
+      "name": "状态徽标",
+      "kind": "chip",
+      "refersTo": "badge-neutral",
+      "description": "状态文字与色点成对；成功和危险文字使用独立可读性 token。",
+      "html": "<div class=\"ds-badges\"><span class=\"ds-badge ds-badge-success\"><span class=\"ds-dot\"></span>已连接</span><span class=\"ds-badge ds-badge-warning\"><span class=\"ds-dot\"></span>待应用</span><span class=\"ds-badge ds-badge-danger\"><span class=\"ds-dot\"></span>连接异常</span><span class=\"ds-badge\">已停止</span></div>",
+      "css": ".ds-badges { display: flex; gap: 8px; flex-wrap: wrap; } .ds-badge { font-family: var(--font-body, \"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif); display: inline-flex; align-items: center; gap: 5px; font-size: 11px; line-height: 21px; padding: 0 6px; border: 1px solid var(--border, #374151); border-radius: 4px; white-space: nowrap; color: var(--muted-foreground, #a1aab8); background: transparent; } .ds-badge-success { color: var(--success-text, #22c55e); background: var(--success-soft, rgba(34, 197, 94, .09)); border-color: color-mix(in srgb, var(--primary, #22c55e) 25%, transparent); } .ds-badge-warning { color: var(--warning, #f59e0b); background: var(--warning-soft, rgba(245, 158, 11, .1)); border-color: color-mix(in srgb, var(--warning, #f59e0b) 25%, transparent); } .ds-badge-danger { color: var(--danger-text, #f87171); background: var(--danger-soft, rgba(239, 68, 68, .1)); border-color: color-mix(in srgb, var(--destructive, #ef4444) 25%, transparent); } .ds-dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }"
+    },
+    {
+      "name": "编号连接记录",
+      "kind": "card",
+      "refersTo": "connection-record",
+      "description": "连续记录组中的一个对象：编号、连接归属、技术地址与当前范围相邻。",
+      "html": "<div class=\"ds-record-group\"><article class=\"ds-record ds-record-selected\"><div class=\"ds-record-top\"><span class=\"ds-record-index\">CN / 01</span><span class=\"ds-record-status\"><span class=\"ds-record-dot\"></span>已连接</span></div><button class=\"ds-record-title\" aria-pressed=\"true\">东京 · 开发环境<svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 18 6-6-6-6\"></path></svg></button><p class=\"ds-record-address\">192.0.2.24:7000</p><div class=\"ds-record-meta\"><span>4 条隧道</span><span class=\"ds-record-version\">v0.65.0</span><span class=\"ds-record-pending\">待应用</span></div><div class=\"ds-record-footer\"><span>进程运行 00:28:16</span><button class=\"ds-record-action\">停止</button></div></article></div>",
+      "css": ".ds-record-group { background: var(--card, #111827); border: 1px solid var(--border, #374151); border-radius: var(--radius, 8px); overflow: hidden; } .ds-record { font-family: var(--font-body, \"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif); color: var(--foreground, #f5f7fa); padding: 15px 17px 10px; min-width: 0; } .ds-record-selected { background: var(--success-soft, rgba(34, 197, 94, .09)); box-shadow: inset 0 2px var(--primary, #22c55e); } .ds-record-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; } .ds-record-index { font-family: var(--font-mono, \"JetBrains Mono\", \"Cascadia Code\", Consolas, monospace); font-variant-numeric: tabular-nums; font-size: 9px; letter-spacing: .05em; color: var(--muted-foreground, #a1aab8); } .ds-record-status { display: inline-flex; align-items: center; gap: 5px; color: var(--success-text, #22c55e); font-size: 11px; line-height: 21px; padding: 0 6px; border: 1px solid color-mix(in srgb, var(--primary, #22c55e) 25%, transparent); border-radius: 4px; background: var(--success-soft, rgba(34, 197, 94, .09)); } .ds-record-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; } .ds-record-title { font-family: var(--font-body, \"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif); display: flex; align-items: center; gap: 7px; border: 0; padding: 0; background: transparent; color: var(--foreground, #f5f7fa); font-size: 15px; line-height: 1.5; font-weight: 550; cursor: pointer; text-align: left; } .ds-record-title:hover { color: var(--primary, #22c55e); } .ds-record-address { font-family: var(--font-mono, \"JetBrains Mono\", \"Cascadia Code\", Consolas, monospace); font-variant-numeric: tabular-nums; font-size: 11px; margin: 2px 0 0; color: var(--muted-foreground, #a1aab8); overflow-wrap: anywhere; } .ds-record-meta { display: flex; gap: 11px; margin-top: auto; padding-top: 12px; font-size: 10px; color: var(--muted-foreground, #a1aab8); } .ds-record-version { font-family: var(--font-mono, \"JetBrains Mono\", \"Cascadia Code\", Consolas, monospace); font-variant-numeric: tabular-nums; } .ds-record-pending { color: var(--warning, #f59e0b); margin-left: auto; } .ds-record-footer { display: flex; align-items: center; justify-content: space-between; gap: 4px; border-top: 1px solid var(--border, #374151); margin-top: 10px; padding-top: 5px; color: var(--muted-foreground, #a1aab8); font-size: 10px; } .ds-record-action { font-family: var(--font-body, \"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif); background: transparent; color: var(--foreground, #f5f7fa); height: 30px; padding: 0 9px; border: 1px solid transparent; border-radius: var(--radius, 8px); font-size: 12px; cursor: pointer; } .ds-record-action:hover { background: var(--secondary, #1a2332); } .ds-record-action:active { transform: translateY(1px); } .ds-record-title:focus-visible { outline: 2px solid var(--ring, #22c55e); outline-offset: 3px; } .ds-record-action:focus-visible { outline: 2px solid var(--ring, #22c55e); outline-offset: 3px; }"
+    },
+    {
+      "name": "密集登记表",
+      "kind": "custom",
+      "refersTo": "register-panel",
+      "description": "固定扫描关系和明确连接归属，表格容器承担窄屏横向滚动。",
+      "html": "<section class=\"ds-register\" aria-label=\"隧道索引\"><div class=\"ds-register-scope\">已选择 2 条隧道 · 东京 / 开发环境</div><div class=\"ds-table-wrap\"><table class=\"ds-table\"><thead><tr><th scope=\"col\">编号</th><th scope=\"col\">隧道</th><th scope=\"col\">连接</th><th scope=\"col\">协议</th><th scope=\"col\">本地目标</th></tr></thead><tbody><tr class=\"ds-table-selected\"><td class=\"ds-table-mono\">01</td><td><button class=\"ds-table-name\">Web 控制台</button></td><td>东京 · 开发环境</td><td><span class=\"ds-protocol\">TCP</span></td><td class=\"ds-table-mono\">127.0.0.1:8080</td></tr><tr><td class=\"ds-table-mono\">02</td><td><button class=\"ds-table-name\">SSH</button></td><td>东京 · 开发环境</td><td><span class=\"ds-protocol\">TCP</span></td><td class=\"ds-table-mono\">127.0.0.1:22</td></tr></tbody></table></div></section>",
+      "css": ".ds-register { font-family: var(--font-body, \"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif); background: var(--card, #111827); color: var(--foreground, #f5f7fa); border: 1px solid var(--border, #374151); border-radius: var(--radius, 8px); overflow: hidden; min-width: 0; } .ds-register-scope { padding: 8px 15px; border-bottom: 1px solid var(--border, #374151); background: var(--success-soft, rgba(34, 197, 94, .09)); font-size: 12px; } .ds-table-wrap { overflow-x: auto; width: 100%; min-width: 0; overscroll-behavior-x: contain; } .ds-table { width: 100%; border-collapse: collapse; white-space: nowrap; font-size: 12px; } .ds-table th { height: 35px; padding: 6px 12px; text-align: left; font-size: 11px; font-weight: 500; color: var(--muted-foreground, #a1aab8); background: var(--secondary, #1a2332); } .ds-table td { height: 43px; padding: 6px 12px; border-top: 1px solid var(--border, #374151); } .ds-table tbody tr:hover { background: color-mix(in srgb, var(--secondary, #1a2332) 55%, transparent); } .ds-table-selected { background: var(--success-soft, rgba(34, 197, 94, .09)); } .ds-table-mono { font-family: var(--font-mono, \"JetBrains Mono\", \"Cascadia Code\", Consolas, monospace); font-variant-numeric: tabular-nums; font-size: 11px; color: var(--muted-foreground, #a1aab8); } .ds-table-name { font-family: var(--font-body, \"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif); border: 0; background: transparent; padding: 2px 0; color: var(--foreground, #f5f7fa); font-size: 12px; line-height: 1.5; font-weight: 500; white-space: nowrap; cursor: pointer; } .ds-table-name:hover { color: var(--primary, #22c55e); } .ds-protocol { font-size: 10px; letter-spacing: .03em; padding: 2px 5px; border: 1px solid var(--border, #374151); border-radius: 4px; color: var(--muted-foreground, #a1aab8); } .ds-table-name:focus-visible { outline: 2px solid var(--ring, #22c55e); outline-offset: 3px; }"
+    },
+    {
+      "name": "编辑对话框",
+      "kind": "custom",
+      "refersTo": "dialog-panel",
+      "description": "Radix 编辑层的视觉外壳预览；焦点管理和 Portal 行为由应用中的 Radix 实现。",
+      "html": "<section class=\"ds-dialog\" role=\"dialog\" aria-labelledby=\"ds-dialog-title\" aria-describedby=\"ds-dialog-description\"><header class=\"ds-dialog-heading\"><div><h2 id=\"ds-dialog-title\">编辑连接</h2><p id=\"ds-dialog-description\">每个连接独立配置、独立运行。</p></div><button class=\"ds-dialog-close\" aria-label=\"关闭编辑器\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m18 6-12 12M6 6l12 12\"></path></svg></button></header><div class=\"ds-dialog-section\">连接配置与协议字段按主题分组。</div></section>",
+      "css": ".ds-dialog { font-family: var(--font-body, \"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif); width: min(640px, calc(100vw - 32px)); max-height: 90vh; overflow-y: auto; scrollbar-gutter: stable; overscroll-behavior: contain; background: var(--popover, #111827); color: var(--foreground, #f5f7fa); border: 1px solid var(--border, #374151); border-radius: 12px; box-shadow: var(--shadow-lg, 0 18px 48px rgb(0 0 0 / .36)); } .ds-dialog-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; position: sticky; top: 0; padding: 22px 24px 18px; border-bottom: 1px solid var(--border, #374151); background: var(--popover, #111827); } .ds-dialog-heading h2 { font-family: var(--font-heading, \"Space Grotesk\", \"Microsoft YaHei UI\", system-ui, sans-serif); margin: 0 0 7px; font-size: 20px; line-height: 1.5; font-weight: 600; } .ds-dialog-heading p { margin: 0; color: var(--muted-foreground, #a1aab8); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; } .ds-dialog-close { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; padding: 0; border: 1px solid transparent; border-radius: var(--radius, 8px); color: var(--foreground, #f5f7fa); background: transparent; cursor: pointer; } .ds-dialog-close:hover { background: var(--secondary, #1a2332); } .ds-dialog-close:active { transform: translateY(1px); } .ds-dialog-section { padding: 20px 24px; color: var(--muted-foreground, #a1aab8); font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; } .ds-dialog-close:focus-visible { outline: 2px solid var(--ring, #22c55e); outline-offset: 3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "连接索引工作台",
+    "overview": "连接索引工作台把连接、隧道和运行反馈组织成可扫描、可定位、可操作的记录。它沿用用户确认的 scoopUI 深蓝与绿色主题，以及 Radix/shadcn 风格的紧凑控件；编号、边界和稳定对齐承载信息密度。\n\n系统的气质是克制、清晰和连续。日常界面以色调分层和细边界区分对象，主操作、选择范围与成功状态共享绿色语义，异常与待应用配置保留各自的文字提示。交互动作保持短促，技术信息使用等宽字体帮助逐列比较。\n\n本文件按 scan 模式从 React 原型的 CSS 与组件提取，已延续到正式桌面实现。当前主题与控件的权威源是 `apps/desktop/src/index.css`、`apps/desktop/src/components/ui.tsx` 与 `apps/desktop/src/components/select.tsx`；页面组合策略见 `.impeccable/surfaces/apps-desktop-src-app-tsx.md`。原型保留用于设计追溯。真实桌面状态来自 Rust 后端，浏览器演示反馈不能作为运行验证。\n\n应用图标源为 `apps/desktop/app-icon.svg`，使用深蓝、绿色和网络节点构图；PNG/ICO 等衍生尺寸由官方 Tauri CLI 导出，来源与再生成命令记录在 `apps/desktop/src-tauri/icons/PROVENANCE.md`。",
+    "keyCharacteristics": [
+      "深蓝暗色与明净亮色共用同一套语义角色。",
+      "紧凑控件、稳定列对齐和低装饰度支持连续维护。",
+      "编号连接记录与隧道索引保留明确对象归属。",
+      "状态同时使用颜色与文字；键盘焦点清楚可见。"
+    ],
+    "rules": [
+      {
+        "name": "语义与可读性",
+        "body": "主题绿色继续承担身份、选择和焦点语义；操作背景与状态文字可使用各自的可读性 token。亮色主按钮和成功文字使用更深的绿色，危险文字与危险按钮分别取值，保持实际前景与背景组合清晰。",
+        "section": "colors"
+      },
+      {
+        "name": "技术对齐",
+        "body": "主机、端口、版本、索引和日志时间使用技术等宽角色及等宽数字；说明与动作文案使用正文角色。不要用字体变化替代对象归属或状态标签。",
+        "section": "typography"
+      },
+      {
+        "name": "滚动边界",
+        "body": "窄屏保留登记表的稳定列关系，由表格容器承担横向滚动；导航独立横向滚动。页面外框和正文保持在视口内。",
+        "section": "layout"
+      },
+      {
+        "name": "默认色调分层",
+        "body": "连接记录、表格和设置区域依靠背景色与边界建立层次。投影用于对话框与选择浮层，主按钮悬停仅有轻微反馈，选中连接使用内侧绿色标记。",
+        "section": "elevation"
+      },
+      {
+        "name": "紧凑圆角",
+        "body": "常用按钮、输入和面板共享中等圆角；徽标与复选框更紧，提示区域和对话框采用各自已实现的圆角角色。小标记保持方中带圆，不改成胶囊外观。",
+        "section": "shapes"
+      },
+      {
+        "name": "操作范围",
+        "body": "批量工具必须紧邻所作用的记录，数量和连接归属可见。保存后的待应用状态、启用意图和进程反馈保持各自表达；失败结果保留逐项重试入口。",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "沿用主题语义 token，并为亮色动作和状态文字使用已有的可读性 token。",
+      "用稳定列、编号、连接归属和明确文字状态支撑信息密度。",
+      "沿用 Button、Input、Select、Badge、Checkbox 与 Dialog 的现有状态和尺寸。",
+      "保留焦点、禁用、错误、加载、部分失败和 reduced-motion 行为。",
+      "新增选择使用共享 Radix Select；滚动容器继承统一滚动条 token，并保留明确的滚动边界。",
+      "新增页面时复用连接记录与登记表语言，并将页面策略维护在对应 surface brief。"
+    ],
+    "donts": [
+      "不要恢复旧项目的页面布局，或重新套用已经被 scoopUI 指令覆盖的独立配色。",
+      "不要添加虚构的流量、带宽、延迟图表或巨型指标卡。",
+      "不要仅凭颜色区分成功、待应用、异常、启用意图与实际运行状态。",
+      "不要把本机 QA 截图当成设计资产，也不要声称 CSS 中声明的字体已经下载或打包。",
+      "原型和浏览器演示的网络、下载进度与桌面选项保持明确的模拟标记；桌面模式只展示后端确认的结果。"
+    ]
+  }
+}
