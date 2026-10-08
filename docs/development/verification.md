@@ -1,6 +1,14 @@
 # 桌面开发验证记录
 
-更新于 2026-10-09。区分默认代码测试、官方二进制验证、浏览器演示和原生 EXE 检查。参考项目只读；测试使用临时目录、专用回环配置与演示数据，未读取用户凭据或真实旧数据库。本轮为前端默认值显示与清单更新，Rust 未改；Rust 和官方进程验证保留 2026-10-08 的通过记录。
+更新于 2026-10-09。区分默认代码测试、官方二进制验证、浏览器演示、原生 EXE 和 GitHub 发布检查。参考项目只读；测试使用临时目录、专用回环配置与演示数据，未读取用户凭据或真实旧数据库。默认值显示更新未改 Rust；本次自动发布修正跨平台测试fixture，生产路径规则未改变。官方进程联调保留 2026-10-08 的通过记录。
+
+## 2026-10-09 自动构建发布
+
+首次源码提交 `295fdf2` 已推送到 main。[首轮 GitHub Actions](https://github.com/nvrenshiren/frpc-ui/actions/runs/37821625580) 的版本计划及 Windows 检查通过：前端44项、Rust workspace45项、Clippy、NSIS/EXE构建、完整预发布ProductVersion、release与打包副本的WebView/IPC smoke、全新NSIS静默安装后的EXE smoke和artifact上传。Linux默认测试暴露两处测试fixture硬编码Windows绝对路径，发布因此被阻止；已改为原生TempDir文件/目录，生产路径规则未改变，本机core19/versions25、Rust格式与core Clippy重新通过。后续完整执行结果以[工作流记录](https://github.com/nvrenshiren/frpc-ui/actions/workflows/ci.yml)为准。
+
+发布脚本14项测试和actionlint通过，包含tag/清单版本一致性、PR不发布、输出注入、路径逃逸、默认清单不修改、重复prepare、缓存旧安装包不误选、两个二进制及release.json校验和。本机额外实际构建NSIS `0.1.0` 和 `0.1.0-dev.1`，验证完整ProductVersion及打包后EXE smoke通过。发布草稿按源码SHA恢复，已有tag按实际commit核验，公开附件不覆盖。
+
+后续自动版本的实际SHA/大小/源码SHA以每个GitHub Release的 `release.json` 和 `SHA256SUMS.txt` 为准；下方 `0.1.0` 的hash保留为前次本机交付记录。首次安装检查不代表升级、卸载或签名已验收。发布策略见[自动发布说明](releases.md)。
 
 ## 当前完成结果
 

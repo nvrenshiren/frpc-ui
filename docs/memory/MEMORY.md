@@ -51,3 +51,5 @@ exec TokenSource、外部includes、官方Store、VirtualNet/featureGates、全�
 ## Git 与自动发布（2026-10-09）
 
 用户要求提交并自动发布。工作流 `.github/workflows/ci.yml` 每次 main push 编译独立 `v<base>-dev.<run>` 预发布，`vX.Y.Z` 标签发布正式版；PR/手动运行仅检查。正式 tag 必须匹配 package/Cargo/npm lock，预发布通过 Tauri config 覆盖应用版本，不修改源码清单。各次 push 保留运行，所有测试与真实 release smoke 成功后发布job才获得contents:write，使用GITHUB_TOKEN，无额外PAT。先draft上传完整EXE/NSIS/SHA256/metadata再公开；已公开附件不覆盖。详情和首次运行状态入口见[自动发布说明](../development/releases.md)与[GitHub Actions](https://github.com/nvrenshiren/frpc-ui/actions/workflows/ci.yml)。本机前端44项、发布脚本14项、Rust格式及actionlint本轮通过；安装后的EXE首次启动由CI新增验收，不能推定升级/签名验收。
+
+首次提交295fdf2已推送。[首轮运行37821625580](https://github.com/nvrenshiren/frpc-ui/actions/runs/37821625580) Windows所有检查（含全新NSIS安装及EXE smoke）通过，Linux的两处Windows硬编码fixture失败并正确阻止发布。fixture已使用native TempDir修复，core19/versions25及适用Clippy本机通过；后续完整结果由Actions记录。main draft重跑可能尚无tag，必须核验targetCommitish；创建/公开前已有tag必须peel到源码SHA，不能依赖--target覆盖旧tag。新发行的校验信息以各Release附件为准，不反复覆盖旧交付hash。

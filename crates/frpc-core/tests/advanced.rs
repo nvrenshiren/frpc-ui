@@ -176,12 +176,17 @@ fn advanced_values_round_trip_store_and_omit_secrets_without_mutating_runtime() 
 #[test]
 fn capability_minima_and_unknown_versions_are_enforced_at_save() {
     let (base, tunnels) = config::parse_toml("serverAddr='127.0.0.1'\n[[proxies]]\nname='web'\ntype='http'\nlocalPort=8080\ncustomDomains=['web.example.test']", "0.71.0", "gates").unwrap();
+    let directory = tempfile::tempdir().unwrap();
+    let token_file = directory.path().join("token.txt");
+    let jwt_file = directory.path().join("jwt.txt");
+    std::fs::write(&token_file, "test-token").unwrap();
+    std::fs::write(&jwt_file, "test-jwt").unwrap();
     let profile_fields = [
         (67, json!({"clientID":"client"})),
         (69, json!({"transport":{"wireProtocol":"v2"}})),
         (
             64,
-            json!({"auth":{"tokenSource":{"type":"file","file":{"path":"C:/tokens/token"}}}}),
+            json!({"auth":{"tokenSource":{"type":"file","file":{"path":token_file}}}}),
         ),
         (
             65,
@@ -189,7 +194,7 @@ fn capability_minima_and_unknown_versions_are_enforced_at_save() {
         ),
         (
             66,
-            json!({"auth":{"method":"oidc","oidc":{"tokenSource":{"type":"file","file":{"path":"C:/tokens/jwt"}}}}}),
+            json!({"auth":{"method":"oidc","oidc":{"tokenSource":{"type":"file","file":{"path":jwt_file}}}}}),
         ),
     ];
     for (minimum, extension) in profile_fields {
@@ -237,7 +242,6 @@ fn capability_minima_and_unknown_versions_are_enforced_at_save() {
         p.version = format!("0.{minimum}.0");
         assert!(config::render_profile_toml(&p, &[t], true).is_ok());
     }
-    let directory = tempfile::tempdir().unwrap();
     let manager = Manager::new(directory.path()).unwrap();
     manager.save_profile(base.clone()).unwrap();
     let bytes = std::fs::read(directory.path().join("state.json")).unwrap();
@@ -388,12 +392,31 @@ fn oidc_file_source_and_client_parameters_are_explicit_and_safe() {
     assert!(config::render_profile_toml(&p, &t, true).is_ok());
 }
 
-fn plugin_sources() -> Vec<String> {
-    ["type='https2http'\nlocalAddr='127.0.0.1:8080'\nenableHTTP2=false", "type='https2https'\nlocalAddr='[::1]:8443'\nenableHTTP2=true", "type='http2http'\nlocalAddr='127.0.0.1:8080'", "type='http2https'\nlocalAddr='127.0.0.1:8443'", "type='http_proxy'\nhttpUser='user'\nhttpPassword='plugin-secret'", "type='socks5'\nusername='user'\npassword='plugin-secret'", "type='static_file'\nlocalPath='C:/site'\nstripPrefix='/static'\nhttpPassword='plugin-secret'", "type='unix_domain_socket'\nunixPath='C:/sockets/app.sock'", "type='tls2raw'\nlocalAddr='127.0.0.1:8080'"].into_iter().enumerate().map(|(index,plugin)|format!("serverAddr='127.0.0.1'\n[[proxies]]\nname='plugin-{index}'\ntype='tcp'\nremotePort=0\n[proxies.plugin]\n{plugin}\n")).collect()
+fn plugin_sources(directory: &std::path::Path) -> Vec<String> {
+    let site_directory = directory.join("site");
+    std::fs::create_dir_all(&site_directory).unwrap();
+    let site_path = serde_json::to_string(&site_directory).unwrap();
+    let socket_path = serde_json::to_string(&directory.join("app.sock")).unwrap();
+    [
+        "type='https2http'\nlocalAddr='127.0.0.1:8080'\nenableHTTP2=false".into(),
+        "type='https2https'\nlocalAddr='[::1]:8443'\nenableHTTP2=true".into(),
+        "type='http2http'\nlocalAddr='127.0.0.1:8080'".into(),
+        "type='http2https'\nlocalAddr='127.0.0.1:8443'".into(),
+        "type='http_proxy'\nhttpUser='user'\nhttpPassword='plugin-secret'".into(),
+        "type='socks5'\nusername='user'\npassword='plugin-secret'".into(),
+        format!("type='static_file'\nlocalPath={site_path}\nstripPrefix='/static'\nhttpPassword='plugin-secret'"),
+        format!("type='unix_domain_socket'\nunixPath={socket_path}"),
+        "type='tls2raw'\nlocalAddr='127.0.0.1:8080'".into(),
+    ]
+    .into_iter()
+    .enumerate()
+    .map(|(index, plugin)| format!("serverAddr='127.0.0.1'\n[[proxies]]\nname='plugin-{index}'\ntype='tcp'\nremotePort=0\n[proxies.plugin]\n{plugin}\n"))
+    .collect()
 }
 #[test]
 fn all_supported_plugins_preserve_fields_and_remove_unused_backend() {
-    for source in plugin_sources() {
+    let directory = tempfile::tempdir().unwrap();
+    for source in plugin_sources(directory.path()) {
         let (p, t) = config::parse_toml(&source, "0.71.0", "plugin").unwrap();
         let output = config::render_profile_toml(&p, &t, true).unwrap();
         assert!(!output.contains("localPort") && !output.contains("localIP"));
@@ -419,7 +442,7 @@ async fn official_frpc_verifies_advanced_and_all_nine_provider_plugins() -> Resu
     for (index, source) in std::iter::once(COMMON.to_string())
         .chain(std::iter::once(oidc.to_string()))
         .chain([token_source, oidc_source, quic.into()])
-        .chain(plugin_sources())
+        .chain(plugin_sources(dir.path()))
         .enumerate()
     {
         let (p, t) = config::parse_toml(&source, "0.71.0", "official")?;
@@ -487,7 +510,7 @@ async fn official_frpc_verifies_reviewed_052_baseline() -> Result<()> {
         }
     }
     let mut rendered = vec![config::render_profile_toml(&profile, &tunnels, true)?];
-    for source in plugin_sources() {
+    for source in plugin_sources(dir.path()) {
         let (mut p, mut t) = config::parse_toml(&source, "0.71.0", "plugin")?;
         let plugin = t[0]
             .advanced
