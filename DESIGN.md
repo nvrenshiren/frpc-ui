@@ -315,6 +315,8 @@ components:
 
 当前主题由 COHESION 的 `theme/shadcn-tokens.json` 派生；应用适配层与控件状态集中于 `apps/desktop/src/index.css`、`apps/desktop/src/components/ui.tsx` 与 `apps/desktop/src/components/select.tsx`。正式 COHESION 标识来自设计系统的 `原色.png` 与 `白色.png`，裁切副本放在 `apps/desktop/src/assets/`。桌面使用持久侧栏，中等宽度收为图标栏，窄窗口改为横向导航。原型保留用于设计追溯。真实桌面状态来自 Rust 后端，浏览器演示反馈不能作为运行验证。
 
+后续 UI 设计与修改应配合 `ui-ux-pro-max`：按具体产品场景、React 技术栈及响应式／无障碍问题检索，并先判断结果是否适用于本桌面运维工具。该技能提供辅助审视，不作为第二套品牌或 token 来源；颜色、组件基础和品牌表达仍以 COHESION 设计系统及本项目约定为准。没有匹配建议时明确使用通用 UX 原则，不将不相关搜索结果写成项目规范。
+
 应用图标源仍为 `apps/desktop/app-icon.svg`；PNG/ICO 等衍生尺寸由官方 Tauri CLI 导出，来源与再生成命令记录在 `apps/desktop/src-tauri/icons/PROVENANCE.md`。窗口内使用独立产品标识，不把 Logo 资产色用作状态文字。
 
 **Key Characteristics:**

@@ -5,6 +5,7 @@
 - 项目 `D:\Work\dawi\frpc-ui`，main；origin 为 `https://github.com/nvrenshiren/frpc-ui.git`。建立时远端为空；2026-10-09 用户授权提交 Git 并启用自动编译发布，许可证待用户决定。项目规范见根 AGENTS.md。
 - 使用简体中文沟通，自主完成可逆开发，不重复请求已授权的操作。多连接、批量维护、高信息密度；根据旧功能重新设计，不保留旧界面。
 - 前端技术栈和早期组件基础参考 `D:\Work\dawi\scoopUI`：React 19、strict TypeScript、Vite 8、Tailwind 4、Radix/shadcn、Zustand 5、Sonner/Lucide，npm/package-lock。2026-11-13 用户要求将视觉规范改为 `D:\Work\dawi\design` 的 COHESION 2.0.0 / shadcn New York / Neutral；浅深色品牌 token 适配在正式 `index.css`，Logo 裁切副本位于 `apps/desktop/src/assets/`。
+- 后续 UI 设计配合 `ui-ux-pro-max` 检索和审视产品匹配、响应式及无障碍；其建议须先核对适用性，不替代 COHESION 品牌与项目正式 token。
 - 最新工作台只显示服务器连接卡片，包含基本信息、版本、传输、进程/登录状态、待应用和错误；隧道表格集中在隧道页。
 - 功能参考只读项目 `D:\Work\frpc-desktop`，HEAD 1d244e0，版本1.2.2；前端技术与组件基线参考 scoopUI HEAD 5818fde，版本0.1.11。参考项目没有修改。
 
