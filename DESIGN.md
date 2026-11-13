@@ -2,108 +2,117 @@
 name: frpc-ui
 description: "多连接管理的高密度桌面工作台"
 colors:
-  primary-dark: "#22c55e"
-  primary-hover-dark: "#34d672"
-  primary-foreground-dark: "#06130a"
-  primary-light: "#16a34a"
-  primary-hover-light: "#15803d"
-  action-primary-light: "#15803d"
-  action-primary-hover-light: "#166534"
-  success-text-light: "#166534"
-  background-dark: "#0b1220"
-  foreground-dark: "#f5f7fa"
-  surface-dark: "#111827"
-  secondary-dark: "#1a2332"
-  muted-foreground-dark: "#a1aab8"
-  border-dark: "#374151"
-  border-strong-dark: "#5b6678"
-  background-light: "#fafbfc"
-  foreground-light: "#0f172a"
+  primary-dark: "#519f77"
+  primary-hover-dark: "#77b292"
+  primary-foreground-dark: "#141414"
+  primary-light: "#167c4b"
+  primary-hover-light: "#2d8558"
+  action-primary-light: "#167c4b"
+  action-primary-hover-light: "#2d8558"
+  success-text-light: "#368011"
+  success-text-dark: "#49aa19"
+  background-dark: "#141414"
+  foreground-dark: "oklch(0.985 0 0)"
+  surface-dark: "#1f1f1f"
+  secondary-dark: "oklch(0.269 0 0)"
+  muted-foreground-dark: "oklch(0.708 0 0)"
+  border-dark: "oklch(1 0 0 / 10%)"
+  border-strong-dark: "oklch(1 0 0 / 15%)"
+  background-light: "#ffffff"
+  foreground-light: "oklch(0.145 0 0)"
   surface-light: "#fff"
   primary-foreground-light: "#fff"
-  secondary-light: "#f4f6f8"
-  muted-foreground-light: "#475569"
-  border-light: "#d1d5db"
-  border-strong-light: "#94a3b8"
-  info-dark: "#60a5fa"
-  info-light: "#2563eb"
-  warning-dark: "#f59e0b"
-  warning-light: "#9a5800"
-  destructive-dark: "#ef4444"
-  destructive-light: "#dc2626"
-  danger-text-dark: "#f87171"
-  danger-text-light: "#b91c1c"
-  action-danger: "#dc2626"
-  action-danger-hover: "#b91c1c"
-  success-soft-dark: "rgba(34, 197, 94, 0.09)"
-  success-soft-light: "rgba(22, 163, 74, 0.08)"
-  warning-soft-dark: "rgba(245, 158, 11, 0.1)"
-  warning-soft-light: "rgba(245, 158, 11, 0.08)"
-  danger-soft-dark: "rgba(239, 68, 68, 0.1)"
-  danger-soft-light: "rgba(239, 68, 68, 0.06)"
-  scrollbar-thumb-dark: "#697b92"
-  scrollbar-thumb-hover-dark: "#8294aa"
-  scrollbar-thumb-active-dark: "#a1aab8"
-  scrollbar-track-dark: "rgb(26 35 50 / 0.45)"
-  scrollbar-thumb-light: "#7b8b9f"
-  scrollbar-thumb-hover-light: "#64758b"
-  scrollbar-thumb-active-light: "#475569"
-  scrollbar-track-light: "rgb(226 232 240 / 0.5)"
+  secondary-light: "oklch(0.97 0 0)"
+  muted-foreground-light: "oklch(0.556 0 0)"
+  border-light: "oklch(0.922 0 0)"
+  border-strong-light: "oklch(0.922 0 0)"
+  info-dark: "#4486e3"
+  info-light: "#1369e2"
+  warning-dark: "#d89614"
+  warning-light: "#96670c"
+  destructive-dark: "#e0595a"
+  destructive-light: "#ca3d3f"
+  danger-text-dark: "#e0595a"
+  danger-text-light: "#ca3d3f"
+  action-danger: "#d44143"
+  action-danger-hover: "#bb5856"
+  action-danger-light: "#d54042"
+  action-danger-hover-light: "#bb5856"
+  accent-dark: "#1f2c25"
+  accent-foreground-dark: "#519f77"
+  sidebar-dark: "oklch(0.205 0 0)"
+  accent-light: "#ecefed"
+  accent-foreground-light: "#167c4b"
+  sidebar-light: "oklch(0.985 0 0)"
+  success-soft-dark: "#162312"
+  success-soft-light: "#f6ffed"
+  warning-soft-dark: "#2b2111"
+  warning-soft-light: "#fffbe6"
+  danger-soft-dark: "#2c1618"
+  danger-soft-light: "#fff2f0"
+  scrollbar-thumb-dark: "#626262"
+  scrollbar-thumb-hover-dark: "#7b7b7b"
+  scrollbar-thumb-active-dark: "#999"
+  scrollbar-track-dark: "rgb(255 255 255 / 0.045)"
+  scrollbar-thumb-light: "#b4b4b4"
+  scrollbar-thumb-hover-light: "#8f8f8f"
+  scrollbar-thumb-active-light: "#6f6f6f"
+  scrollbar-track-light: "rgb(15 23 42 / 0.045)"
 typography:
   headline:
-    fontFamily: "\"Space Grotesk\", \"Microsoft YaHei UI\", system-ui, sans-serif"
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Microsoft YaHei UI\", \"Noto Sans\", sans-serif"
     fontSize: "27px"
     fontWeight: 600
     lineHeight: 1.35
     letterSpacing: "-0.035em"
   headline-compact:
-    fontFamily: "\"Space Grotesk\", \"Microsoft YaHei UI\", system-ui, sans-serif"
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Microsoft YaHei UI\", \"Noto Sans\", sans-serif"
     fontSize: "24px"
     fontWeight: 600
     lineHeight: 1.35
     letterSpacing: "-0.035em"
   title:
-    fontFamily: "\"Space Grotesk\", \"Microsoft YaHei UI\", system-ui, sans-serif"
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Microsoft YaHei UI\", \"Noto Sans\", sans-serif"
     fontSize: "20px"
     fontWeight: 600
     lineHeight: 1.5
   title-record:
-    fontFamily: "\"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif"
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Microsoft YaHei UI\", \"Noto Sans\", sans-serif"
     fontSize: "15px"
     fontWeight: 550
     lineHeight: 1.5
   body:
-    fontFamily: "\"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif"
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Microsoft YaHei UI\", \"Noto Sans\", sans-serif"
     fontSize: "14px"
     fontWeight: 400
     lineHeight: 1.5
   body-compact:
-    fontFamily: "\"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif"
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Microsoft YaHei UI\", \"Noto Sans\", sans-serif"
     fontSize: "12px"
     fontWeight: 400
     lineHeight: 1.5
   label:
-    fontFamily: "\"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif"
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Microsoft YaHei UI\", \"Noto Sans\", sans-serif"
     fontSize: "13px"
     fontWeight: 500
     lineHeight: 1.5
   label-compact:
-    fontFamily: "\"DM Sans\", \"Microsoft YaHei UI\", system-ui, sans-serif"
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Microsoft YaHei UI\", \"Noto Sans\", sans-serif"
     fontSize: "11px"
     fontWeight: 400
     lineHeight: 1.5
   mono:
-    fontFamily: "\"JetBrains Mono\", \"Cascadia Code\", Consolas, monospace"
+    fontFamily: "ui-monospace, \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, monospace"
     fontSize: "11px"
     fontWeight: 400
     lineHeight: 1.5
   mono-index:
-    fontFamily: "\"JetBrains Mono\", \"Cascadia Code\", Consolas, monospace"
+    fontFamily: "ui-monospace, \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, monospace"
     fontSize: "10px"
     fontWeight: 400
     lineHeight: 1.5
   mono-editor:
-    fontFamily: "\"JetBrains Mono\", \"Cascadia Code\", Consolas, monospace"
+    fontFamily: "ui-monospace, \"SFMono-Regular\", Consolas, \"Liberation Mono\", Menlo, monospace"
     fontSize: "11px"
     fontWeight: 400
     lineHeight: 1.7
@@ -111,7 +120,9 @@ rounded:
   sm: "4px"
   notice: "6px"
   md: "8px"
-  dialog: "12px"
+  root: "10px"
+  card: "12px"
+  dialog: "14px"
 spacing:
   "4": "4px"
   "6": "6px"
@@ -163,6 +174,11 @@ components:
     height: "36px"
   button-danger-hover:
     backgroundColor: "{colors.action-danger-hover}"
+  button-danger-light:
+    backgroundColor: "{colors.action-danger-light}"
+    textColor: "{colors.primary-foreground-light}"
+  button-danger-hover-light:
+    backgroundColor: "{colors.action-danger-hover-light}"
   button-small:
     height: "30px"
     padding: "0 9px"
@@ -199,8 +215,8 @@ components:
     padding: "6px 30px 6px 10px"
     size: "12px"
   select-item-selected:
-    backgroundColor: "{colors.success-soft-dark}"
-    textColor: "{colors.primary-dark}"
+    backgroundColor: "{colors.accent-dark}"
+    textColor: "{colors.accent-foreground-dark}"
   select-trigger-light:
     backgroundColor: "{colors.secondary-light}"
     textColor: "{colors.foreground-light}"
@@ -208,16 +224,20 @@ components:
     backgroundColor: "{colors.surface-light}"
     textColor: "{colors.foreground-light}"
   select-item-selected-light:
-    backgroundColor: "{colors.success-soft-light}"
-    textColor: "{colors.success-text-light}"
+    backgroundColor: "{colors.accent-light}"
+    textColor: "{colors.accent-foreground-light}"
   nav-item:
     backgroundColor: "transparent"
     textColor: "{colors.muted-foreground-dark}"
-    padding: "0 18px"
-    height: "51px"
+    padding: "0 11px"
+    height: "40px"
     size: "13px"
   nav-item-active:
-    textColor: "{colors.foreground-dark}"
+    backgroundColor: "{colors.accent-dark}"
+    textColor: "{colors.accent-foreground-dark}"
+  nav-item-active-light:
+    backgroundColor: "{colors.accent-light}"
+    textColor: "{colors.accent-foreground-light}"
   badge-neutral:
     backgroundColor: "transparent"
     textColor: "{colors.muted-foreground-dark}"
@@ -226,7 +246,7 @@ components:
     padding: "0 6px"
   badge-success:
     backgroundColor: "{colors.success-soft-dark}"
-    textColor: "{colors.primary-dark}"
+    textColor: "{colors.success-text-dark}"
   badge-success-light:
     backgroundColor: "{colors.success-soft-light}"
     textColor: "{colors.success-text-light}"
@@ -246,12 +266,13 @@ components:
     backgroundColor: "{colors.surface-dark}"
     textColor: "{colors.foreground-dark}"
     padding: "15px 17px 10px"
+    rounded: "{rounded.card}"
   connection-record-selected:
-    backgroundColor: "{colors.success-soft-dark}"
+    backgroundColor: "{colors.accent-dark}"
   register-panel:
     backgroundColor: "{colors.surface-dark}"
     textColor: "{colors.foreground-dark}"
-    rounded: "{rounded.md}"
+    rounded: "{rounded.card}"
   dialog-panel:
     backgroundColor: "{colors.surface-dark}"
     textColor: "{colors.foreground-dark}"
@@ -288,34 +309,34 @@ components:
 
 **Creative North Star: "连接索引工作台"**
 
-连接索引工作台把连接、隧道和运行反馈组织成可扫描、可定位、可操作的记录。它沿用用户确认的 scoopUI 深蓝与绿色主题，以及 Radix/shadcn 风格的紧凑控件；编号、边界和稳定对齐承载信息密度。
+连接索引工作台把连接、隧道和运行反馈组织成可扫描、可定位、可操作的记录。界面现按 `D:\Work\dawi\design` 的 COHESION 2.0.0 设计系统实施，采用 shadcn/ui New York / Neutral 基础、COHESION 品牌主题和 Radix 交互；信息密度由侧栏导航、稳定列与记录边界承载。
 
-系统的气质是克制、清晰和连续。日常界面以色调分层和细边界区分对象，主操作、选择范围与成功状态共享绿色语义，异常与待应用配置保留各自的文字提示。交互动作保持短促，技术信息使用等宽字体帮助逐列比较。
+系统的气质是克制、清晰和连续。页面使用 COHESION 派生的中性色表面与绿色主操作；成功、警告、错误和信息状态继续使用各自语义色并保留文字提示。技术信息使用系统等宽字体帮助逐列比较。
 
-本文件按 scan 模式从 React 原型的 CSS 与组件提取，已延续到正式桌面实现。当前主题与控件的权威源是 `apps/desktop/src/index.css`、`apps/desktop/src/components/ui.tsx` 与 `apps/desktop/src/components/select.tsx`；页面组合策略见 `.impeccable/surfaces/apps-desktop-src-app-tsx.md`。原型保留用于设计追溯。真实桌面状态来自 Rust 后端，浏览器演示反馈不能作为运行验证。
+当前主题由 COHESION 的 `theme/shadcn-tokens.json` 派生；应用适配层与控件状态集中于 `apps/desktop/src/index.css`、`apps/desktop/src/components/ui.tsx` 与 `apps/desktop/src/components/select.tsx`。正式 COHESION 标识来自设计系统的 `原色.png` 与 `白色.png`，裁切副本放在 `apps/desktop/src/assets/`。桌面使用持久侧栏，中等宽度收为图标栏，窄窗口改为横向导航。原型保留用于设计追溯。真实桌面状态来自 Rust 后端，浏览器演示反馈不能作为运行验证。
 
-应用图标源为 `apps/desktop/app-icon.svg`，使用深蓝、绿色和网络节点构图；PNG/ICO 等衍生尺寸由官方 Tauri CLI 导出，来源与再生成命令记录在 `apps/desktop/src-tauri/icons/PROVENANCE.md`。
+应用图标源仍为 `apps/desktop/app-icon.svg`；PNG/ICO 等衍生尺寸由官方 Tauri CLI 导出，来源与再生成命令记录在 `apps/desktop/src-tauri/icons/PROVENANCE.md`。窗口内使用独立产品标识，不把 Logo 资产色用作状态文字。
 
 **Key Characteristics:**
 
-- 深蓝暗色与明净亮色共用同一套语义角色。
+- COHESION 深色与浅色主题共用同一套语义角色。
 - 紧凑控件、稳定列对齐和低装饰度支持连续维护。
 - 工作台独立服务器卡片与隧道页索引保留明确对象归属。
 - 状态同时使用颜色与文字；键盘焦点清楚可见。
 
 ## Colors
 
-色彩以运行绿色和冷静中性色为中心。Frontmatter 的颜色值为规范层；下文只解释角色，所有主题切换由 CSS 语义变量实现。组件主条目记录暗色默认值，`*-light` 条目记录亮色差异，其余形状、尺寸和状态共用。
+色彩以 COHESION 品牌绿色和 Neutral 中性色为中心。Frontmatter 的颜色值来自逐科 shadcn token 快照；所有主题切换由 CSS 语义变量实现。组件主条目记录暗色默认值，`*-light` 条目记录亮色差异，其余形状、尺寸和状态共用。
 
 ### Primary
 
-- **运行绿**：`primary-dark` / `primary-light` 用于选中记录、导航下划线、复选框、焦点与进度；`primary-hover-*` 记录主题原有悬停色。
-- **动作绿**：暗色主按钮继承主题绿色。亮色主按钮使用 `action-primary-light` 及其 hover token，与浅色前景配对。
-- **成功文字绿**：暗色状态文字继承运行绿；亮色徽标使用 `success-text-light`。成功底色使用 `success-soft-*`，让文字与记录内容都保持清楚。
+- **品牌绿**：`primary-dark` / `primary-light` 取自 COHESION 派生主题，用于主操作、选中范围和键盘焦点；`primary-hover-*` 保持主题对应的悬停状态。
+- **动作前景**：主按钮前景随浅深主题配对；品牌 Logo 三色固定，只用于标识资产，不承担状态或正文语义。
+- **成功文字绿**：状态文字取 COHESION 语义 token；成功底色使用 `success-soft-*`，让文字与记录内容都保持清楚。
 
 ### Neutral
 
-- **深蓝工作底 / 明净工作底**：`background-*` 承担页面、日志和配置文本的基础画布。
+- **Neutral 工作底**：`background-*` 承担页面、日志和配置文本的基础画布。
 - **记录表面**：`surface-*` 对应卡面与 popover 共用的语义值，覆盖连接记录、登记表、设置与对话框。
 - **次级底色**：`secondary-*` 用于输入、表头、悬停与提示区域。
 - **主文字 / 辅助文字**：`foreground-*` 承担对象名和正文；`muted-foreground-*` 承担地址、说明、次要状态和列头。
@@ -327,13 +348,13 @@ components:
 
 信息蓝用于链接、访客角色和日志级别；警告色用于待应用、等待确认与警告日志；破坏色用于错误边界和错误级别。危险徽标文字使用 `danger-text-*`，危险按钮使用 `action-danger` 系列。警告和危险柔和底色不承担唯一的状态说明。
 
-**The 语义与可读性 Rule.** 主题绿色继续承担身份、选择和焦点语义；操作背景与状态文字可使用各自的可读性 token。亮色主按钮和成功文字使用更深的绿色，危险文字与危险按钮分别取值，保持实际前景与背景组合清晰。
+**The 语义与可读性 Rule.** COHESION 主题色承担操作、选择和焦点语义；操作背景与状态文字使用各自的可读性 token。浅深主题的主按钮前景、成功文字和危险文字分别取值，保持实际前景与背景组合清晰。
 
 Sidecar 的 tonal ramps 是由当前颜色衍生的预览色阶；它们不是新增应用 token，也不改变 CSS 的主题语义。
 
 ## Typography
 
-标题、正文和技术文本分别使用 frontmatter 中的字体角色。当前 CSS 声明了 DM Sans、Space Grotesk 与 JetBrains Mono，并提供 Microsoft YaHei UI、system-ui、Cascadia Code、Consolas 等回退；仓库没有打包这些声明的品牌字体，也没有 `@font-face` 或远程字体导入。实际渲染采用本机可用字体，不应把栈首字体视为已加载资产。
+标题、正文和技术文本分别使用 frontmatter 中的字体角色。界面沿用 COHESION Web 基线的系统字体栈与系统等宽字体；仓库不下载或远程加载品牌字体，实际渲染采用本机可用字体。
 
 - **Headline**：页面标题，紧凑断点使用 `headline-compact`；短标题直接建立层级，不加额外眉题。
 - **Title**：对话框标题；`title-record` 用于连接名称。
@@ -347,13 +368,13 @@ Sidecar 的 tonal ramps 是由当前颜色衍生的预览色阶；它们不是�
 
 ## Layout
 
-工作区是连续的操作画布，容器居中并设最大宽度（1600px）。桌面身份栏与功能导航分开，水平页面留白取 spacing 的最大步骤；正文内的控件、表头与记录采用更小步骤。实际间距是从 CSS 中反复使用的值提取，frontmatter 不假定这些值已经是独立 CSS spacing 变量。
+桌面界面采用 248px 持久侧栏与独立内容画布；内容区最大宽度 1720px，宽度不足时侧栏收为 74px 图标栏，窄窗口切换为横向导航。标题、工具和工作区留白依据任务调整，控件、表头与记录使用更小步骤。实际间距集中在 CSS 的组件规则中，frontmatter 不假定这些值已经是独立 CSS spacing 变量。
 
 工作台只显示独立服务器卡片：宽屏四列、中等两列、最窄单列，卡片间距 16px、边距 18px、圆角 12px。卡片包含名称、地址、版本、传输、进程/登录状态、待应用状态和错误，底部操作对齐；空状态占满网格。隧道登记表仅在隧道页显示，搜索、筛选、选择和批量动作紧邻记录。表头和行保持紧凑、稳定。
 
-响应式断点和用途放在 sidecar 的 `extensions.breakpoints`：宽视口对齐外层栏与容器，中等视口重排连接组，窄视口收紧外层留白并换行工具栏。对话框宽度随视口收缩、内容在自身内部滚动，标题区保持可见。表单通常两列，在 560px 以下折叠为单列；日志消息在窄屏独占下一行。配置交换的字段、说明、预览与操作共享统一的水平边界，不因 fieldset 包裹改变内距。设置正文、迁移预览与列表项保持独立段落间距，长技术值允许断行。
+宽视口对齐内容留白，中等视口收窄侧栏并重排连接卡片，820px 以下使用图标栏，700px 以下改为可横向滚动的顶部导航。对话框宽度随视口收缩、内容在自身内部滚动，标题区保持可见。表单通常两列，在 560px 以下折叠为单列；日志消息在窄屏独占下一行。配置交换的字段、说明、预览与操作共享统一的水平边界，不因 fieldset 包裹改变内距。设置正文、迁移预览与列表项保持独立段落间距，长技术值允许断行。
 
-**The 滚动边界 Rule.** 窄屏保留登记表的稳定列关系，由表格容器承担横向滚动；导航独立横向滚动。页面外框和正文保持在视口内。
+**The 滚动边界 Rule.** 窄屏保留登记表的稳定列关系，由表格容器承担横向滚动；侧栏导航独立横向滚动。页面外框和正文保持在视口内。
 
 页面、表格、导航、对话框、日志、配置文本和下拉菜单共用滚动条主题。WebView2 使用 10px 轨道与留有透明边界的圆角滑块，Firefox 使用 thin 滚动条和同一套颜色。页面、对话框、日志、配置文本与下拉视口保留稳定的 scrollbar gutter，避免出现滚动条时挤动相邻内容；横向表格保持独立的滚动边界。
 
@@ -365,7 +386,7 @@ Sidecar 的 tonal ramps 是由当前颜色衍生的预览色阶；它们不是�
 
 ## Shapes
 
-形状来自 scoopUI 的圆角控件体系。服务器卡片有独立边框，登记表行用分隔线连接；状态点为小圆点，协议和角色为紧凑矩形。边界通常为单像素线，选中导航有底部标记。
+形状沿用 shadcn/ui New York / Neutral 的紧凑圆角语言。基础半径为 10px，输入与按钮为 8px，连接卡片为 12px、编辑弹窗为 14px。服务器卡片有独立边框，登记表行用分隔线连接；状态点为小圆点，协议和角色为紧凑矩形。
 
 **The 紧凑圆角 Rule.** 常用按钮、输入和面板共享中等圆角；徽标与复选框更紧，提示区域和对话框采用各自已实现的圆角角色。小标记保持方中带圆，不改成胶囊外观。
 
@@ -375,7 +396,7 @@ Sidecar 的 tonal ramps 是由当前颜色衍生的预览色阶；它们不是�
 
 按钮紧凑、语义明确，由 `Button` 的 primary、outline、ghost、danger 变体与 default、sm、icon 尺寸组成。常规边界按钮是默认变体，主按钮承载页面关键动作，ghost 用于记录内辅助动作，danger 用于明确的破坏性确认。
 
-颜色、尺寸与内边距见 frontmatter。悬停加强底色或边界；按下时轻微下移；禁用降低不透明度并停止位移；焦点沿用绿色环。图标按钮必须保留对象明确的可访问名称。
+颜色、尺寸与内边距见 frontmatter。悬停加强底色或边界；按下时轻微下移；禁用降低不透明度并停止位移；焦点沿用 COHESION 主色环。图标按钮必须保留对象明确的可访问名称。
 
 ### Inputs and selection
 
@@ -389,7 +410,7 @@ Sidecar 的 tonal ramps 是由当前颜色衍生的预览色阶；它们不是�
 
 ### Navigation
 
-导航使用编号、文字和底部绿色标记。当前页同时设置 `aria-current`，hover 提亮文字与背景；编号保留技术文本角色。窄视口保留横向滚动，编号与名称始终成对出现。
+桌面导航使用图标、文字和侧栏选中底色，当前页设置 `aria-current`；中等宽度保留图标轨道，窄窗口改为横向滚动导航。日志异常数量直接显示在对应入口。
 
 ### Chips and status
 
@@ -415,7 +436,7 @@ Sidecar 的 tonal ramps 是由当前颜色衍生的预览色阶；它们不是�
 
 ### Do
 
-- 沿用主题语义 token，并为亮色动作和状态文字使用已有的可读性 token。
+- 沿用 COHESION shadcn token，并为浅色动作和状态文字使用已有的可读性 token。
 - 用稳定列、编号、连接归属和明确文字状态支撑信息密度。
 - 沿用 Button、Input、Select、Badge、Checkbox 与 Dialog 的现有状态和尺寸。
 - 保留焦点、禁用、错误、加载、部分失败和 reduced-motion 行为。
@@ -424,7 +445,7 @@ Sidecar 的 tonal ramps 是由当前颜色衍生的预览色阶；它们不是�
 
 ### Don't
 
-- 不要恢复旧项目的页面布局，或重新套用已经被 scoopUI 指令覆盖的独立配色。
+- 不要恢复旧项目的页面布局，或为 COHESION 语义 token 再建一套独立配色。
 - 不要添加虚构的流量、带宽、延迟图表或巨型指标卡。
 - 不要仅凭颜色区分成功、待应用、异常、启用意图与实际运行状态。
 - 不要把本机 QA 截图当成设计资产，也不要声称 CSS 中声明的字体已经下载或打包。

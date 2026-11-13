@@ -4,9 +4,9 @@
 
 - 项目 `D:\Work\dawi\frpc-ui`，main；origin 为 `https://github.com/nvrenshiren/frpc-ui.git`。建立时远端为空；2026-10-09 用户授权提交 Git 并启用自动编译发布，许可证待用户决定。项目规范见根 AGENTS.md。
 - 使用简体中文沟通，自主完成可逆开发，不重复请求已授权的操作。多连接、批量维护、高信息密度；根据旧功能重新设计，不保留旧界面。
-- UI 技术栈、配色和组件明确参考 `D:\Work\dawi\scoopUI`：React 19、strict TypeScript、Vite 8、Tailwind 4、Radix/shadcn、Zustand 5、Sonner/Lucide，npm/package-lock。深蓝/绿色 token 集中于正式 index.css。
+- 前端技术栈和早期组件基础参考 `D:\Work\dawi\scoopUI`：React 19、strict TypeScript、Vite 8、Tailwind 4、Radix/shadcn、Zustand 5、Sonner/Lucide，npm/package-lock。2026-11-13 用户要求将视觉规范改为 `D:\Work\dawi\design` 的 COHESION 2.0.0 / shadcn New York / Neutral；浅深色品牌 token 适配在正式 `index.css`，Logo 裁切副本位于 `apps/desktop/src/assets/`。
 - 最新工作台只显示服务器连接卡片，包含基本信息、版本、传输、进程/登录状态、待应用和错误；隧道表格集中在隧道页。
-- 功能参考只读项目 `D:\Work\frpc-desktop`，HEAD 1d244e0，版本1.2.2；UI参考 scoopUI HEAD 5818fde，版本0.1.11。参考项目没有修改。
+- 功能参考只读项目 `D:\Work\frpc-desktop`，HEAD 1d244e0，版本1.2.2；前端技术与组件基线参考 scoopUI HEAD 5818fde，版本0.1.11。参考项目没有修改。
 
 ## 架构与约束
 
@@ -32,7 +32,9 @@ TCP/UDP单映射remotePort0自动分配，范围不能用0；STCP/XTCP visitor�
 
 exec TokenSource、外部includes、官方Store、VirtualNet/featureGates、全局start、自定义日志目的地/级别与NTLM代理未开放。监督日志固定console/info/无色，loginFailExit=false；管理监听固定127.0.0.1。扩展这些功能需明确来源、状态采集与平台语义，不能静默吞字段或假装兼容。
 
-## UI与验证状态（2026-10-09）
+## UI与验证状态
+
+2026-11-13：按用户要求采用 COHESION 设计系统，工作区改为持久桌面侧栏（中等窗口收为图标栏、窄窗口改为横向导航），加入正式品牌 Logo，并把按钮、卡片、登记表、设置和弹窗统一到浅深色语义 token。视觉依据为设计系统 `theme/shadcn-tokens.json` 和 `dist/tokens/cohesion-tokens.css`；设计选择记录在根目录 `DESIGN.md` 与 `PRODUCT.md`。本轮未运行构建或测试。
 
 生产Select统一Radix，170ms入场/110ms退场/160ms箭头，尊重reduced-motion；各滚动区采用主题token。配置文件控件为共享按钮+隐藏文件输入，文件名/大小自然换行，超限保留文本并禁止导入，同文件可重选。高级字典保留连续换行草稿和非法输入，保存失败留表单；中英/深浅、1280/860/390检查无根/对话框溢出，密集表格局部滚动。最终干净预览无warning/error，恢复中文深色/默认视口并清除演示测试记录。
 

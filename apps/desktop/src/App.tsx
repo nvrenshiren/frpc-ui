@@ -6,19 +6,25 @@ import {
   ChevronRight,
   CircleHelp,
   FileSliders,
+  LayoutDashboard,
   ListFilter,
   LoaderCircle,
+  Monitor,
   Moon,
   Network,
+  Package,
   Pencil,
   Play,
   Plus,
   RotateCw,
   Search,
+  ScrollText,
+  Settings2,
   Square,
   Sun,
   Trash2,
   X,
+  type LucideIcon,
 } from "lucide-react";
 import { Toaster, toast } from "sonner";
 import { useAppStore } from "./store";
@@ -45,6 +51,8 @@ import {
   SettingsView,
 } from "./components/UtilityViews";
 import { desktopHost, errorMessage } from "./desktop";
+import cohesionLogoColor from "./assets/cohesion-logo-color.png";
+import cohesionLogoWhite from "./assets/cohesion-logo-white.png";
 
 const ProfileEditor = lazy(() => import("./components/Editors").then((module) => ({ default: module.ProfileEditor })));
 const TunnelEditor = lazy(() => import("./components/Editors").then((module) => ({ default: module.TunnelEditor })));
@@ -72,6 +80,20 @@ const pageNames: Record<Page, [string, string]> = {
   logs: ["日志", "Logs"],
   settings: ["设置", "Settings"],
 };
+
+const pageIcons: Record<Page, LucideIcon> = {
+  overview: LayoutDashboard,
+  connections: Network,
+  tunnels: ListFilter,
+  versions: Package,
+  logs: ScrollText,
+  settings: Settings2,
+};
+
+const pageGroups: Page[][] = [
+  ["overview", "connections", "tunnels", "versions", "logs"],
+  ["settings"],
+];
 
 function useBatchAction() {
   const [localBusy, setBusy] = useState(false);
@@ -172,6 +194,7 @@ export default function App() {
   }, []);
   useEffect(() => {
     document.documentElement.classList.toggle("light", !dark);
+    document.documentElement.dataset.theme = dark ? "dark" : "light";
     document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
   }, [dark, language]);
   const currentScope = store.profiles.find((p) => p.id === store.scope);
@@ -206,7 +229,7 @@ export default function App() {
   };
   if (!store.ready)
     return (
-      <div className="app-shell">
+      <div className="app-shell app-shell-loading">
         <main className="workspace">
           <div className="empty-state" aria-live="polite">
             <Network size={32} />
@@ -233,209 +256,261 @@ export default function App() {
       <a href="#main" className="skip-link">
         {t("跳转到工作区", "Skip to workspace")}
       </a>
-      <header className="topbar">
+      <aside className="app-sidebar">
         <div className="brand">
-          <span className="brand-mark">
-            <Network size={23} />
-          </span>
-          <strong>
-            frpc<span className="brand-suffix">/ ui</span>
-          </strong>
-          <span className="brand-description">
-            {t("连接管理工作台", "Connection workspace")}
-          </span>
-        </div>
-        <div className="topbar-tools">
-          {!desktopHost && (
-            <span className="demo-tag">
-              <span className="status-dot" />
-              {t("浏览器演示模式", "Browser demo mode")}
+          <img
+            className="cohesion-logo"
+            src={dark ? cohesionLogoWhite : cohesionLogoColor}
+            alt="COHESION 逐科"
+          />
+          <span className="brand-divider" />
+          <div className="product-brand">
+            <span className="brand-mark">
+              <Network size={18} />
             </span>
-          )}
-          <Button
-            variant="ghost"
-            size="icon"
-            disabled={store.busy}
-            aria-label={
-              dark
-                ? t("切换亮色", "Switch to light theme")
-                : t("切换暗色", "Switch to dark theme")
-            }
-            onClick={() =>
-              completeMutation(() =>
-                store.updateSettings({ theme: dark ? "light" : "dark" }),
-              )
-            }
-          >
-            {dark ? <Sun size={17} /> : <Moon size={17} />}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={store.busy}
-            aria-label={t("切换英文", "Switch to Chinese")}
-            onClick={() =>
-              completeMutation(() =>
-                store.updateSettings({
-                  language: language === "zh" ? "en" : "zh",
-                }),
-              )
-            }
-          >
-            {language === "zh" ? "EN" : "中文"}
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={t("使用说明", "User guide")}
-            onClick={() => setHelp(true)}
-          >
-            <CircleHelp size={17} />
-          </Button>
+            <div>
+              <strong>
+                frpc<span className="brand-suffix">/ ui</span>
+              </strong>
+              <span className="brand-description">
+                {t("连接管理工作台", "Connection workspace")}
+              </span>
+            </div>
+          </div>
         </div>
-      </header>
-      <nav className="section-nav" aria-label={t("主导航", "Main navigation")}>
-        {(Object.keys(pageNames) as Page[]).map((page, index) => (
-          <button
-            key={page}
-            className={store.page === page ? "nav-item active" : "nav-item"}
-            aria-current={store.page === page ? "page" : undefined}
-            onClick={() => store.setPage(page)}
-          >
-            <span className="nav-index">0{index + 1}</span>
-            {t(...pageNames[page])}
-            {page === "logs" && failed > 0 && <span className="nav-alert" />}
-          </button>
-        ))}
-        <span className="nav-end mono">FRPC / MULTI-CONNECTION</span>
-      </nav>
-      <main id="main" className="workspace">
-        {store.loadError && (
-          <div className="prototype-note" role="alert">
-            <p>
-              {t("状态刷新失败：", "Status refresh failed: ")}
-              {store.loadError}
-            </p>
-            <Button size="sm" onClick={() => void store.retryLoading()}>
-              {t("重试", "Retry")}
+        <nav className="section-nav" aria-label={t("主导航", "Main navigation")}>
+          {pageGroups.map((group, groupIndex) => (
+            <div className="nav-group" key={groupIndex}>
+              <span className="nav-caption">
+                {groupIndex === 0
+                  ? t("运维工作区", "OPERATIONS")
+                  : t("应用偏好", "PREFERENCES")}
+              </span>
+              {group.map((page) => {
+                const Icon = pageIcons[page];
+                return (
+                  <button
+                    key={page}
+                    className={store.page === page ? "nav-item active" : "nav-item"}
+                    aria-label={t(...pageNames[page])}
+                    aria-current={store.page === page ? "page" : undefined}
+                    title={t(...pageNames[page])}
+                    onClick={() => store.setPage(page)}
+                  >
+                    <Icon size={17} aria-hidden="true" />
+                    <span className="nav-label">{t(...pageNames[page])}</span>
+                    {page === "logs" && failed > 0 && (
+                      <span
+                        className="nav-alert"
+                        aria-label={t(`${failed} 个异常连接`, `${failed} failed connections`)}
+                      >
+                        {failed > 9 ? "9+" : failed}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
+        <div className="sidebar-environment">
+          <span className="sidebar-environment-icon">
+            <Monitor size={15} aria-hidden="true" />
+          </span>
+          <span>
+            <strong>
+              {desktopHost
+                ? t("本机桌面实例", "Local desktop")
+                : t("浏览器演示模式", "Browser demo")}
+            </strong>
+            <small>
+              {desktopHost
+                ? t("实时进程与登录状态", "Live process and login state")
+                : t("使用演示数据", "Using sample data")}
+            </small>
+          </span>
+        </div>
+      </aside>
+      <div className="app-content">
+        <header className="topbar">
+          <div className="topbar-context">
+            <span className="topbar-context-label">FRPC / CONTROL</span>
+            <ChevronRight size={14} aria-hidden="true" />
+            <span className="topbar-context-current">
+              {t(...pageNames[store.page])}
+            </span>
+          </div>
+          <div className="topbar-tools">
+            <Button
+              variant="ghost"
+              size="icon"
+              disabled={store.busy}
+              aria-label={
+                dark
+                  ? t("切换亮色", "Switch to light theme")
+                  : t("切换暗色", "Switch to dark theme")
+              }
+              onClick={() =>
+                completeMutation(() =>
+                  store.updateSettings({ theme: dark ? "light" : "dark" }),
+                )
+              }
+            >
+              {dark ? <Sun size={17} /> : <Moon size={17} />}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={store.busy}
+              aria-label={t("切换英文", "Switch to Chinese")}
+              onClick={() =>
+                completeMutation(() =>
+                  store.updateSettings({
+                    language: language === "zh" ? "en" : "zh",
+                  }),
+                )
+              }
+            >
+              {language === "zh" ? "EN" : "中文"}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label={t("使用说明", "User guide")}
+              onClick={() => setHelp(true)}
+            >
+              <CircleHelp size={17} />
             </Button>
           </div>
-        )}
-        <div className="page-heading">
-          <div>
-            <h1>
-              {store.page === "overview"
-                ? t("连接工作台", "Connection workspace")
-                : t(...pageNames[store.page])}
-            </h1>
-            <p>
-              {store.page === "overview"
-                ? t(
-                    "查看服务器连接的基本信息、运行状态与待应用修改。",
-                    "Review server details, connection status and pending changes.",
-                  )
-                : store.page === "connections"
+        </header>
+        <main id="main" className="workspace">
+          {store.loadError && (
+            <div className="prototype-note" role="alert">
+              <p>
+                {t("状态刷新失败：", "Status refresh failed: ")}
+                {store.loadError}
+              </p>
+              <Button size="sm" onClick={() => void store.retryLoading()}>
+                {t("重试", "Retry")}
+              </Button>
+            </div>
+          )}
+          <div className="page-heading">
+            <div>
+              <h1>
+                {store.page === "overview"
+                  ? t("连接工作台", "Connection workspace")
+                  : t(...pageNames[store.page])}
+              </h1>
+              <p>
+                {store.page === "overview"
                   ? t(
-                      "独立配置、独立运行。选择连接后执行批量操作。",
-                      "Independent configuration and runtime. Select connections for batch actions.",
+                      "查看服务器连接的基本信息、运行状态与待应用修改。",
+                      "Review server details, connection status and pending changes.",
                     )
-                  : store.page === "tunnels"
+                  : store.page === "connections"
                     ? t(
-                        "所有映射统一检索。保存配置后，在所属连接应用。",
-                        "Search every mapping. Apply saved changes to their connection.",
+                        "独立配置、独立运行。选择连接后执行批量操作。",
+                        "Independent configuration and runtime. Select connections for batch actions.",
                       )
-                    : store.page === "versions"
+                    : store.page === "tunnels"
                       ? t(
-                          "每个连接使用明确版本，下载与运行状态分别管理。",
-                          "Assign a version to each connection; manage downloads separately from runtime.",
+                          "所有映射统一检索。保存配置后，在所属连接应用。",
+                          "Search every mapping. Apply saved changes to their connection.",
                         )
-                      : store.page === "logs"
+                      : store.page === "versions"
                         ? t(
-                            "按连接定位事件，日志与进程状态一起判断。",
-                            "Trace events by connection and assess them alongside runtime state.",
+                            "每个连接使用明确版本，下载与运行状态分别管理。",
+                            "Assign a version to each connection; manage downloads separately from runtime.",
                           )
-                        : t(
-                            "工作台偏好与桌面行为。",
-                            "Workspace preferences and desktop behavior.",
-                          )}
-            </p>
+                        : store.page === "logs"
+                          ? t(
+                              "按连接定位事件，日志与进程状态一起判断。",
+                              "Trace events by connection and assess them alongside runtime state.",
+                            )
+                          : t(
+                              "工作台偏好与桌面行为。",
+                              "Workspace preferences and desktop behavior.",
+                            )}
+              </p>
+            </div>
+            <div className="heading-actions">
+              {store.page === "tunnels" && (
+                <Button
+                  variant="primary"
+                  onClick={newTunnel}
+                  disabled={store.profiles.length === 0}
+                >
+                  <Plus size={16} />
+                  {t("新建隧道", "New tunnel")}
+                </Button>
+              )}
+              {(store.page === "connections" || store.page === "overview") && (
+                <Button onClick={importConfiguration}>
+                  <ArrowDownToLine size={16} />
+                  {t("导入配置", "Import configuration")}
+                </Button>
+              )}
+              {(store.page === "connections" || store.page === "overview") && (
+                <Button variant="primary" onClick={newProfile}>
+                  <Plus size={16} />
+                  {t("新建连接", "New connection")}
+                </Button>
+              )}
+            </div>
           </div>
-          <div className="heading-actions">
-            {store.page === "tunnels" && (
-              <Button
-                variant="primary"
-                onClick={newTunnel}
-                disabled={store.profiles.length === 0}
-              >
-                <Plus size={16} />
-                {t("新建隧道", "New tunnel")}
-              </Button>
-            )}
-            {(store.page === "connections" || store.page === "overview") && (
-              <Button onClick={importConfiguration}>
-                <ArrowDownToLine size={16} />
-                {t("导入配置", "Import configuration")}
-              </Button>
-            )}
-            {(store.page === "connections" || store.page === "overview") && (
-              <Button variant="primary" onClick={newProfile}>
-                <Plus size={16} />
-                {t("新建连接", "New connection")}
-              </Button>
-            )}
-          </div>
-        </div>
-        {store.page === "overview" && (
-          <ConnectionCards onEdit={setProfileEdit} />
-        )}
-        {store.page === "tunnels" && (
-          <TunnelRegister
-            key={store.page}
-            onEdit={setTunnelEdit}
-            onAdd={newTunnel}
-          />
-        )}
-        {store.page === "connections" && (
-          <ConnectionTable
-            profiles={scopedProfiles}
-            onEdit={setProfileEdit}
-            onExchange={(profile) => {
-              setExchangeImport(false);
-              setExchange(profile);
-            }}
-          />
-        )}
-        {store.page === "versions" && <VersionsView />}
-        {store.page === "logs" && <LogsView />}
-        {store.page === "settings" && <SettingsView />}
-        <BatchResults />
-        <footer className="workspace-footer">
-          <span>
-            {t(
-              desktopHost
-                ? "进程、登录确认与配置状态由本机 frpc 提供。"
-                : "浏览器仅演示交互；真实连接和持久配置请使用桌面应用。",
-              desktopHost
-                ? "Runtime, login confirmation and configuration status come from local frpc."
-                : "The browser demonstrates interactions. Use the desktop app for live connections and persistent configuration.",
-            )}
-          </span>
-          <span className="mono">
-            {desktopHost ? "TAURI / RUST" : "BROWSER / DEMO"}
-          </span>
-        </footer>
-      </main>
+          {store.page === "overview" && (
+            <ConnectionCards onEdit={setProfileEdit} />
+          )}
+          {store.page === "tunnels" && (
+            <TunnelRegister
+              key={store.page}
+              onEdit={setTunnelEdit}
+              onAdd={newTunnel}
+            />
+          )}
+          {store.page === "connections" && (
+            <ConnectionTable
+              profiles={scopedProfiles}
+              onEdit={setProfileEdit}
+              onExchange={(profile) => {
+                setExchangeImport(false);
+                setExchange(profile);
+              }}
+            />
+          )}
+          {store.page === "versions" && <VersionsView />}
+          {store.page === "logs" && <LogsView />}
+          {store.page === "settings" && <SettingsView />}
+          <BatchResults />
+          <footer className="workspace-footer">
+            <span>
+              {t(
+                desktopHost
+                  ? "进程、登录确认与配置状态由本机 frpc 提供。"
+                  : "浏览器仅演示交互；真实连接和持久配置请使用桌面应用。",
+                desktopHost
+                  ? "Runtime, login confirmation and configuration status come from local frpc."
+                  : "The browser demonstrates interactions. Use the desktop app for live connections and persistent configuration.",
+              )}
+            </span>
+            <span className="mono">
+              {desktopHost ? "TAURI / RUST" : "BROWSER / DEMO"}
+            </span>
+          </footer>
+        </main>
+      </div>
       <Suspense fallback={null}>
-      {profileEdit && <ProfileEditor
-        profile={profileEdit}
-        onClose={() => setProfileEdit(null)}
-      />}
-      {tunnelEdit && <TunnelEditor tunnel={tunnelEdit} onClose={() => setTunnelEdit(null)} />}
-      {exchange && <ConfigExchange
-        profile={exchange}
-        initialMode={exchangeImport ? "import" : "export"}
-        onClose={() => setExchange(null)}
-      />}
+        {profileEdit && <ProfileEditor
+          profile={profileEdit}
+          onClose={() => setProfileEdit(null)}
+        />}
+        {tunnelEdit && <TunnelEditor tunnel={tunnelEdit} onClose={() => setTunnelEdit(null)} />}
+        {exchange && <ConfigExchange
+          profile={exchange}
+          initialMode={exchangeImport ? "import" : "export"}
+          onClose={() => setExchange(null)}
+        />}
       </Suspense>
       <Dialog
         open={help}
