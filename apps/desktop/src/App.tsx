@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import {
   Activity,
+  CircleAlert,
   ArrowDownToLine,
   CheckCircle2,
   ChevronRight,
@@ -476,7 +477,10 @@ export default function App() {
             </div>
           </div>
           {store.page === "overview" && (
-            <ConnectionCards onEdit={setProfileEdit} />
+            <>
+              <ConnectionOverview />
+              <ConnectionCards onEdit={setProfileEdit} />
+            </>
           )}
           {store.page === "tunnels" && (
             <TunnelRegister
@@ -583,6 +587,65 @@ export default function App() {
         closeButton
       />
     </div>
+  );
+}
+
+function ConnectionOverview() {
+  const profiles = useAppStore((state) => state.profiles);
+  const { t } = useI18n();
+  if (profiles.length === 0) return null;
+
+  const running = profiles.filter((profile) => profile.process === "running").length;
+  const pending = profiles.filter((profile) => profile.pending).length;
+  const failed = profiles.filter(
+    (profile) => profile.connection === "failed" || profile.process === "failed",
+  ).length;
+  const metrics = [
+    {
+      label: t("全部连接", "Connections"),
+      value: profiles.length,
+      icon: Network,
+      tone: "neutral",
+    },
+    {
+      label: t("运行中", "Running"),
+      value: running,
+      icon: Activity,
+      tone: "success",
+    },
+    {
+      label: t("待应用", "Pending"),
+      value: pending,
+      icon: RotateCw,
+      tone: "warning",
+    },
+    {
+      label: t("异常", "Failed"),
+      value: failed,
+      icon: CircleAlert,
+      tone: "danger",
+    },
+  ];
+
+  return (
+    <section className="overview-summary" aria-labelledby="overview-summary-heading">
+      <div className="overview-summary-heading">
+        <h2 id="overview-summary-heading">
+          {t("连接概况", "Connection overview")}
+        </h2>
+      </div>
+      <div className="overview-summary-items">
+        {metrics.map(({ label, value, icon: Icon, tone }) => (
+          <div className={`overview-summary-item ${tone}`} key={label}>
+            <span className="overview-metric-icon" aria-hidden="true">
+              <Icon size={14} />
+            </span>
+            <strong className="mono">{value}</strong>
+            <span>{label}</span>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
