@@ -34,7 +34,7 @@ exec TokenSource、外部includes、官方Store、VirtualNet/featureGates、全�
 
 ## UI与验证状态
 
-2026-11-13：按用户要求采用 COHESION 设计系统，工作区改为持久桌面侧栏（中等窗口收为图标栏、窄窗口改为横向导航），加入正式品牌 Logo，并把按钮、卡片、登记表、设置和弹窗统一到浅深色语义 token。视觉依据为设计系统 `theme/shadcn-tokens.json` 和 `dist/tokens/cohesion-tokens.css`；设计选择记录在根目录 `DESIGN.md` 与 `PRODUCT.md`。本轮未运行构建或测试。
+2026-11-13：按用户要求采用 COHESION 设计系统，工作区改为持久桌面侧栏（中等窗口收为图标栏、窄窗口改为横向导航），加入正式品牌 Logo，并把按钮、卡片、登记表、设置和弹窗统一到浅深色语义 token。视觉依据为设计系统 `theme/shadcn-tokens.json` 和 `dist/tokens/cohesion-tokens.css`；页面切换后焦点移到标题，异常连接计数用单一上下文状态区域通知读屏器。设计选择记录在根目录 `DESIGN.md` 与 `PRODUCT.md`。`apps/desktop` 的 `npm run build`（TypeScript 检查与 Vite 生产构建）通过；未运行测试。
 
 生产Select统一Radix，170ms入场/110ms退场/160ms箭头，尊重reduced-motion；各滚动区采用主题token。配置文件控件为共享按钮+隐藏文件输入，文件名/大小自然换行，超限保留文本并禁止导入，同文件可重选。高级字典保留连续换行草稿和非法输入，保存失败留表单；中英/深浅、1280/860/390检查无根/对话框溢出，密集表格局部滚动。最终干净预览无warning/error，恢复中文深色/默认视口并清除演示测试记录。
 

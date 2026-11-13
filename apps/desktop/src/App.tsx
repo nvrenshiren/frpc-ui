@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import {
   Activity,
   ArrowDownToLine,
@@ -167,6 +167,8 @@ function Status({ profile }: { profile: Profile }) {
 export default function App() {
   const store = useAppStore();
   const { t, language } = useI18n();
+  const pageHeadingRef = useRef<HTMLHeadingElement>(null);
+  const previousPageRef = useRef(store.page);
   const [profileEdit, setProfileEdit] = useState<Profile | null>(null);
   const [tunnelEdit, setTunnelEdit] = useState<Tunnel | null>(null);
   const [exchange, setExchange] = useState<Profile | null>(null);
@@ -197,6 +199,11 @@ export default function App() {
     document.documentElement.dataset.theme = dark ? "dark" : "light";
     document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
   }, [dark, language]);
+  useEffect(() => {
+    if (previousPageRef.current === store.page) return;
+    previousPageRef.current = store.page;
+    pageHeadingRef.current?.focus();
+  }, [store.page]);
   const currentScope = store.profiles.find((p) => p.id === store.scope);
   const scopedProfiles = currentScope ? [currentScope] : store.profiles;
   const failed = store.profiles.filter(
@@ -302,7 +309,8 @@ export default function App() {
                     {page === "logs" && failed > 0 && (
                       <span
                         className="nav-alert"
-                        aria-label={t(`${failed} 个异常连接`, `${failed} failed connections`)}
+                        aria-hidden="true"
+                        title={t(`${failed} 个异常连接`, `${failed} failed connections`)}
                       >
                         {failed > 9 ? "9+" : failed}
                       </span>
@@ -313,6 +321,14 @@ export default function App() {
             </div>
           ))}
         </nav>
+        <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+          {failed > 0
+            ? t(
+                `${failed} 个连接异常，请查看日志。`,
+                `${failed} ${failed === 1 ? "connection" : "connections"} need attention. Open Logs for details.`,
+              )
+            : ""}
+        </span>
         <div className="sidebar-environment">
           <span className="sidebar-environment-icon">
             <Monitor size={15} aria-hidden="true" />
@@ -397,7 +413,7 @@ export default function App() {
           )}
           <div className="page-heading">
             <div>
-              <h1>
+              <h1 ref={pageHeadingRef} tabIndex={-1}>
                 {store.page === "overview"
                   ? t("连接工作台", "Connection workspace")
                   : t(...pageNames[store.page])}
