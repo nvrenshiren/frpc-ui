@@ -2,6 +2,8 @@
 
 已复核清单中的 **32 个官方 stable tag、20 个 minor（0.52–0.71）**。审核对象是本应用支持的配置能力，不是官方全部功能或全部版本的端到端测试。[版本索引](../../apps/desktop/src/reviewedFrpcReleases.ts)与[字段清单](../../apps/desktop/src/configCapabilities.ts)是展示入口，Rust 在生成配置前执行相同门槛，随后仍运行所选二进制的 `frpc verify -c`。
 
+截至 2026-11-15，上游已发布 [frpc v0.72.0](https://github.com/fatedier/frp/releases/tag/v0.72.0)，但本应用尚未审核其配置变更；当前代码按既定规则拒绝未审核 minor。启用前需要比较新增能力与默认行为，更新 TS/Rust 门槛、逐版本清单及验证。
+
 ## 方法与基线
 
 逐 tag 读取 `pkg/config/v1/client.go`、`common.go`、`proxy.go`、`visitor.go`，以及旧版 `plugin.go` / 新版 `proxy_plugin.go`；0.64 以后补读 `value_source.go`。共核对 171 份固定标签源码，以完整 JSON 路径、嵌入结构和精确插件注册常量对比，避免把 `HTTP2HTTPS` 当作 `HTTP2HTTP`。142 个清单条目中，126 个字段或插件选项逐项核对首次出现标签；15 个协议/认证选项检查基线注册；`enabled` 单独按应用语义处理。

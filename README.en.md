@@ -2,18 +2,18 @@
 
 [简体中文](README.md)
 
-A multi-connection frpc desktop workspace built with **Tauri 2, Rust and React**. It reorganizes the capabilities of frpc-desktop for dense tunnel lists and batch maintenance, with scoopUI colors and component primitives.
+A multi-connection frpc desktop workspace built with **Tauri 2, Rust and React**. Its visual system follows COHESION, the 逐科 design system; it uses the React stack validated by scoopUI and focuses on dense tunnel lists and batch maintenance.
 
-The real desktop implementation lives in `apps/desktop`; the design prototype remains in `prototypes/frpc-ui`. The app manages official frpc binaries rather than implementing the frp protocol. The first Windows x64 executable has been built. The [verification record](docs/development/verification.md) covers tested scope, the artifact hash and remaining release checks.
+The real desktop implementation lives in `apps/desktop`; `prototypes/frpc-ui` is retained only as a historical design prototype. The app manages official frpc binaries rather than implementing the frp protocol. Windows x64 builds, verified scope and remaining checks are documented in the [verification record](docs/development/verification.md).
 
 ## Run the desktop app
 
 Download Windows x64 builds from [GitHub Releases](https://github.com/nvrenshiren/frpc-ui/releases): executable, NSIS installer and SHA-256 checksums. Every push to `main` builds and publishes a separate prerelease; `vX.Y.Z` tags publish stable versions. Publication waits for tests and actual packaged startup checks. See [release documentation](docs/development/releases.md) and [Actions](https://github.com/nvrenshiren/frpc-ui/actions/workflows/ci.yml). Builds are currently unsigned; in-app updates are not implemented.
 
-Development uses Node.js 24, npm, the Rust MSVC toolchain, Microsoft C++ Build Tools and WebView2. See the [official Tauri prerequisites](https://v2.tauri.app/start/prerequisites/#windows). Node.js 24 and Rust 1.98 have been verified locally.
+Development uses Node.js 24, npm, the Rust MSVC toolchain (MSRV 1.90), Microsoft C++ Build Tools and WebView2. See the [official Tauri prerequisites](https://v2.tauri.app/start/prerequisites/#windows).
 
 ```powershell
-cd D:\Work\dawi\frpc-ui\apps\desktop
+cd apps/desktop
 npm ci
 npm run desktop:dev
 ```
@@ -32,7 +32,7 @@ The default output is `target/release/frpc-ui-desktop.exe` at the repository roo
 ## First use
 
 1. A fresh desktop installation starts with no connections or installed binaries; it does not create demo configuration.
-2. In Versions, refresh official releases and install one, or import a local frpc executable. The app accepts modern TOML releases from 0.52.0 onward and actually runs `frpc -v` when importing.
+2. In Versions, refresh official releases and install one, or import a local frpc executable. The version library recognizes modern TOML releases from 0.52.0 onward, but configuration is enabled only for reviewed releases. Unreviewed minor/major releases are not assumed compatible; see the [per-release configuration checklist](docs/frpc-version-configuration.md). Local imports run `frpc -v` to identify the binary.
 3. Create a connection with its frps address, port, token and an installed frpc version, then add tunnels.
 4. Start the connection. Process state, confirmed server login and tunnel registration are reported separately. Batch operations return individual results and retry the original failed action.
 5. Editing, enabling, disabling or deleting tunnels marks configuration pending. Restart and apply runs official `frpc verify`, then restarts that connection's process; traffic is briefly interrupted. A stopped connection is only verified. Stop a connection before changing its frpc version.
@@ -44,7 +44,7 @@ TOML import and legacy migration add stopped connections without overwriting exi
 
 - Multiple connections and eight protocols including TCPMUX. Workspace shows server cards; tunnel maintenance stays in Tunnels.
 - Advanced authentication/OIDC/file tokens, networking/TLS/QUIC, HTTP domains and routing, XTCP fallback, bandwidth limits, load balancing, health checks and nine provider plugins.
-- Configuration checklists for 32 official stable releases; version and protocol conditions drive editor availability.
+- Configuration checklists for 32 reviewed official stable tags from 0.52 to 0.71; version and protocol conditions drive editor availability. Unreviewed releases are not assumed compatible.
 - Controls display audited defaults for the precise release and current context. Explicit edits create advanced overrides; reset removes them. Checklists include defaults and provenance, with patch changes reviewed separately.
 - Batch start/stop, controlled apply, real frpc validation and supervised processes, partial failures and retries.
 - Official GitHub releases, SHA-256 verified downloads, safe extraction, atomic installation, local import, integrity checks before each launch and assigned-version removal protection.
@@ -81,8 +81,8 @@ npm run build
 cargo test --workspace
 ```
 
-Network download and official frpc/frps integration tests are opt-in ignored tests. Default tests do not access the public network. All 44 frontend tests and 45 default Rust workspace tests pass. All four core configuration/loopback integration tests passed when explicitly run, including real 0.52.0 and 0.71.0 configuration verification. Both the final build output and delivered executable passed packaged WebView startup/IPC/shutdown checks; debug survival or MockRuntime cannot replace release validation. The first executable's stack overflow and fix are documented in the [Windows startup notes](docs/development/windows-startup.md).
+Network downloads and official frpc/frps integration tests are opt-in ignored tests. Default tests do not access the public network. The [verification record](docs/development/verification.md) lists the latest reproducible checks and the scope of completed official-binary verification. Before publishing a Windows release, run the packaged executable's WebView startup/IPC/shutdown smoke; debug survival or MockRuntime cannot replace release validation. The first executable's stack overflow and fix are documented in the [Windows startup notes](docs/development/windows-startup.md).
 
 [Architecture](docs/development/architecture.md) · [IPC contract](docs/development/ipc-contract.md) · [Verification](docs/development/verification.md) · [Product scope](PRODUCT.md) · [Design system](DESIGN.md) · [Rewrite assessment](docs/rust-rewrite-assessment.md) · [Project memory](docs/memory/MEMORY.md)
 
-The original prototype can still run with `npm ci` and `npm run dev` inside `prototypes/frpc-ui`, on port 5187. A license has not yet been selected for this new project.
+The prototype is retained for design history and is not the source of production behavior or current visual specifications. A license has not yet been selected for this new project.

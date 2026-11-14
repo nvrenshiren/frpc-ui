@@ -2,18 +2,18 @@
 
 [English](README.en.md)
 
-使用 **Tauri 2 + Rust + React** 的多连接 frpc 桌面管理工作台。根据 frpc-desktop 的功能重新组织界面，配色与基础组件参考 scoopUI，面向高密度隧道检索与批量维护。
+使用 **Tauri 2 + Rust + React** 的多连接 frpc 桌面管理工作台。界面遵循 COHESION 逐科设计系统，面向高密度隧道检索与批量维护；技术栈采用 scoopUI 项目验证过的 React 生态。
 
-真实桌面实现位于 `apps/desktop`，设计原型保留在 `prototypes/frpc-ui`。应用管理官方 frpc 二进制，不重写 frp 协议。第一版 Windows x64 EXE 已构建，当前验证范围、产物 hash 与后续发行验收见[验证记录](docs/development/verification.md)。
+真实桌面实现位于 `apps/desktop`；`prototypes/frpc-ui` 仅作历史设计原型。应用管理官方 frpc 二进制，不重写 frp 协议。Windows x64 发布、验证范围与未覆盖的验收见[验证记录](docs/development/verification.md)。
 
 ## 运行桌面应用
 
 Windows x64 下载见 [GitHub Releases](https://github.com/nvrenshiren/frpc-ui/releases)：提供直接运行的 EXE、NSIS 安装包和 SHA-256 校验清单。每次推送 `main` 自动编译并发布预发布版；`vX.Y.Z` 标签发布正式版。全部测试及真实启动检查通过后才发布，详见[自动发布说明](docs/development/releases.md)和 [Actions](https://github.com/nvrenshiren/frpc-ui/actions/workflows/ci.yml)。当前产物未签名，应用内自动更新尚未实现。
 
-开发环境使用 Node.js 24、npm、Rust MSVC 工具链、Microsoft C++ Build Tools 与 WebView2。系统依赖安装方法见 [Tauri 官方说明](https://v2.tauri.app/start/prerequisites/#windows)。当前本机已验证 Node.js 24 与 Rust 1.98。
+开发环境使用 Node.js 24、npm、Rust MSVC 工具链（MSRV 1.90）、Microsoft C++ Build Tools 与 WebView2。系统依赖安装方法见 [Tauri 官方说明](https://v2.tauri.app/start/prerequisites/#windows)。
 
 ```powershell
-cd D:\Work\dawi\frpc-ui\apps\desktop
+cd apps/desktop
 npm ci
 npm run desktop:dev
 ```
@@ -32,7 +32,7 @@ npm run test:desktop:smoke
 ## 首次使用
 
 1. 桌面首次启动为空连接、空版本库，不写演示配置。
-2. 在“版本库”刷新官方版本并下载安装，或选择本地 frpc 可执行文件导入。当前接受 0.52.0 及以上现代 TOML 版本；本地导入会实际运行 `frpc -v` 识别版本。
+2. 在“版本库”刷新官方版本并下载安装，或选择本地 frpc 可执行文件导入。版本库可识别 0.52.0 及以上现代 TOML 版本；配置能力仅对已审核版本开放，未审核的新 minor/major 不会被当作兼容版本。当前清单见[逐版本配置文档](docs/frpc-version-configuration.md)。本地导入会实际运行 `frpc -v` 识别版本。
 3. 新增连接，填写 frps 地址、端口、token，并选择已安装的 frpc 版本；再新增隧道。
 4. 启动连接。进程运行、服务器登录确认与隧道注册状态分别显示；批量操作逐连接返回结果，可重试失败项。
 5. 编辑、启停或删除隧道后显示“待应用”。点击“重启并应用”先执行官方 `frpc verify`，通过后重启该连接的进程，期间连接会短暂中断；已停止的连接只验证配置。更换 frpc 版本必须先停止连接。
@@ -44,7 +44,7 @@ TOML 导入和旧客户端迁移都新增停止的连接，不覆盖现有连接
 
 - 多连接与八种隧道协议：TCP、UDP、HTTP、HTTPS、STCP、SUDP、XTCP、TCPMUX；工作台仅展示服务器连接卡片，隧道集中维护。
 - 高级认证/OIDC/文件 Token、网络/TLS/QUIC、HTTP 多域名与路由、XTCP 回退、限流、负载均衡、健康检查及九种 provider 插件；可选值沿用对应版本默认。
-- 版本库提供 0.52–0.71 共 32 个官方稳定版本的配置清单；连接和隧道编辑器按版本及协议条件显示可用选项，降级保留并提示不兼容参数。
+- 版本库提供 0.52–0.71 共 32 个已审核官方稳定标签的配置清单；连接和隧道编辑器按版本及协议条件显示可用选项，降级保留并提示不兼容参数。未审核版本不会推定兼容。
 - 有官方默认值的控件直接显示对应版本默认值，TCP 复用等联动项同步更新；明确修改才保存高级覆盖，可恢复默认。清单列出默认值及来源，补丁差异单独核验。
 - 批量启停、受控应用配置、真实 frpc 验证与进程监督、部分失败与原动作重试。
 - 官方 GitHub 版本查询、SHA-256 校验下载、安全解压、原子安装、本地导入、每次启动前二进制校验及引用版本删除保护。
@@ -81,8 +81,8 @@ npm run build
 cargo test --workspace
 ```
 
-网络下载与官方 frpc/frps 联调为显式执行的 ignored 测试，普通测试不访问公网。当前前端 44 项与 Rust workspace 45 项默认测试通过；core 4 项官方配置/回环测试已显式通过，包含 0.52.0 与 0.71.0 实际配置验证。最终构建输出和交付 EXE 均通过真实 WebView 启动/IPC/退出检查；debug 存活或 MockRuntime 通过不能代替。首次 EXE 闪退的原因与修复见[Windows 启动说明](docs/development/windows-startup.md)。
+网络下载与官方 frpc/frps 联调为显式执行的 ignored 测试，普通测试不访问公网。最近一次可复现的代码检查及已完成的官方二进制验证范围见[验证记录](docs/development/verification.md)。Windows 发布前仍须对最终 release EXE 执行真实 WebView 启动/IPC/退出 smoke；debug 存活或 MockRuntime 通过不能代替。首次 EXE 闪退的原因与修复见[Windows 启动说明](docs/development/windows-startup.md)。
 
 [架构](docs/development/architecture.md) · [IPC 契约](docs/development/ipc-contract.md) · [验证记录](docs/development/verification.md) · [产品范围](PRODUCT.md) · [设计规范](DESIGN.md) · [Rust 评估](docs/rust-rewrite-assessment.md) · [项目记忆](docs/memory/MEMORY.md)
 
-旧原型仍可在 `prototypes/frpc-ui` 中执行 `npm ci` 和 `npm run dev`，端口为 5187。新项目许可证尚未决定，未擅自指定 LICENSE。
+原型只用于设计追溯，不作为生产行为或视觉规范的依据。新项目许可证尚未决定，未擅自指定 LICENSE。

@@ -1,6 +1,6 @@
-# 高级配置实现契约（2026-10-08）
+# 高级配置实现契约
 
-用户要求补齐配置清单中的高级能力，同时工作台只展示连接卡片。继续使用官方 frpc 和现有应用模型，不迁移旧存储。
+本文记录高级配置模型、版本门槛、导出和编辑器之间的实现契约。继续使用官方 frpc 和现有应用模型，不迁移旧存储；配置覆盖与未开放项见[完整清单](../frp-configuration-coverage.md)。
 
 ## DTO 与兼容
 
@@ -22,7 +22,7 @@
 - `crates/frpc-core`：模型、高级验证、解析/生成、进程监督与凭据脱敏，不依赖 UI 或 Tauri。
 - 前端 `model.ts`、`config.ts`、`advancedConfig.ts`：DTO、交换与配置验证，向编辑器提供 `validateProfileAdvanced` / `validateTunnelAdvanced` 和双语 `ConfigError`。
 - `configCapabilities.ts`：连接/隧道编辑器、版本库清单与交换校验共用的字段、版本门槛及适用条件；逐版本文档由该表生成。已审核 stable 发布列于 `reviewedFrpcReleases.ts`，Rust 校验保持相同门槛。
-- `Editors.tsx`、`AdvancedFields.tsx`：沿用 scoopUI 配色与共享动画 Select，按版本和协议条件组织高级表单。不兼容旧值保留，明确提示，保存前校验。
+- `Editors.tsx`、`AdvancedFields.tsx`：遵循 COHESION 主题 token 与共享 Radix Select，按版本和协议条件组织高级表单。不兼容旧值保留，明确提示，保存前校验。
 - `App.tsx`：连接卡片工作台与页面组合；迁移位于 `crates/frpc-versions`，通过宿主组合后再做 core DTO 校验。
 
 ## 交付验证

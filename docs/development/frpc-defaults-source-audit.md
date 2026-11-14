@@ -4,6 +4,8 @@
 
 逐标签对比 `pkg/config/v1/{client,common,proxy,visitor,plugin/proxy_plugin}.go` 中的结构、零值、`Complete()`，再核对健康检查、TLS、连接器、OIDC 与私有访问权限的运行时回退。`plugin.go` 后来更名为 `proxy_plugin.go`；0.52.x 的连接器代码在 `client/service.go`，0.53 起在 `client/connector.go`。表中“全部版本”指字段存在的已审核版本；新增字段仍需先经过 [配置能力清单](../../apps/desktop/src/configCapabilities.ts) 的版本和协议/角色/插件/认证限制。
 
+上游 v0.72.0 于 2026-11-04 发布，但不在这 32 个固定标签内，也未审核其默认值；截至 2026-11-15，该版本不属于应用支持范围，见[版本源码审核](frpc-version-source-audit.md)。
+
 这是 32 个固定标签的源码审核。已有真实二进制配置验证范围为 0.52.0 与 0.71.0，真实 TCP 数据面闭环为 0.71.0；不能据此声称其它 30 个二进制或所有 TLS/OIDC/插件数据面均已联调。历史配置能力审核见 [frpc-version-source-audit.md](frpc-version-source-audit.md)。
 
 ## 补丁与上下文变化

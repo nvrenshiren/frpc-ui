@@ -1,6 +1,8 @@
 # frpc 配置覆盖清单
 
-核验日期：2026-10-08。连接、隧道、访问者与九种适用的 provider 插件高级参数已贯通模型、表单、保存、TOML 导入导出、分享和旧项目迁移。界面依据所选版本、协议、角色、认证方式与插件类型显示参数。逐字段和逐版本清单见 [32 个官方稳定版本的配置清单](frpc-version-configuration.md)，源码核验见 [版本源码审计](development/frpc-version-source-audit.md)。
+配置能力审核覆盖 2026-10-08 核验的 0.52–0.71 官方标签。连接、隧道、访问者与九种适用的 provider 插件高级参数已贯通模型、表单、保存、TOML 导入导出、分享和旧项目迁移。界面依据所选版本、协议、角色、认证方式与插件类型显示参数。逐字段和逐版本清单见 [已审核版本的配置清单](frpc-version-configuration.md)，源码核验见 [版本源码审计](development/frpc-version-source-audit.md)。
+
+未经审核的新 minor/major 不会被推定兼容；当前明确边界见[逐版本配置清单](frpc-version-configuration.md)。
 
 ## 基线与状态
 
