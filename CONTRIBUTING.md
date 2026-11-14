@@ -4,7 +4,16 @@
 
 安装与运行步骤见 [README](README.md)。开始工作前读取 [AGENTS.md](AGENTS.md) 与 [项目记忆](docs/memory/MEMORY.md)，接口变更同步维护 [IPC 契约](docs/development/ipc-contract.md)。
 
-提交前执行前端构建、`cargo fmt --all -- --check`、Rust 测试与适用的 Clippy 检查。配置和运行状态改动围绕真实行为测试；官方版本下载与 loopback 隧道测试须显式运行，不能用模拟结果替代。
+提交前执行前端构建，以及与 CI 一致的 Rust 门禁：
+
+```powershell
+cargo +stable fmt --all -- --check
+cargo +stable test --locked --workspace
+cargo +stable check --locked --workspace
+cargo +stable clippy --locked --workspace --all-targets -- -D warnings
+```
+
+最低 Rust 版本为 1.90.0；改动依赖或 MSRV 声明时，另用该工具链执行 `cargo +1.90.0 check --locked --workspace` 与 `cargo +1.90.0 test --locked --workspace`。配置和运行状态改动围绕真实行为测试；官方版本下载与 loopback 隧道测试须显式运行，不能用模拟结果替代。
 
 凭据、个人配置、运行目录和下载的二进制不入库。错误报告提供脱敏的错误信息和复现步骤，不附带原始 token、secretKey、NeDB 或 state.json。PR 描述聚焦改动和验证，沿用 scoopUI 的主题与组件风格，不恢复旧界面。
 

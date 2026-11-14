@@ -90,6 +90,8 @@ jobs:
       - run: npm test
       - name: Rust tests
         run: cargo +stable test --locked --workspace
+      - name: Rust workspace check
+        run: cargo +stable check --locked --workspace
       - name: Desktop Clippy
         run: cargo +stable clippy --locked --workspace --all-targets -- -D warnings
       - name: Prepare Tauri build version

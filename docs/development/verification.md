@@ -2,6 +2,13 @@
 
 更新于 2026-10-09。区分默认代码测试、官方二进制验证、浏览器演示、原生 EXE 和 GitHub 发布检查。参考项目只读；测试使用临时目录、专用回环配置与演示数据，未读取用户凭据或真实旧数据库。默认值显示更新未改 Rust；本次自动发布修正跨平台测试fixture，生产路径规则未改变。官方进程联调保留 2026-10-08 的通过记录。
 
+## 2026-11-15 Rust 失败路径与阻塞审查
+
+- 生产 Rust 输入路径不再有 `unwrap()` / `unreachable!()`；唯一保留的 `expect` 是凭据剥离后提取根 JSON 对象，根变体由本函数构造且 scrub 只改嵌套值，附近注释说明不变量。测试代码中的 `unwrap()` 仅用于 fixture 构造和断言。
+- `frpc-core::lock`、`VersionManager::state` 对 std Mutex poison 都使用 `PoisonError::into_inner` 继续运行，不重置状态；该策略及可能继续看到 panic 前部分运行状态的边界见 [架构锁策略](architecture.md#锁中毒与异步-io)。Tokio mutex 用于异步串行化且不具备 poison 标志；std MutexGuard 不跨 await。
+- Tauri 配置/设置/开机启动同步操作、版本 staging/commit/removal 与归档解压、旧数据库路径/文件预览、运行 TOML 临时文件写入均移入 blocking pool；Token 文件、版本二进制元数据/复制/哈希使用 Tokio fs，frpc 子进程使用 Tokio process。同步 `Manager::new` / `VersionManager::new` 只在 production setup 中运行，需在 IPC 注册前同步完成。
+- 验证：Rust 1.90.0 下 workspace fmt、locked check、locked tests、strict Clippy 全通过；45 项通过，5 项需官方二进制或网络并保持 ignored。CI Windows job 显式跑 locked workspace check；本地门禁与 CI 命令见 `CONTRIBUTING.md`。
+
 ## 2026-10-09 自动构建发布
 
 首次源码提交 `295fdf2` 已推送到 main。[首轮 GitHub Actions](https://github.com/nvrenshiren/frpc-ui/actions/runs/37821625580) 的版本计划及 Windows 检查通过：前端44项、Rust workspace45项、Clippy、NSIS/EXE构建、完整预发布ProductVersion、release与打包副本的WebView/IPC smoke、全新NSIS静默安装后的EXE smoke和artifact上传。Linux默认测试暴露两处测试fixture硬编码Windows绝对路径，发布因此被阻止；已改为原生TempDir文件/目录，生产路径规则未改变，本机core19/versions25、Rust格式与core Clippy重新通过。后续完整执行结果以[工作流记录](https://github.com/nvrenshiren/frpc-ui/actions/workflows/ci.yml)为准。
@@ -18,6 +25,7 @@
 | Rust 默认测试 | 最终完整 workspace 45 项通过，5 项 ignored：core 19、versions 25、Tauri IPC 1。 |
 | `cargo fmt --all -- --check` | 完整 workspace 通过。 |
 | `cargo clippy --workspace --all-targets -- -D warnings` | 最终完整 workspace 通过。 |
+| Rust MSRV | `cargo metadata --locked` 显示 Cargo.lock 依赖声明的最高 `rust-version` 为 1.90（包括 Tauri 2.12.1）；rustc 1.90.0 / cargo 1.90.0 下 workspace fmt、test（45 passed、5 ignored）、strict Clippy 与 `check --locked` 均通过。三个 package 均继承 `rust-version = "1.90"`。 |
 | TypeScript / Vite | 最终 release 前端构建通过；编辑器与交换弹窗按需加载，主入口 487.31 kB，gzip 153.28 kB，没有 500 kB chunk 提示。 |
 | 官方 0.71.0 配置 | 基础协议/visitor 与 14 份高级 fixtures 均通过实际 verify：完整连接、HTTP/TCPMUX/XTCP、OIDC、文件 Token、QUIC 和九种 provider 插件。 |
 | 官方 0.52.0 配置 | SHA-256 校验官方归档并确认版本，11 份基线配置通过 verify；覆盖八种 provider、三种 visitor、七种旧插件、OIDC 与 QUIC。 |
@@ -83,12 +91,20 @@ npm run test:desktop:smoke
 npm run test:desktop:smoke -- ../../artifacts/frpc-ui-0.1.0-windows-x64.exe
 ```
 
-仓库根目录：
+仓库根目录（与 CI 相同的 stable 门禁）：
 
 ```powershell
-cargo fmt --all -- --check
-cargo test --workspace
-cargo clippy --workspace --all-targets -- -D warnings
+cargo +stable fmt --all -- --check
+cargo +stable test --locked --workspace
+cargo +stable check --locked --workspace
+cargo +stable clippy --locked --workspace --all-targets -- -D warnings
+```
+
+最低支持工具链检查（MSRV 1.90.0）：
+
+```powershell
+cargo +1.90.0 check --locked --workspace
+cargo +1.90.0 test --locked --workspace
 ```
 
 官方进程检查使用调用者已校验的二进制，测试仅访问回环网络：

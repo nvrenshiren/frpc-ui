@@ -37,7 +37,7 @@ cd apps/desktop
 npm version 0.1.1 --no-git-tag-version
 cd ../..
 # 将 Cargo.toml 中 workspace.package.version 同步为 0.1.1
-cargo check --workspace
+cargo +stable check --locked --workspace
 git add apps/desktop/package.json apps/desktop/package-lock.json Cargo.toml Cargo.lock
 git commit -m "发布 0.1.1"
 git push origin main

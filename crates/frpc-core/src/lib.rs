@@ -18,7 +18,18 @@ use std::{
 };
 use tokio::sync::{oneshot, watch};
 
+/// Stable error boundary for fallible `frpc-core` APIs.
+///
+/// The wrapped `anyhow::Error` preserves existing validation and I/O context while
+/// callers can distinguish errors produced by this crate from application errors.
+#[derive(Debug, thiserror::Error)]
+#[error(transparent)]
+pub struct CoreError(#[from] anyhow::Error);
+
+pub type CoreResult<T> = std::result::Result<T, CoreError>;
+
 pub(crate) fn lock<T>(mutex: &Mutex<T>) -> MutexGuard<'_, T> {
+    // Poison policy: recover the stored state and continue; see architecture.md for limits.
     mutex.lock().unwrap_or_else(|poison| poison.into_inner())
 }
 
@@ -103,7 +114,7 @@ pub struct Manager {
     pub(crate) inner: Arc<Inner>,
 }
 impl Manager {
-    pub fn new(data_dir: impl AsRef<Path>) -> Result<Self> {
+    fn new_inner(data_dir: impl AsRef<Path>) -> Result<Self> {
         std::fs::create_dir_all(data_dir.as_ref())?;
         let data_dir = data_dir.as_ref().canonicalize()?;
         let path = data_dir.join("state.json");
@@ -176,7 +187,7 @@ impl Manager {
         }
         Ok(())
     }
-    pub fn save_profile(&self, mut profile: Profile) -> Result<()> {
+    fn save_profile_inner(&self, mut profile: Profile) -> Result<()> {
         self.update(|state| {
             let id = profile.id.clone();
             if let Some(existing) = state.profiles.iter_mut().find(|p| p.id == id) {
@@ -206,7 +217,7 @@ impl Manager {
             Ok(vec![id])
         })
     }
-    pub fn delete_profiles(&self, ids: Vec<String>) -> Result<()> {
+    fn delete_profiles_inner(&self, ids: Vec<String>) -> Result<()> {
         self.update(|state| {
             ensure!(
                 !state.profiles.iter().any(|p| ids.contains(&p.id)
@@ -226,7 +237,7 @@ impl Manager {
             Ok(Vec::new())
         })
     }
-    pub fn save_tunnel(&self, mut tunnel: Tunnel) -> Result<()> {
+    fn save_tunnel_inner(&self, mut tunnel: Tunnel) -> Result<()> {
         normalize_domain_alias(&mut tunnel);
         self.update(|state| {
             let mut changed = vec![tunnel.profile_id.clone()];
@@ -242,7 +253,7 @@ impl Manager {
             Ok(changed)
         })
     }
-    pub fn delete_tunnels(&self, ids: Vec<String>) -> Result<()> {
+    fn delete_tunnels_inner(&self, ids: Vec<String>) -> Result<()> {
         self.update(|state| {
             let changed = state
                 .tunnels
@@ -254,7 +265,7 @@ impl Manager {
             Ok(changed)
         })
     }
-    pub fn toggle_tunnels(&self, ids: Vec<String>, enabled: bool) -> Result<()> {
+    fn toggle_tunnels_inner(&self, ids: Vec<String>, enabled: bool) -> Result<()> {
         self.update(|state| {
             let mut changed = Vec::new();
             for t in state.tunnels.iter_mut().filter(|t| ids.contains(&t.id)) {
@@ -265,7 +276,7 @@ impl Manager {
             Ok(changed)
         })
     }
-    pub fn import_configuration(
+    fn import_configuration_inner(
         &self,
         mut profile: Profile,
         mut tunnels: Vec<Tunnel>,
@@ -302,7 +313,7 @@ impl Manager {
             Ok(vec![id])
         })
     }
-    pub fn set_settings(&self, settings: AppSettings) -> Result<()> {
+    fn set_settings_inner(&self, settings: AppSettings) -> Result<()> {
         self.update(|state| {
             state.settings = settings;
             Ok(Vec::new())
@@ -359,6 +370,79 @@ impl Manager {
             tasks.spawn(async move { manager.run(&id, RunAction::Stop, None).await });
         }
         while tasks.join_next().await.is_some() {}
+    }
+
+    /// Synchronously opens and validates local state, preserving the legacy anyhow result type.
+    /// Call from setup code or a blocking worker, not from an async executor thread.
+    pub fn new(data_dir: impl AsRef<Path>) -> Result<Self> {
+        Self::new_inner(data_dir)
+    }
+
+    /// Typed-error synchronous constructor for new callers; use setup code or a blocking worker.
+    pub fn try_new(data_dir: impl AsRef<Path>) -> CoreResult<Self> {
+        Self::new_inner(data_dir).map_err(Into::into)
+    }
+
+    /// Saves a profile after full validation, preserving the legacy anyhow result type.
+    pub fn save_profile(&self, profile: Profile) -> Result<()> {
+        self.save_profile_inner(profile)
+    }
+
+    pub fn try_save_profile(&self, profile: Profile) -> CoreResult<()> {
+        self.save_profile_inner(profile).map_err(Into::into)
+    }
+
+    pub fn delete_profiles(&self, ids: Vec<String>) -> Result<()> {
+        self.delete_profiles_inner(ids)
+    }
+
+    pub fn try_delete_profiles(&self, ids: Vec<String>) -> CoreResult<()> {
+        self.delete_profiles_inner(ids).map_err(Into::into)
+    }
+
+    pub fn save_tunnel(&self, tunnel: Tunnel) -> Result<()> {
+        self.save_tunnel_inner(tunnel)
+    }
+
+    pub fn try_save_tunnel(&self, tunnel: Tunnel) -> CoreResult<()> {
+        self.save_tunnel_inner(tunnel).map_err(Into::into)
+    }
+
+    pub fn delete_tunnels(&self, ids: Vec<String>) -> Result<()> {
+        self.delete_tunnels_inner(ids)
+    }
+
+    pub fn try_delete_tunnels(&self, ids: Vec<String>) -> CoreResult<()> {
+        self.delete_tunnels_inner(ids).map_err(Into::into)
+    }
+
+    pub fn toggle_tunnels(&self, ids: Vec<String>, enabled: bool) -> Result<()> {
+        self.toggle_tunnels_inner(ids, enabled)
+    }
+
+    pub fn try_toggle_tunnels(&self, ids: Vec<String>, enabled: bool) -> CoreResult<()> {
+        self.toggle_tunnels_inner(ids, enabled).map_err(Into::into)
+    }
+
+    pub fn import_configuration(&self, profile: Profile, tunnels: Vec<Tunnel>) -> Result<()> {
+        self.import_configuration_inner(profile, tunnels)
+    }
+
+    pub fn try_import_configuration(
+        &self,
+        profile: Profile,
+        tunnels: Vec<Tunnel>,
+    ) -> CoreResult<()> {
+        self.import_configuration_inner(profile, tunnels)
+            .map_err(Into::into)
+    }
+
+    pub fn set_settings(&self, settings: AppSettings) -> Result<()> {
+        self.set_settings_inner(settings)
+    }
+
+    pub fn try_set_settings(&self, settings: AppSettings) -> CoreResult<()> {
+        self.set_settings_inner(settings).map_err(Into::into)
     }
 }
 fn normalize_domain_alias(tunnel: &mut Tunnel) {

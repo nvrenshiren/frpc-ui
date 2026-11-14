@@ -41,8 +41,10 @@ pub struct Service {
 impl Service {
     pub fn new(data_dir: PathBuf) -> Result<Self, String> {
         Ok(Self {
-            core: Arc::new(Manager::new(&data_dir).map_err(|error| error.to_string())?),
-            versions: Arc::new(VersionManager::new(&data_dir).map_err(|error| error.to_string())?),
+            core: Arc::new(Manager::try_new(&data_dir).map_err(|error| error.to_string())?),
+            versions: Arc::new(
+                VersionManager::try_new(&data_dir).map_err(|error| error.to_string())?,
+            ),
             mutation: Mutex::new(()),
             settings: Mutex::new(()),
             closing: AtomicBool::new(false),
@@ -96,7 +98,7 @@ impl Service {
             let binary = match version {
                 Some(version) => self
                     .versions
-                    .binary_path(&version)
+                    .try_binary_path(&version)
                     .await
                     .map_err(|error| error.to_string()),
                 None => Err("连接不存在，请刷新后重试".to_string()),

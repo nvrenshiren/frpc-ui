@@ -22,7 +22,7 @@ pub struct MigrationPreview {
 
 /// No default old user-data path is searched. The caller must explicitly select
 /// the legacy database directory and an already installed modern frpc version.
-pub fn preview_legacy(
+fn preview_legacy_inner(
     data_dir: impl AsRef<Path>,
     selected_version: &str,
 ) -> Result<MigrationPreview> {
@@ -52,7 +52,10 @@ pub fn preview_legacy(
         ));
         return Ok(preview);
     }
-    let server = servers.into_values().next().unwrap();
+    let server = servers
+        .into_values()
+        .next()
+        .context("旧服务器记录在计数后消失")?;
     let server = server.as_object().context("旧服务器记录不是对象")?;
     let server_id = required_string(server, "_id")?;
     let profile_id = stable_id("legacy-profile", &server_id);
@@ -261,6 +264,23 @@ pub fn preview_legacy(
     }
     preview.can_import = preview.issues.is_empty();
     Ok(preview)
+}
+
+/// Synchronously reads the explicitly selected legacy database with the original anyhow result type.
+/// Call from synchronous code or a blocking worker; do not run filesystem parsing on an async executor.
+pub fn preview_legacy(
+    data_dir: impl AsRef<Path>,
+    selected_version: &str,
+) -> Result<MigrationPreview> {
+    preview_legacy_inner(data_dir, selected_version)
+}
+
+/// Typed-error synchronous entry point; callers in async contexts must use a blocking worker.
+pub fn try_preview_legacy(
+    data_dir: impl AsRef<Path>,
+    selected_version: &str,
+) -> crate::VersionsResult<MigrationPreview> {
+    preview_legacy_inner(data_dir, selected_version).map_err(Into::into)
 }
 
 fn read_database(path: &Path) -> Result<Vec<u8>> {
@@ -732,7 +752,13 @@ fn check_defaults(
     path: &str,
     issues: &mut Vec<String>,
 ) {
-    for (key, default) in defaults.as_object().unwrap() {
+    // Callers pass only local `json!({...})` default literals. If that contract
+    // changes accidentally, report an issue and block migration instead of panicking.
+    let Some(defaults) = defaults.as_object() else {
+        issues.push(format!("{path}：内部默认配置模板不是对象，无法安全迁移。"));
+        return;
+    };
+    for (key, default) in defaults {
         if let Some(value) = map.get(key) {
             if value != default {
                 issues.push(format!(

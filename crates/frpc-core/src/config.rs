@@ -7,7 +7,7 @@ use anyhow::{ensure, Context, Result};
 use serde_json::{json, Map, Value};
 use std::{collections::HashSet, net::IpAddr};
 
-pub fn validate_profile(p: &Profile) -> Result<()> {
+fn validate_profile_inner(p: &Profile) -> Result<()> {
     text(&p.id, "id")?;
     text(&p.name, "name")?;
     host(&p.server_addr, "serverAddr")?;
@@ -17,9 +17,10 @@ pub fn validate_profile(p: &Profile) -> Result<()> {
         ["tcp", "kcp", "quic", "websocket", "wss"].contains(&p.transport.as_str()),
         "Unsupported transport protocol"
     );
-    advanced::validate_profile_advanced(p)
+    advanced::validate_profile_advanced(p)?;
+    Ok(())
 }
-pub fn validate_tunnel(t: &Tunnel) -> Result<()> {
+fn validate_tunnel_inner(t: &Tunnel) -> Result<()> {
     text(&t.id, "id")?;
     text(&t.profile_id, "profileId")?;
     text(&t.name, "name")?;
@@ -35,10 +36,14 @@ pub fn validate_tunnel(t: &Tunnel) -> Result<()> {
     } else if t.tunnel_type.domain() {
         let domains = if let Some(v) = t.advanced.get("customDomains") {
             v.as_array()
-                .unwrap()
+                .context("customDomains must be an array")?
                 .iter()
-                .map(|v| v.as_str().unwrap())
-                .collect::<Vec<_>>()
+                .map(|value| {
+                    value
+                        .as_str()
+                        .context("customDomains entries must be strings")
+                })
+                .collect::<Result<Vec<_>>>()?
         } else if t.domain.is_empty() {
             vec![]
         } else {
@@ -86,7 +91,7 @@ pub fn validate_tunnel(t: &Tunnel) -> Result<()> {
     }
     Ok(())
 }
-pub fn validate_configuration(profiles: &[Profile], tunnels: &[Tunnel]) -> Result<()> {
+fn validate_configuration_inner(profiles: &[Profile], tunnels: &[Tunnel]) -> Result<()> {
     let (mut ids, mut names, mut ports) = (HashSet::new(), HashSet::new(), HashSet::new());
     for p in profiles {
         validate_profile(p)?;
@@ -115,6 +120,13 @@ pub fn validate_configuration(profiles: &[Profile], tunnels: &[Tunnel]) -> Resul
     }
     Ok(())
 }
+fn object_literal(value: Value) -> Result<Map<String, Value>> {
+    value
+        .as_object()
+        .cloned()
+        .context("Internal configuration template must be an object")
+}
+
 fn text(v: &str, k: &str) -> Result<()> {
     ensure!(
         !v.trim().is_empty() && v.len() <= 255 && !v.chars().any(char::is_control),
@@ -148,7 +160,7 @@ pub(crate) fn domain(v: &str) -> Result<()> {
 }
 
 /// Minima are independently verified against fixed official release tags.
-pub fn validate_version_capabilities(p: &Profile, tunnels: &[Tunnel]) -> Result<()> {
+fn validate_version_capabilities_inner(p: &Profile, tunnels: &[Tunnel]) -> Result<()> {
     let version = p.version.strip_prefix('v').unwrap_or(&p.version);
     ensure!(
         version.len() <= 32
@@ -235,7 +247,7 @@ pub fn validate_version_capabilities(p: &Profile, tunnels: &[Tunnel]) -> Result<
     }
     Ok(())
 }
-pub fn render_profile_toml(p: &Profile, tunnels: &[Tunnel], credentials: bool) -> Result<String> {
+fn render_profile_toml_inner(p: &Profile, tunnels: &[Tunnel], credentials: bool) -> Result<String> {
     render(p, tunnels, credentials, true)
 }
 pub(crate) fn render_runtime_toml(p: &Profile, tunnels: &[Tunnel]) -> Result<String> {
@@ -247,7 +259,9 @@ fn render(p: &Profile, tunnels: &[Tunnel], credentials: bool, exchange: bool) ->
     if !credentials {
         ensure!(p.advanced.get("auth").and_then(|v|v.get("oidc")).and_then(|v|v.get("tokenSource")).is_none(),"OIDC token-source-only export requires including credentials or supplying client parameters");
     }
-    let mut config=json!({"serverAddr":p.server_addr,"serverPort":p.server_port,"transport":{"protocol":p.transport,"tls":{"enable":p.tls}},"loginFailExit":false,"log":{"to":"console","level":"info","disablePrintColor":true}}).as_object().unwrap().clone();
+    let mut config = object_literal(
+        json!({"serverAddr":p.server_addr,"serverPort":p.server_port,"transport":{"protocol":p.transport,"tls":{"enable":p.tls}},"loginFailExit":false,"log":{"to":"console","level":"info","disablePrintColor":true}}),
+    )?;
     if !p.user.is_empty() {
         config.insert("user".into(), json!(p.user));
     }
@@ -288,7 +302,9 @@ fn render(p: &Profile, tunnels: &[Tunnel], credentials: bool, exchange: bool) ->
                 t.name.clone()
             };
             ensure!(names.insert(name.clone()), "Generated tunnel names collide");
-            let mut item=json!({"name":name,"type":t.tunnel_type,"transport":{"useEncryption":t.encryption,"useCompression":t.compression}}).as_object().unwrap().clone();
+            let mut item = object_literal(
+                json!({"name":name,"type":t.tunnel_type,"transport":{"useEncryption":t.encryption,"useCompression":t.compression}}),
+            )?;
             if credentials && t.tunnel_type.private() && !t.secret_key.is_empty() {
                 item.insert("secretKey".into(), json!(t.secret_key));
             }
@@ -306,11 +322,9 @@ fn render(p: &Profile, tunnels: &[Tunnel], credentials: bool, exchange: bool) ->
                 } else {
                     t.local_ip.clone()
                 };
-                let mut plugin =
-                    json!({"type":"https2http","localAddr":format!("{ip}:{}",t.local_port)})
-                        .as_object()
-                        .unwrap()
-                        .clone();
+                let mut plugin = object_literal(
+                    json!({"type":"https2http","localAddr":format!("{ip}:{}",t.local_port)}),
+                )?;
                 if !t.cert_path.is_empty() {
                     plugin.insert("crtPath".into(), json!(t.cert_path));
                     plugin.insert("keyPath".into(), json!(t.key_path));
@@ -415,7 +429,7 @@ fn reject_datetime(v: &toml::Value) -> Result<()> {
     Ok(())
 }
 /// Import keeps exact advanced values and creates fresh identifiers.
-pub fn parse_toml(source: &str, version: &str, name: &str) -> Result<(Profile, Vec<Tunnel>)> {
+fn parse_toml_inner(source: &str, version: &str, name: &str) -> Result<(Profile, Vec<Tunnel>)> {
     ensure!(
         !source.trim().is_empty() && source.len() <= 1024 * 1024,
         "Configuration must contain 1 byte to 1 MiB"
@@ -638,4 +652,75 @@ pub(crate) fn local_address(v: &str) -> Result<(String, u16)> {
     let port: u16 = port.parse().context("Invalid plugin.localAddr port")?;
     ensure!(port != 0, "plugin.localAddr port must be 1–65535");
     Ok((ip.into(), port))
+}
+
+/// Validates a profile and preserves the legacy anyhow result type.
+pub fn validate_profile(p: &Profile) -> Result<()> {
+    validate_profile_inner(p)
+}
+
+/// Typed-error entry point for new callers.
+pub fn try_validate_profile(p: &Profile) -> crate::CoreResult<()> {
+    validate_profile_inner(p).map_err(Into::into)
+}
+
+/// Validates a tunnel and preserves the legacy anyhow result type.
+pub fn validate_tunnel(t: &Tunnel) -> Result<()> {
+    validate_tunnel_inner(t)
+}
+
+/// Typed-error entry point for new callers.
+pub fn try_validate_tunnel(t: &Tunnel) -> crate::CoreResult<()> {
+    validate_tunnel_inner(t).map_err(Into::into)
+}
+
+/// Validates the complete profile and tunnel collection with the legacy anyhow result type.
+pub fn validate_configuration(profiles: &[Profile], tunnels: &[Tunnel]) -> Result<()> {
+    validate_configuration_inner(profiles, tunnels)
+}
+
+/// Typed-error entry point for new callers.
+pub fn try_validate_configuration(
+    profiles: &[Profile],
+    tunnels: &[Tunnel],
+) -> crate::CoreResult<()> {
+    validate_configuration_inner(profiles, tunnels).map_err(Into::into)
+}
+
+/// Checks feature availability for the selected frpc version with legacy anyhow errors.
+pub fn validate_version_capabilities(p: &Profile, tunnels: &[Tunnel]) -> Result<()> {
+    validate_version_capabilities_inner(p, tunnels)
+}
+
+/// Typed-error entry point for new callers.
+pub fn try_validate_version_capabilities(p: &Profile, tunnels: &[Tunnel]) -> crate::CoreResult<()> {
+    validate_version_capabilities_inner(p, tunnels).map_err(Into::into)
+}
+
+/// Renders exchange TOML with the legacy anyhow result type.
+pub fn render_profile_toml(p: &Profile, tunnels: &[Tunnel], credentials: bool) -> Result<String> {
+    render_profile_toml_inner(p, tunnels, credentials)
+}
+
+/// Typed-error entry point for new callers.
+pub fn try_render_profile_toml(
+    p: &Profile,
+    tunnels: &[Tunnel],
+    credentials: bool,
+) -> crate::CoreResult<String> {
+    render_profile_toml_inner(p, tunnels, credentials).map_err(Into::into)
+}
+
+/// Parses a supported frpc TOML document with the legacy anyhow result type.
+pub fn parse_toml(source: &str, version: &str, name: &str) -> Result<(Profile, Vec<Tunnel>)> {
+    parse_toml_inner(source, version, name)
+}
+
+/// Typed-error entry point for new callers.
+pub fn try_parse_toml(
+    source: &str,
+    version: &str,
+    name: &str,
+) -> crate::CoreResult<(Profile, Vec<Tunnel>)> {
+    parse_toml_inner(source, version, name).map_err(Into::into)
 }

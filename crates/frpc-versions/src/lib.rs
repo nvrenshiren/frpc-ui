@@ -1,11 +1,22 @@
 //! Official frpc release installation, local import and executable integrity.
 //! The crate owns all binary paths and does not depend on a desktop host.
-
 mod archive;
 pub mod migration;
 mod remote;
 
+/// Legacy result alias retained for source compatibility. Prefer [`VersionsResult`]
+/// on new APIs so callers can identify errors originating from this crate.
 pub use anyhow::Result;
+
+/// Stable error boundary for fallible `frpc-versions` APIs.
+///
+/// The wrapped `anyhow::Error` preserves existing validation and I/O context while
+/// callers can distinguish errors produced by this crate from application errors.
+#[derive(Debug, thiserror::Error)]
+#[error(transparent)]
+pub struct VersionsError(#[from] anyhow::Error);
+
+pub type VersionsResult<T> = std::result::Result<T, VersionsError>;
 use anyhow::{bail, Context};
 use futures_util::StreamExt;
 use reqwest::Client;
@@ -62,13 +73,75 @@ struct Inner {
     mutation: tokio::sync::Mutex<()>,
 }
 
+struct StageDirectory {
+    path: PathBuf,
+    cleanup: bool,
+}
+
+struct InstallProgressGuard {
+    inner: Arc<Inner>,
+    version: String,
+}
+
+impl Drop for InstallProgressGuard {
+    fn drop(&mut self) {
+        self.inner
+            .state
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .progress
+            .remove(&self.version);
+    }
+}
+
+impl StageDirectory {
+    fn path(&self) -> &Path {
+        &self.path
+    }
+}
+
+impl Drop for StageDirectory {
+    fn drop(&mut self) {
+        if !self.cleanup {
+            return;
+        }
+        let path = self.path.clone();
+        if let Ok(handle) = tokio::runtime::Handle::try_current() {
+            handle.spawn_blocking(move || {
+                let _ = fs::remove_dir_all(path);
+            });
+        } else if std::thread::Builder::new()
+            .name("frpc-stage-cleanup".into())
+            .spawn(move || {
+                let _ = fs::remove_dir_all(path);
+            })
+            .is_err()
+        {
+            // Cleanup is best-effort if the runtime and OS thread pool are unavailable.
+            let _ = fs::remove_dir_all(&self.path);
+        }
+    }
+}
+
+async fn create_stage(root: PathBuf, prefix: &'static str) -> Result<StageDirectory> {
+    let stage = tokio::task::spawn_blocking(move || {
+        let temporary = tempfile::Builder::new().prefix(prefix).tempdir_in(root)?;
+        Ok::<_, std::io::Error>(StageDirectory {
+            path: temporary.keep(),
+            cleanup: true,
+        })
+    })
+    .await??;
+    Ok(stage)
+}
+
 #[derive(Clone)]
 pub struct VersionManager {
     inner: Arc<Inner>,
 }
 
 impl VersionManager {
-    pub fn new(data_dir: impl AsRef<Path>) -> Result<Self> {
+    fn new_inner(data_dir: impl AsRef<Path>) -> Result<Self> {
         let root = data_dir.as_ref().join("versions");
         fs::create_dir_all(&root).context("无法创建 frpc 版本目录")?;
         let root = fs::canonicalize(root)?;
@@ -129,6 +202,7 @@ impl VersionManager {
     }
 
     fn state(&self) -> std::sync::MutexGuard<'_, State> {
+        // Match frpc-core: recover the in-memory catalog; this does not repair a partial mutation.
         self.inner
             .state
             .lock()
@@ -164,14 +238,18 @@ impl VersionManager {
         }
         let mut result: Vec<_> = result.into_values().collect();
         result.sort_by(|left, right| {
-            semver::Version::parse(&right.version)
-                .unwrap()
-                .cmp(&semver::Version::parse(&left.version).unwrap())
+            match (
+                semver::Version::parse(&left.version),
+                semver::Version::parse(&right.version),
+            ) {
+                (Ok(left_version), Ok(right_version)) => right_version.cmp(&left_version),
+                _ => left.version.cmp(&right.version),
+            }
         });
         result
     }
 
-    pub async fn refresh(&self) -> Result<Vec<Version>> {
+    async fn refresh_inner(&self) -> Result<Vec<Version>> {
         let (os, arch) = remote::platform()?;
         let response = self
             .inner
@@ -199,7 +277,7 @@ impl VersionManager {
         Ok(self.list())
     }
 
-    pub async fn install(&self, id: &str) -> Result<Version> {
+    async fn install_inner(&self, id: &str) -> Result<Version> {
         valid_version(id)?;
         let _mutation = self.inner.mutation.lock().await;
         let candidate = {
@@ -214,16 +292,16 @@ impl VersionManager {
                 .context("请先刷新官方版本列表，再选择安装")?
         };
         self.state().progress.insert(id.into(), 1);
-        let operation = self.install_candidate(candidate).await;
-        self.state().progress.remove(id);
-        operation
+        let _progress = InstallProgressGuard {
+            inner: Arc::clone(&self.inner),
+            version: id.into(),
+        };
+        self.install_candidate(candidate).await
     }
 
     async fn install_candidate(&self, candidate: remote::Candidate) -> Result<Version> {
         let checksum = remote::expected_checksum(&self.inner.client, &candidate).await?;
-        let stage = tempfile::Builder::new()
-            .prefix(".install-")
-            .tempdir_in(&self.inner.root)?;
+        let stage = create_stage(self.inner.root.clone(), ".install-").await?;
         let archive_path = stage.path().join("archive");
         let response = self
             .inner
@@ -276,9 +354,9 @@ impl VersionManager {
             bail!("解压得到的 frpc 版本与官方发布不一致");
         }
         let hash = file_hash(&binary_path).await?;
-        let size = regular_binary(&binary_path)?.len();
+        let size = regular_binary_async(&binary_path).await?.len();
         // The archive is deliberately excluded from the atomic installation.
-        fs::remove_file(stage.path().join("archive"))?;
+        tokio::fs::remove_file(stage.path().join("archive")).await?;
         self.commit(
             stage,
             InstalledManifest {
@@ -289,31 +367,30 @@ impl VersionManager {
                 source: "official".into(),
             },
         )
+        .await
     }
 
     /// The caller obtains this path from a native file picker. The selected
     /// executable is copied before validation; its original file is never changed.
-    pub async fn import(&self, path: impl AsRef<Path>) -> Result<Version> {
+    async fn import_inner(&self, path: impl AsRef<Path>) -> Result<Version> {
         let _mutation = self.inner.mutation.lock().await;
         let path = path.as_ref();
-        regular_binary(path)?;
-        let stage = tempfile::Builder::new()
-            .prefix(".import-")
-            .tempdir_in(&self.inner.root)?;
+        regular_binary_async(path).await?;
+        let stage = create_stage(self.inner.root.clone(), ".import-").await?;
         let binary = stage.path().join(BINARY_NAME);
         tokio::fs::copy(path, &binary).await?;
-        regular_binary(&binary)?;
+        regular_binary_async(&binary).await?;
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
-            fs::set_permissions(&binary, fs::Permissions::from_mode(0o755))?;
+            tokio::fs::set_permissions(&binary, fs::Permissions::from_mode(0o755)).await?;
         }
         let version = detect_version(&binary).await?;
         if self.state().installed.contains_key(&version) {
             bail!("此版本已经安装，请先移除现有版本");
         }
         let hash = file_hash(&binary).await?;
-        let size = regular_binary(&binary)?.len();
+        let size = regular_binary_async(&binary).await?.len();
         self.commit(
             stage,
             InstalledManifest {
@@ -324,11 +401,21 @@ impl VersionManager {
                 source: "local".into(),
             },
         )
+        .await
     }
 
-    fn commit(&self, stage: tempfile::TempDir, manifest: InstalledManifest) -> Result<Version> {
+    async fn commit(&self, stage: StageDirectory, manifest: InstalledManifest) -> Result<Version> {
+        let inner = Arc::clone(&self.inner);
+        tokio::task::spawn_blocking(move || Self::commit_inner(&inner, stage, manifest)).await?
+    }
+
+    fn commit_inner(
+        inner: &Inner,
+        mut stage: StageDirectory,
+        manifest: InstalledManifest,
+    ) -> Result<Version> {
         valid_version(&manifest.version)?;
-        let destination = self.inner.root.join(&manifest.version);
+        let destination = inner.root.join(&manifest.version);
         if destination.exists() {
             bail!("版本安装目录已存在，不会覆盖现有二进制");
         }
@@ -342,16 +429,19 @@ impl VersionManager {
         metadata.sync_all()?;
         drop(metadata);
         fs::rename(stage.path(), &destination).context("无法原子安装 frpc")?;
-        // TempDir cleanup now sees a missing source path and never removes the
-        // committed directory. State is published only after the rename succeeds.
+        stage.cleanup = false;
+        // State is published only after the atomic directory rename succeeds.
         let result = version_dto(&manifest);
-        self.state()
+        inner
+            .state
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
             .installed
             .insert(manifest.version.clone(), manifest);
         Ok(result)
     }
 
-    pub async fn remove(&self, id: &str, assigned_versions: &[String]) -> Result<()> {
+    async fn remove_inner(&self, id: &str, assigned_versions: &[String]) -> Result<()> {
         self.remove_with_rename(id, assigned_versions, |source, destination| {
             fs::rename(source, destination)
         })
@@ -362,7 +452,7 @@ impl VersionManager {
         &self,
         id: &str,
         assigned_versions: &[String],
-        rename: impl FnOnce(&Path, &Path) -> std::io::Result<()>,
+        rename: impl FnOnce(&Path, &Path) -> std::io::Result<()> + Send + 'static,
     ) -> Result<()> {
         valid_version(id)?;
         let _mutation = self.inner.mutation.lock().await;
@@ -375,42 +465,52 @@ impl VersionManager {
         if !self.state().installed.contains_key(id) {
             bail!("版本尚未安装");
         }
-        let directory = self.inner.root.join(id);
-        let metadata = fs::symlink_metadata(&directory)?;
-        let canonical = fs::canonicalize(&directory)?;
-        if !canonical.is_absolute()
-            || canonical.parent() != Some(self.inner.root.as_path())
-            || !metadata.is_dir()
-            || metadata.file_type().is_symlink()
-        {
-            bail!("安装目录不安全，拒绝删除");
-        }
-        let reservation = tempfile::Builder::new()
-            .prefix(".removing-")
-            .rand_bytes(16)
-            .tempdir_in(&self.inner.root)
-            .context("无法创建版本移除暂存目录")?;
-        let tombstone = reservation.path().to_owned();
-        // Windows cannot rename a directory over an existing directory. Release
-        // only our empty reservation; the random sibling remains the target.
-        reservation.close().context("无法释放版本移除暂存目录")?;
-        if !tombstone.is_absolute() || tombstone.parent() != Some(self.inner.root.as_path()) {
-            bail!("版本移除暂存路径不安全");
-        }
-        match fs::symlink_metadata(&tombstone) {
-            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-            Err(error) => return Err(error).context("无法校验版本移除暂存路径"),
-            Ok(_) => bail!("版本移除暂存路径已存在"),
-        }
-        // This rename is the removal commit point. Until it succeeds neither
-        // files nor installed state change; afterward interrupted cleanup can
-        // only leave a hidden directory which startup already ignores.
-        rename(&directory, &tombstone).context("无法原子移除 frpc 安装目录")?;
-        {
-            let mut state = self.state();
-            state.installed.remove(id);
-            state.progress.remove(id);
-        }
+        let root = self.inner.root.clone();
+        let inner = Arc::clone(&self.inner);
+        let owned_id = id.to_owned();
+        let tombstone = tokio::task::spawn_blocking(move || {
+            let directory = root.join(&owned_id);
+            let metadata = fs::symlink_metadata(&directory)?;
+            let canonical = fs::canonicalize(&directory)?;
+            if !canonical.is_absolute()
+                || canonical.parent() != Some(root.as_path())
+                || !metadata.is_dir()
+                || metadata.file_type().is_symlink()
+            {
+                bail!("安装目录不安全，拒绝删除");
+            }
+            let reservation = tempfile::Builder::new()
+                .prefix(".removing-")
+                .rand_bytes(16)
+                .tempdir_in(&root)
+                .context("无法创建版本移除暂存目录")?;
+            let tombstone = reservation.path().to_owned();
+            // Windows cannot rename a directory over an existing directory. Release
+            // only our empty reservation; the random sibling remains the target.
+            reservation.close().context("无法释放版本移除暂存目录")?;
+            if !tombstone.is_absolute() || tombstone.parent() != Some(root.as_path()) {
+                bail!("版本移除暂存路径不安全");
+            }
+            match fs::symlink_metadata(&tombstone) {
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+                Err(error) => return Err(error).context("无法校验版本移除暂存路径"),
+                Ok(_) => bail!("版本移除暂存路径已存在"),
+            }
+            // This rename is the removal commit point. Until it succeeds neither
+            // files nor installed state change; afterward interrupted cleanup can
+            // only leave a hidden directory which startup already ignores.
+            rename(&directory, &tombstone).context("无法原子移除 frpc 安装目录")?;
+            {
+                let mut state = inner
+                    .state
+                    .lock()
+                    .unwrap_or_else(std::sync::PoisonError::into_inner);
+                state.installed.remove(&owned_id);
+                state.progress.remove(&owned_id);
+            }
+            Ok::<_, anyhow::Error>(tombstone)
+        })
+        .await??;
         // Keep catalog candidates available for reinstallation. Cleanup failure
         // does not resurrect an installation or turn a committed removal into
         // an error that invites a destructive retry.
@@ -420,7 +520,7 @@ impl VersionManager {
 
     /// Checks SHA-256 again for every launch; callers may never cache this path
     /// instead of calling this method when starting or verifying frpc.
-    pub async fn binary_path(&self, version: &str) -> Result<PathBuf> {
+    async fn binary_path_inner(&self, version: &str) -> Result<PathBuf> {
         let version = version.strip_prefix('v').unwrap_or(version);
         valid_version(version)?;
         let manifest = self
@@ -430,8 +530,8 @@ impl VersionManager {
             .cloned()
             .context("所选 frpc 版本尚未安装")?;
         let binary = self.inner.root.join(version).join(BINARY_NAME);
-        regular_binary(&binary)?;
-        let canonical = fs::canonicalize(&binary)?;
+        regular_binary_async(&binary).await?;
+        let canonical = tokio::fs::canonicalize(&binary).await?;
         let expected_directory = self.inner.root.join(version);
         if canonical.parent() != Some(expected_directory.as_path()) {
             bail!("frpc 文件超出安装目录");
@@ -440,6 +540,61 @@ impl VersionManager {
         verify_hash(&hash, &manifest.sha256)
             .context("frpc 二进制校验失败，文件可能已被修改；请重新安装")?;
         Ok(canonical)
+    }
+
+    /// Synchronously scans and validates the installed version catalog.
+    /// Call from setup code or a blocking worker, not from an async executor thread.
+    pub fn new(data_dir: impl AsRef<Path>) -> Result<Self> {
+        Self::new_inner(data_dir)
+    }
+
+    /// Typed-error synchronous constructor for new callers; use setup code or a blocking worker.
+    pub fn try_new(data_dir: impl AsRef<Path>) -> VersionsResult<Self> {
+        Self::new_inner(data_dir).map_err(Into::into)
+    }
+
+    pub async fn refresh(&self) -> Result<Vec<Version>> {
+        self.refresh_inner().await
+    }
+
+    pub async fn try_refresh(&self) -> VersionsResult<Vec<Version>> {
+        self.refresh_inner().await.map_err(Into::into)
+    }
+
+    pub async fn install(&self, id: &str) -> Result<Version> {
+        self.install_inner(id).await
+    }
+
+    pub async fn try_install(&self, id: &str) -> VersionsResult<Version> {
+        self.install_inner(id).await.map_err(Into::into)
+    }
+
+    pub async fn import(&self, path: impl AsRef<Path>) -> Result<Version> {
+        self.import_inner(path).await
+    }
+
+    pub async fn try_import(&self, path: impl AsRef<Path>) -> VersionsResult<Version> {
+        self.import_inner(path).await.map_err(Into::into)
+    }
+
+    pub async fn remove(&self, id: &str, assigned_versions: &[String]) -> Result<()> {
+        self.remove_inner(id, assigned_versions).await
+    }
+
+    pub async fn try_remove(&self, id: &str, assigned_versions: &[String]) -> VersionsResult<()> {
+        self.remove_inner(id, assigned_versions)
+            .await
+            .map_err(Into::into)
+    }
+
+    /// Rechecks the installed executable's hash; preserves the original anyhow result type.
+    pub async fn binary_path(&self, version: &str) -> Result<PathBuf> {
+        self.binary_path_inner(version).await
+    }
+
+    /// Typed-error entry point for callers resolving an installed executable.
+    pub async fn try_binary_path(&self, version: &str) -> VersionsResult<PathBuf> {
+        self.binary_path_inner(version).await.map_err(Into::into)
     }
 }
 
@@ -490,6 +645,17 @@ fn validate_manifest(manifest: &InstalledManifest, expected: &str) -> Result<()>
 
 fn regular_binary(path: &Path) -> Result<fs::Metadata> {
     let metadata = fs::symlink_metadata(path).context("无法读取 frpc 文件")?;
+    validate_binary_metadata(metadata)
+}
+
+async fn regular_binary_async(path: &Path) -> Result<fs::Metadata> {
+    let metadata = tokio::fs::symlink_metadata(path)
+        .await
+        .context("无法读取 frpc 文件")?;
+    validate_binary_metadata(metadata)
+}
+
+fn validate_binary_metadata(metadata: fs::Metadata) -> Result<fs::Metadata> {
     if !metadata.is_file()
         || metadata.file_type().is_symlink()
         || metadata.len() == 0
@@ -501,7 +667,7 @@ fn regular_binary(path: &Path) -> Result<fs::Metadata> {
 }
 
 async fn detect_version(path: &Path) -> Result<String> {
-    regular_binary(path)?;
+    regular_binary_async(path).await?;
     let mut command = tokio::process::Command::new(path);
     command
         .arg("-v")

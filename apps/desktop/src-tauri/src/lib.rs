@@ -24,17 +24,18 @@ fn show_main(app: &tauri::AppHandle) {
     }
 }
 
-pub fn run() {
+pub fn run() -> Result<(), Box<dyn std::error::Error>> {
     // Exercise the packaged WebView and complete IPC dispatcher without reading
     // user configuration or changing system autostart registration.
-    let smoke_directory = std::env::args()
-        .any(|argument| argument == "--smoke-test")
-        .then(|| {
+    let smoke_directory = if std::env::args().any(|argument| argument == "--smoke-test") {
+        Some(
             tempfile::Builder::new()
                 .prefix("frpc-ui-smoke-")
-                .tempdir()
-                .expect("Unable to create smoke-test directory")
-        });
+                .tempdir()?,
+        )
+    } else {
+        None
+    };
     let smoke_data_dir = smoke_directory
         .as_ref()
         .map(|directory| directory.path().to_path_buf());
@@ -67,7 +68,7 @@ pub fn run() {
                 {
                     if settings.auto_start != registered {
                         settings.auto_start = registered;
-                        service.core.set_settings(settings.clone())?;
+                        service.core.try_set_settings(settings.clone())?;
                     }
                 }
             }
@@ -187,8 +188,7 @@ pub fn run() {
             commands::preview_legacy,
             commands::import_legacy
         ])
-        .build(tauri::generate_context!())
-        .expect("Unable to initialize frpc-ui");
+        .build(tauri::generate_context!())?;
     let handle_event = move |app: &tauri::AppHandle, event: tauri::RunEvent| {
         if let tauri::RunEvent::ExitRequested { api, .. } = event {
             if !shutdown_done.load(Ordering::SeqCst) {
@@ -215,4 +215,5 @@ pub fn run() {
     } else {
         app.run(handle_event);
     }
+    Ok(())
 }

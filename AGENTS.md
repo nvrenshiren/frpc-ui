@@ -16,7 +16,15 @@
 
 ## 开发与验证
 
-在 `apps/desktop` 执行 `npm ci`、`npm test`、`npm run build`；使用 `npm run desktop:dev` 启动真实桌面应用，`npm run desktop:build:exe` 构建 Windows EXE。在根目录执行 `cargo fmt --all -- --check`、`cargo test --workspace` 和 `cargo clippy --workspace --all-targets -- -D warnings`。涉及网络下载或真实进程的忽略测试按验证文档显式执行。
+在 `apps/desktop` 执行 `npm ci`、`npm test`、`npm run build`；使用 `npm run desktop:dev` 启动真实桌面应用，`npm run desktop:build:exe` 构建 Windows EXE。
+
+### Rust 约定
+
+- Workspace edition 为 2021；每个 package 从 workspace 继承 `edition` 和 `rust-version`。当前 MSRV 是 Rust 1.90.0：Cargo.lock 中依赖声明的最高 `rust-version` 为 1.90，且 `cargo +1.90.0 check --locked --workspace` 已通过。调整依赖或 Rust 版本时重新核对锁文件中依赖的 MSRV，并用该最低工具链运行 workspace check/test；不得仅按本机 stable 版本推断 MSRV。
+- 生产 Rust 逻辑留在 `frpc-core`、`frpc-versions`；`src-tauri` 组合领域 crate 并承载系统集成。按领域职责组织模块；`frpc-core/src/advanced.rs` 是 façade，校验位于 `advanced/validation.rs`，凭据剥离、脱敏值和显式 Token 文件读取位于 `advanced/secrets.rs`。只有职责、复用或宿主边界明确时才拆模块/ crate。
+- 新增领域接口使用 crate 自有错误类型：`frpc_core::CoreError` / `CoreResult<T>` 与 `frpc_versions::VersionsError` / `VersionsResult<T>`，对应当前公开的 `try_*` 方法。它们保留原 `anyhow` 上下文作为兼容桥；新增错误语义时优先增加可匹配的具体变体。已有不带 `try_` 的 API 和 `frpc_versions::Result<T>` 保留原 `anyhow` 签名以避免公共 API 断裂；新调用应使用 `try_*`。内部实现可继续使用 `anyhow` 添加操作上下文。
+- Tauri IPC 返回 `String` 错误；仅在 Tauri `commands`/`Service` 适配边界将 crate 错误映射为字符串，不在领域 crate 内降为字符串。`BatchResult.message` 是进程操作的 UI 结果 DTO，不替代库错误类型。
+- 遵循 Rustfmt 默认格式，不增加项目私有格式配置。根目录本地门禁与 CI 使用相同 stable 命令：`cargo +stable fmt --all -- --check`、`cargo +stable test --locked --workspace`、`cargo +stable check --locked --workspace`、`cargo +stable clippy --locked --workspace --all-targets -- -D warnings`。CI 的 Windows job 对整个 workspace 执行 test/check/clippy，随后构建 release；Linux job 对两个可移植领域 crate 执行 test 与 clippy。Rust 版本基线另用 `cargo +1.90.0 check --locked --workspace` 和 `cargo +1.90.0 test --locked --workspace` 验证。涉及网络下载或真实进程的忽略测试按验证文档显式执行。
 
 业务逻辑尽量保留在独立 Rust crate；Tauri 命令负责系统集成和参数桥接，前端不推断进程真实状态。原子 JSON 存储是初版本地应用的选择；配置和凭据保存在应用数据目录，日志有界且脱敏。不要将凭据写入文档或演示数据，不要让未知配置静默丢失。运行中的“重启并应用”会中断已有会话。
 

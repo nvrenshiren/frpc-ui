@@ -18,6 +18,21 @@ use tokio::{
 const LOG_LIMIT: usize = 1000;
 const LINE_LIMIT: usize = 4096;
 
+struct RuntimeConfigFile(Option<tempfile::NamedTempFile>);
+
+impl Drop for RuntimeConfigFile {
+    fn drop(&mut self) {
+        let Some(file) = self.0.take() else {
+            return;
+        };
+        if let Ok(handle) = tokio::runtime::Handle::try_current() {
+            handle.spawn_blocking(move || drop(file));
+        } else {
+            drop(file);
+        }
+    }
+}
+
 fn command(binary: &std::path::Path) -> Command {
     let mut command = Command::new(binary);
     command
@@ -96,12 +111,15 @@ async fn start(
     }
     let binary = binary.context("Install and select an frpc version first")?;
     ensure!(binary.is_absolute(), "frpc binary path must be absolute");
-    let binary = binary
-        .canonicalize()
+    let binary = tokio::fs::canonicalize(&binary)
+        .await
         .context("Cannot find the selected frpc binary")?;
-    ensure!(binary.is_file(), "frpc binary path must be a file");
+    ensure!(
+        tokio::fs::metadata(&binary).await?.is_file(),
+        "frpc binary path must be a file"
+    );
     let generated = config::render_runtime_toml(&profile, &tunnels)?;
-    let file_tokens = crate::advanced::file_source_tokens(&profile)?;
+    let file_tokens = crate::advanced::file_source_tokens(&profile).await?;
     let secrets: Vec<_> = std::iter::once(profile.auth_token.clone())
         .chain(crate::advanced::sensitive_values(&profile.advanced))
         .chain(
@@ -113,13 +131,19 @@ async fn start(
         .chain(tunnels.iter().map(|t| t.secret_key.clone()))
         .filter(|s| !s.is_empty())
         .collect();
-    let mut file = tempfile::Builder::new()
-        .prefix("frpc-ui-")
-        .suffix(".toml")
-        .tempfile_in(&manager.inner.runtime_dir)?;
-    file.write_all(generated.as_bytes())?;
-    file.flush()?;
+    let runtime_dir = manager.inner.runtime_dir.clone();
+    let file = tokio::task::spawn_blocking(move || {
+        let mut file = tempfile::Builder::new()
+            .prefix("frpc-ui-")
+            .suffix(".toml")
+            .tempfile_in(runtime_dir)?;
+        file.write_all(generated.as_bytes())?;
+        file.flush()?;
+        Ok::<_, std::io::Error>(file)
+    })
+    .await??;
     let config_path = file.path().to_path_buf();
+    let file = RuntimeConfigFile(Some(file));
     let mut verify = command(&binary);
     verify.arg("verify").arg("-c").arg(&config_path);
     let mut child = verify.spawn().context("Cannot execute frpc verify")?;

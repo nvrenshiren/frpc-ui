@@ -10,6 +10,19 @@ use crate::service::{BatchExecution, DesktopSnapshot, Service};
 type Backend<'a> = State<'a, Arc<Service>>;
 type Response = Result<DesktopSnapshot, String>;
 
+async fn run_blocking<T, E>(
+    operation: impl FnOnce() -> std::result::Result<T, E> + Send + 'static,
+) -> Result<T, String>
+where
+    T: Send + 'static,
+    E: std::fmt::Display + Send + 'static,
+{
+    tokio::task::spawn_blocking(operation)
+        .await
+        .map_err(|error| format!("后台 Rust 操作失败：{error}"))?
+        .map_err(|error| error.to_string())
+}
+
 #[tauri::command]
 pub fn get_snapshot(state: Backend<'_>) -> DesktopSnapshot {
     let snapshot = state.snapshot();
@@ -22,50 +35,40 @@ pub fn get_snapshot(state: Backend<'_>) -> DesktopSnapshot {
 #[tauri::command]
 pub async fn save_profile(state: Backend<'_>, profile: Profile) -> Response {
     let _guard = state.mutation.lock().await;
-    state
-        .core
-        .save_profile(profile)
-        .map_err(|error| error.to_string())?;
+    let core = Arc::clone(&state.core);
+    run_blocking(move || core.try_save_profile(profile)).await?;
     Ok(state.snapshot())
 }
 
 #[tauri::command]
 pub async fn delete_profile(state: Backend<'_>, id: String) -> Response {
     let _guard = state.mutation.lock().await;
-    state
-        .core
-        .delete_profiles(vec![id])
-        .map_err(|error| error.to_string())?;
+    let core = Arc::clone(&state.core);
+    run_blocking(move || core.try_delete_profiles(vec![id])).await?;
     Ok(state.snapshot())
 }
 
 #[tauri::command]
 pub async fn save_tunnel(state: Backend<'_>, tunnel: Tunnel) -> Response {
     let _guard = state.mutation.lock().await;
-    state
-        .core
-        .save_tunnel(tunnel)
-        .map_err(|error| error.to_string())?;
+    let core = Arc::clone(&state.core);
+    run_blocking(move || core.try_save_tunnel(tunnel)).await?;
     Ok(state.snapshot())
 }
 
 #[tauri::command]
 pub async fn delete_tunnels(state: Backend<'_>, ids: Vec<String>) -> Response {
     let _guard = state.mutation.lock().await;
-    state
-        .core
-        .delete_tunnels(ids)
-        .map_err(|error| error.to_string())?;
+    let core = Arc::clone(&state.core);
+    run_blocking(move || core.try_delete_tunnels(ids)).await?;
     Ok(state.snapshot())
 }
 
 #[tauri::command]
 pub async fn toggle_tunnels(state: Backend<'_>, ids: Vec<String>, enabled: bool) -> Response {
     let _guard = state.mutation.lock().await;
-    state
-        .core
-        .toggle_tunnels(ids, enabled)
-        .map_err(|error| error.to_string())?;
+    let core = Arc::clone(&state.core);
+    run_blocking(move || core.try_toggle_tunnels(ids, enabled)).await?;
     Ok(state.snapshot())
 }
 
@@ -76,10 +79,8 @@ pub async fn import_configuration(
     tunnels: Vec<Tunnel>,
 ) -> Response {
     let _guard = state.mutation.lock().await;
-    state
-        .core
-        .import_configuration(profile, tunnels)
-        .map_err(|error| error.to_string())?;
+    let core = Arc::clone(&state.core);
+    run_blocking(move || core.try_import_configuration(profile, tunnels)).await?;
     Ok(state.snapshot())
 }
 
@@ -95,32 +96,37 @@ pub async fn run_profiles(
 #[tauri::command]
 pub async fn set_settings(app: AppHandle, state: Backend<'_>, settings: AppSettings) -> Response {
     let _guard = state.settings.lock().await;
-    let autostart = app.autolaunch();
-    let registered = autostart.is_enabled().map_err(|error| error.to_string())?;
-    let changed = registered != settings.auto_start;
-    if changed {
-        if settings.auto_start {
-            autostart.enable()
-        } else {
-            autostart.disable()
-        }
-        .map_err(|error| format!("无法更新开机启动：{error}"))?;
-    }
-    if let Err(error) = state.core.set_settings(settings) {
+    let core = Arc::clone(&state.core);
+    run_blocking(move || {
+        let autostart = app.autolaunch();
+        let registered = autostart.is_enabled().map_err(|error| error.to_string())?;
+        let changed = registered != settings.auto_start;
         if changed {
-            let rollback = if registered {
+            let update = if settings.auto_start {
                 autostart.enable()
             } else {
                 autostart.disable()
             };
-            if let Err(rollback_error) = rollback {
-                return Err(format!(
-                    "设置保存失败：{error}；开机启动恢复失败：{rollback_error}"
-                ));
-            }
+            update.map_err(|error| format!("无法更新开机启动：{error}"))?;
         }
-        return Err(error.to_string());
-    }
+        if let Err(error) = core.try_set_settings(settings) {
+            if changed {
+                let rollback = if registered {
+                    autostart.enable()
+                } else {
+                    autostart.disable()
+                };
+                if let Err(rollback_error) = rollback {
+                    return Err(format!(
+                        "设置保存失败：{error}；开机启动恢复失败：{rollback_error}"
+                    ));
+                }
+            }
+            return Err(error.to_string());
+        }
+        Ok(())
+    })
+    .await?;
     // This is a saved preference; close-to-tray and silent launch read it at the point of use.
     Ok(state.snapshot())
 }
@@ -129,7 +135,7 @@ pub async fn set_settings(app: AppHandle, state: Backend<'_>, settings: AppSetti
 pub async fn refresh_versions(state: Backend<'_>) -> Response {
     state
         .versions
-        .refresh()
+        .try_refresh()
         .await
         .map_err(|error| error.to_string())?;
     Ok(state.snapshot())
@@ -139,7 +145,7 @@ pub async fn refresh_versions(state: Backend<'_>) -> Response {
 pub async fn install_version(state: Backend<'_>, id: String) -> Response {
     state
         .versions
-        .install(&id)
+        .try_install(&id)
         .await
         .map_err(|error| error.to_string())?;
     Ok(state.snapshot())
@@ -157,7 +163,7 @@ pub async fn remove_version(state: Backend<'_>, id: String) -> Response {
         .collect::<Vec<_>>();
     state
         .versions
-        .remove(&id, &assigned)
+        .try_remove(&id, &assigned)
         .await
         .map_err(|error| error.to_string())?;
     Ok(state.snapshot())
@@ -167,7 +173,7 @@ pub async fn remove_version(state: Backend<'_>, id: String) -> Response {
 pub async fn import_version(state: Backend<'_>, path: String) -> Response {
     state
         .versions
-        .import(path)
+        .try_import(path)
         .await
         .map_err(|error| error.to_string())?;
     Ok(state.snapshot())
@@ -195,9 +201,9 @@ fn legacy_directory(path: String) -> Result<PathBuf, String> {
 }
 
 async fn legacy_preview(path: String, version: String) -> Result<MigrationPreview, String> {
-    let directory = legacy_directory(path)?;
     tokio::task::spawn_blocking(move || {
-        let mut preview = frpc_versions::migration::preview_legacy(directory, &version)
+        let directory = legacy_directory(path)?;
+        let mut preview = frpc_versions::migration::try_preview_legacy(directory, &version)
             .map_err(|error| error.to_string())?;
         if preview.can_import {
             let profiles: Vec<Profile> = preview
@@ -214,7 +220,7 @@ async fn legacy_preview(path: String, version: String) -> Result<MigrationPrevie
                 .map(serde_json::from_value)
                 .collect::<Result<_, _>>()
                 .map_err(|_| "旧隧道配置无法转换为受支持的格式".to_string())?;
-            if let Err(error) = frpc_core::config::validate_configuration(&profiles, &tunnels) {
+            if let Err(error) = frpc_core::config::try_validate_configuration(&profiles, &tunnels) {
                 preview.issues.push(error.to_string());
                 preview.can_import = false;
             }
@@ -233,7 +239,7 @@ pub async fn preview_legacy(
 ) -> Result<MigrationPreview, String> {
     state
         .versions
-        .binary_path(&version)
+        .try_binary_path(&version)
         .await
         .map_err(|error| error.to_string())?;
     legacy_preview(path, version).await
@@ -249,7 +255,7 @@ pub async fn import_legacy(
     let _guard = state.mutation.lock().await;
     state
         .versions
-        .binary_path(&version)
+        .try_binary_path(&version)
         .await
         .map_err(|error| error.to_string())?;
     let preview = legacy_preview(path, version).await?;
@@ -259,17 +265,20 @@ pub async fn import_legacy(
     if !preview.can_import || preview.profiles.len() != 1 {
         return Err("旧配置存在未支持的字段或无效数据，请先解决预览中的问题".into());
     }
-    let profile: Profile = serde_json::from_value(preview.profiles.into_iter().next().unwrap())
-        .map_err(|_| "旧连接转换失败".to_string())?;
+    let profile_value = preview
+        .profiles
+        .into_iter()
+        .next()
+        .ok_or_else(|| "旧连接数据为空，请重新预览".to_string())?;
+    let profile: Profile =
+        serde_json::from_value(profile_value).map_err(|_| "旧连接转换失败".to_string())?;
     let tunnels: Vec<Tunnel> = preview
         .tunnels
         .into_iter()
         .map(serde_json::from_value)
         .collect::<Result<_, _>>()
         .map_err(|_| "旧隧道转换失败".to_string())?;
-    state
-        .core
-        .import_configuration(profile, tunnels)
-        .map_err(|error| error.to_string())?;
+    let core = Arc::clone(&state.core);
+    run_blocking(move || core.try_import_configuration(profile, tunnels)).await?;
     Ok(state.snapshot())
 }

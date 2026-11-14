@@ -23,6 +23,27 @@ flowchart TB
 | Tauri `Service` / commands | 领域组合、批量结果、配置/版本关联锁、迁移领域验证、自动启动插件与系统行为 |
 | React `desktop.ts` / `store.ts` | typed invoke、宿主识别、串行保存、权威快照接收、过期响应保护、状态轮询 |
 
+### Rust 模块与错误边界
+
+Rust workspace 使用 edition 2021，MSRV 声明为 1.90。Cargo.lock 中依赖声明的最高 `rust-version` 是 1.90，并已用 Rust 1.90.0 成功执行 workspace `cargo check --locked`；可复现命令见 [验证记录](verification.md)。
+
+`frpc-core::advanced` 作为稳定模块入口：`advanced/validation.rs` 检查 profile/tunnel 高级字段及 schema 条件，`advanced/secrets.rs` 处理导出副本凭据剥离、日志敏感值提取和显式 Token 文件读取。原有 `frpc_core::advanced::{validate_profile_advanced, validate_tunnel_advanced, without_credentials, sensitive_values}` 路径保持可用。
+
+新增领域调用使用 `frpc-core` 的 `try_*` API（`CoreError` / `CoreResult<T>`) 和 `frpc-versions` 的 `try_*` API（`VersionsError` / `VersionsResult<T>`）。当前错误类型包装原有 `anyhow::Error`，保留其上下文，同时让调用方识别错误所属 crate；这是旧领域错误尚未细分前的兼容边界，不代表内部所有函数已迁移到具体错误枚举。已有不带 `try_` 的 API 及 `frpc-versions::Result<T>` 保留原 anyhow 签名，避免破坏既有调用方；Tauri `commands`/`Service` 使用 typed API 并在 IPC 边界映射成 `String`。领域 crate 不依赖或返回 Tauri 类型。
+
+| crate | 新调用使用的 typed 入口 |
+| --- | --- |
+| `frpc-core` | `Manager::{try_new, try_save_profile, try_delete_profiles, try_save_tunnel, try_delete_tunnels, try_toggle_tunnels, try_import_configuration, try_set_settings}`；`config::{try_validate_profile, try_validate_tunnel, try_validate_configuration, try_validate_version_capabilities, try_render_profile_toml, try_parse_toml}`；`advanced::{try_validate_profile_advanced, try_validate_tunnel_advanced}` |
+| `frpc-versions` | `VersionManager::{try_new, try_refresh, try_install, try_import, try_remove, try_binary_path}`；`migration::try_preview_legacy` |
+
+### 锁中毒与异步 I/O
+
+`frpc-core::lock` 和 `VersionManager::state` 对 `std::sync::Mutex` 中毒都采用**取回 poison 内部 guard 并继续运行**的策略（`PoisonError::into_inner`）；不会清空、重建或验证内存状态。`frpc-core::Manager::update` 在持有状态锁时复制并验证候选状态、原子写文件，再发布新状态；版本安装/删除先完成目录 rename，再更新内存目录。这个顺序降低了持久化失败时出现半提交状态的风险。进程状态仍会直接更新内存；若 panic 恰好发生在这类临界区，恢复锁不等于自动修复，UI 可能继续看到当时的部分内存状态，需要诊断原 panic。Tauri 保存命令将该同步文件操作移到 blocking pool，但其它同步 API 调用方也必须避免从 async executor 直接调用并留意快照等待。`tokio::sync::Mutex` 不提供 poison 标志；Service 的 mutation/settings 锁用于串行化操作，按 Tokio 锁语义释放后继续。任何 `std::sync::MutexGuard` 都不跨 `.await`。
+
+异步调用里的同步 I/O 已按操作交给运行时：Tauri 保存配置/设置和开机启动系统 API 用 `spawn_blocking` 执行；配置/设置还包含同步领域校验与原子 JSON 写入。开机启动变更、状态持久化及失败回滚位于同一个 blocking 操作中，避免 IPC future 在两步之间取消。core 启动把运行 TOML 文件创建和写入放入 blocking pool，Token 文件与二进制路径元数据使用 `tokio::fs`，运行 TOML 临时文件退出清理由 blocking pool 执行。frpc 子进程通过 `tokio::process` 启停并以 Tokio I/O 读取输出。版本目录暂存创建、清单写入/安装 rename 和删除 rename 事务用 `spawn_blocking`，删除 rename 和 catalog 内存更新在同一 blocking 操作内完成；阶段目录异常清理由 blocking pool 执行，安装进度由 guard 清除。下载用 reqwest async，复制/元数据/散列使用 Tokio 文件 I/O，归档解压在 `spawn_blocking`。旧数据库目录校验及预览读取整体在 `spawn_blocking` 中运行。`Manager::new` / `VersionManager::new` 仍同步读取并校验本机状态，只在生产 Tauri setup 中、向 IPC 注册 Service 之前调用，不在 async task 内调用。
+
+生产 Rust 路径没有对 IPC/磁盘/网络/子进程输入使用 `unwrap()` / `unreachable!()`。唯一保留的 `expect` 在 `advanced::without_credentials`：根 `Value` 由 `Value::Object` 构造，`scrub` 只修改嵌套值并不改变根变体，代码注释写明这个内部不变量。其余 `unwrap()` 位于 `#[cfg(test)]` 测试辅助代码。旧迁移记录计数、`customDomains` / locations 数组类型及 IPC 预览结果都改为可返回错误。
+
 ## 配置与存储决定
 
 早期本机单用户管理采用 `schemaVersion: 1` JSON，而非数据库或 ORM。当前主要操作是小规模连接/隧道集合的完整一致性保存，不需要关系查询或多进程写入；JSON 便于检查、备份、迁移，也避免引入额外运行依赖。跨实体校验集中在领域层，后续出现大量历史记录、复杂查询或多进程需求再重新评估数据库。
