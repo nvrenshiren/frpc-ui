@@ -35,7 +35,7 @@ web
 - 支持审核过的 frpc 0.52–0.71 现代 TOML 配置，逐版本清单驱动编辑器显示；新的 minor/major 先审核能力，同 minor 补丁继承清单并由实际二进制 verify。连接/隧道常用高级字段、八种协议与九种 provider 插件已贯通交换与迁移。未知字段明确拒绝；旧 NeDB 只读预览和指纹校验后新增导入。
 - 官方默认值直接显示在输入/选择控件中，按精确补丁与当前配置联动；未修改的高级值保持省略。已有覆盖保留并可恢复默认，环境/必填值不编造。版本清单同时提供默认值和来源。
 - 工作台只显示服务器连接卡片；隧道列表集中到隧道页。
-- 桌面导航使用 COHESION 品牌侧栏，中等窗口收为图标栏，窄窗口改为横向导航；主题 token 适配保存在 `apps/desktop/src/index.css`，Logo 裁切副本保存在 `apps/desktop/src/assets/`。
+- 桌面导航使用 COHESION 品牌侧栏（1080px 以下收为图标栏，700px 以下改为横向导航）；顶部状态条仅展示快照中的服务端确认连接数量。主题 token 与正式 `canvasAtmosphere` 氛围适配保存在 `apps/desktop/src/index.css`，Logo 裁切副本保存在 `apps/desktop/src/assets/`。
 - macOS/Linux 打包、旧 INI、系统服务、应用自动更新、exec TokenSource、外部 includes/Store/VirtualNet 尚未实现。HTTPS 插件实际 TLS 和全协议流量联调仍待扩展。
 
 ## Evidence on Hand

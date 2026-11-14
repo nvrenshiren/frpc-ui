@@ -1,12 +1,14 @@
 ---
 name: frpc-ui
-description: "多连接管理的高密度桌面工作台"
+description: "逐科高密度网络控制台"
 colors:
   primary-dark: "#519f77"
   primary-hover-dark: "#77b292"
+  primary-active-dark: "#51896c"
   primary-foreground-dark: "#141414"
   primary-light: "#167c4b"
   primary-hover-light: "#2d8558"
+  primary-active-light: "#0b5735"
   action-primary-light: "#167c4b"
   action-primary-hover-light: "#2d8558"
   success-text-light: "#368011"
@@ -36,6 +38,8 @@ colors:
   danger-text-light: "#ca3d3f"
   action-danger: "#d44143"
   action-danger-hover: "#bb5856"
+  action-danger-active-dark: "#ad393a"
+  action-danger-active-light: "#d9363e"
   action-danger-light: "#d54042"
   action-danger-hover-light: "#bb5856"
   accent-dark: "#1f2c25"
@@ -93,12 +97,12 @@ typography:
     lineHeight: 1.5
   label:
     fontFamily: "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Microsoft YaHei UI\", \"Noto Sans\", sans-serif"
-    fontSize: "13px"
+    fontSize: "14px"
     fontWeight: 500
     lineHeight: 1.5
   label-compact:
     fontFamily: "-apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Microsoft YaHei UI\", \"Noto Sans\", sans-serif"
-    fontSize: "11px"
+    fontSize: "12px"
     fontWeight: 400
     lineHeight: 1.5
   mono:
@@ -121,8 +125,9 @@ rounded:
   notice: "6px"
   md: "8px"
   root: "10px"
-  card: "12px"
+  card: "14px"
   dialog: "14px"
+  pill: "999px"
 spacing:
   "4": "4px"
   "6": "6px"
@@ -138,21 +143,23 @@ components:
     textColor: "{colors.primary-foreground-dark}"
     typography: "{typography.label}"
     rounded: "{rounded.md}"
-    padding: "0 13px"
+    padding: "0 16px"
     height: "36px"
   button-primary-hover:
     backgroundColor: "{colors.primary-hover-dark}"
+  button-primary-active:
+    backgroundColor: "{colors.primary-active-dark}"
   button-primary-light:
     backgroundColor: "{colors.action-primary-light}"
     textColor: "{colors.primary-foreground-light}"
   button-primary-light-hover:
     backgroundColor: "{colors.action-primary-hover-light}"
   button-outline:
-    backgroundColor: "transparent"
+    backgroundColor: "{colors.background-dark}"
     textColor: "{colors.foreground-dark}"
     typography: "{typography.label}"
     rounded: "{rounded.md}"
-    padding: "0 13px"
+    padding: "0 16px"
     height: "36px"
   button-outline-hover:
     backgroundColor: "{colors.secondary-dark}"
@@ -161,7 +168,7 @@ components:
     textColor: "{colors.foreground-dark}"
     typography: "{typography.label}"
     rounded: "{rounded.md}"
-    padding: "0 13px"
+    padding: "0 16px"
     height: "36px"
   button-ghost-hover:
     backgroundColor: "{colors.secondary-dark}"
@@ -170,31 +177,37 @@ components:
     textColor: "{colors.primary-foreground-light}"
     typography: "{typography.label}"
     rounded: "{rounded.md}"
-    padding: "0 13px"
+    padding: "0 16px"
     height: "36px"
   button-danger-hover:
     backgroundColor: "{colors.action-danger-hover}"
+  button-danger-active:
+    backgroundColor: "{colors.action-danger-active-dark}"
   button-danger-light:
     backgroundColor: "{colors.action-danger-light}"
     textColor: "{colors.primary-foreground-light}"
   button-danger-hover-light:
     backgroundColor: "{colors.action-danger-hover-light}"
   button-small:
-    height: "30px"
-    padding: "0 9px"
+    height: "32px"
+    padding: "0 12px"
     size: "12px"
   button-icon:
-    height: "30px"
-    width: "30px"
+    height: "36px"
+    width: "36px"
+    padding: "0"
+  button-icon-small:
+    height: "32px"
+    width: "32px"
     padding: "0"
   input-field:
     backgroundColor: "{colors.secondary-dark}"
     textColor: "{colors.foreground-dark}"
     rounded: "{rounded.md}"
-    padding: "0 11px"
+    padding: "0 12px"
     height: "36px"
     width: "100%"
-    size: "13px"
+    size: "14px"
   input-field-light:
     backgroundColor: "{colors.secondary-light}"
     textColor: "{colors.foreground-light}"
@@ -202,9 +215,9 @@ components:
     backgroundColor: "{colors.secondary-dark}"
     textColor: "{colors.foreground-dark}"
     rounded: "{rounded.md}"
-    padding: "0 10px 0 11px"
+    padding: "0 10px 0 12px"
     height: "36px"
-    size: "13px"
+    size: "14px"
   select-panel:
     backgroundColor: "{colors.surface-dark}"
     textColor: "{colors.foreground-dark}"
@@ -242,8 +255,8 @@ components:
     backgroundColor: "transparent"
     textColor: "{colors.muted-foreground-dark}"
     typography: "{typography.label-compact}"
-    rounded: "{rounded.sm}"
-    padding: "0 6px"
+    rounded: "{rounded.pill}"
+    padding: "2px 8px"
   badge-success:
     backgroundColor: "{colors.success-soft-dark}"
     textColor: "{colors.success-text-dark}"
@@ -265,7 +278,7 @@ components:
   connection-record:
     backgroundColor: "{colors.surface-dark}"
     textColor: "{colors.foreground-dark}"
-    padding: "15px 17px 10px"
+    padding: "16px"
     rounded: "{rounded.card}"
   connection-record-selected:
     backgroundColor: "{colors.accent-dark}"
@@ -279,6 +292,7 @@ components:
     rounded: "{rounded.dialog}"
     width: "min(640px, calc(100vw - 32px))"
   button-outline-light:
+    backgroundColor: "{colors.background-light}"
     textColor: "{colors.foreground-light}"
   button-outline-light-hover:
     backgroundColor: "{colors.secondary-light}"
@@ -307,13 +321,13 @@ components:
 
 ## Overview
 
-**Creative North Star: "连接索引工作台"**
+**Creative North Star: "逐科网络控制台 / Signal Operations Desk"**
 
-连接索引工作台把连接、隧道和运行反馈组织成可扫描、可定位、可操作的记录。界面现按 `D:\Work\dawi\design` 的 COHESION 2.0.0 设计系统实施，采用 shadcn/ui New York / Neutral 基础、COHESION 品牌主题和 Radix 交互；信息密度由侧栏导航、稳定列与记录边界承载。
+将 frpc 管理体验重新组织成精密、可信且易扫描的网络控制台。路线取自 `ui-ux-pro-max` 针对 network admin console 的 Real-Time / Operations Landing、Glassmorphism 和高密度规则，并按桌面运维任务裁剪：保留数据快照与操作工作区，不使用营销式叙事、滚动动画、虚构图表或非官方奢华配色。采用 `D:\Work\dawi\design` 的 COHESION 2.0.0、shadcn/ui New York / Neutral 基础和 Radix 交互，variance 7、motion 3、density 8。
 
-系统的气质是克制、清晰和连续。页面使用 COHESION 派生的中性色表面与绿色主操作；成功、警告、错误和信息状态继续使用各自语义色并保留文字提示。技术信息使用系统等宽字体帮助逐列比较。
+系统的气质是科技、克制和可靠。页面只使用 COHESION 派生的中性色表面、品牌绿色和语义状态色；状态始终带文字，不以颜色单独表达。画布光晕与细网格取自设计系统正式 `canvasAtmosphere`，选择性玻璃质感只用于侧栏与顶部导航；Card、表格和表单保持清晰不透明的阅读表面。地址、版本、计数与日志使用系统等宽字体。
 
-当前主题由 COHESION 的 `theme/shadcn-tokens.json` 派生；应用适配层与控件状态集中于 `apps/desktop/src/index.css`、`apps/desktop/src/components/ui.tsx` 与 `apps/desktop/src/components/select.tsx`。正式 COHESION 标识来自设计系统的 `原色.png` 与 `白色.png`，裁切副本放在 `apps/desktop/src/assets/`。桌面使用持久侧栏，中等宽度收为图标栏，窄窗口改为横向导航。原型保留用于设计追溯。真实桌面状态来自 Rust 后端，浏览器演示反馈不能作为运行验证。
+当前主题由 COHESION 的 `theme/shadcn-tokens.json` 派生；适配与共享组件状态集中于 `apps/desktop/src/index.css`、`apps/desktop/src/components/ui.tsx` 与 `apps/desktop/src/components/select.tsx`。正式 COHESION 标识来自设计系统的 `原色.png` 与 `白色.png`，裁切副本位于 `apps/desktop/src/assets/`。桌面使用品牌侧栏和即时服务器确认状态；1080px 以下收为图标栏，700px 以下切换横向导航。原型保留用于设计追溯。真实桌面状态来自 Rust 快照，浏览器演示不能作为进程运行验证。
 
 后续 UI 设计与修改应配合 `ui-ux-pro-max`：按具体产品场景、React 技术栈及响应式／无障碍问题检索，并先判断结果是否适用于本桌面运维工具。该技能提供辅助审视，不作为第二套品牌或 token 来源；颜色、组件基础和品牌表达仍以 COHESION 设计系统及本项目约定为准。没有匹配建议时明确使用通用 UX 原则，不将不相关搜索结果写成项目规范。
 
@@ -322,8 +336,9 @@ components:
 **Key Characteristics:**
 
 - COHESION 深色与浅色主题共用同一套语义角色。
-- 紧凑控件、稳定列对齐和低装饰度支持连续维护。
-- 工作台独立服务器卡片与隧道页索引保留明确对象归属。
+- COHESION 品牌画布、局部玻璃导航与精细光线边界形成高级科技质感。
+- 高密度控件、稳定列与局部表格滚动支持连续维护。
+- 工作台快照、服务器节点卡片与独立隧道登记表保留明确对象归属。
 - 状态同时使用颜色与文字；键盘焦点清楚可见。
 
 ## Colors
@@ -370,9 +385,9 @@ Sidecar 的 tonal ramps 是由当前颜色衍生的预览色阶；它们不是�
 
 ## Layout
 
-桌面界面采用 248px 持久侧栏与独立内容画布；内容区最大宽度 1720px，宽度不足时侧栏收为 74px 图标栏，窄窗口切换为横向导航。标题、工具和工作区留白依据任务调整，控件、表头与记录使用更小步骤。实际间距集中在 CSS 的组件规则中，frontmatter 不假定这些值已经是独立 CSS spacing 变量。
+桌面界面采用 248px 持久侧栏与独立内容画布；内容区最大宽度 1760px，1080px 以下侧栏收为 76px 图标轨道，820px 以下使用 74px 图标栏，700px 以下切换横向导航。顶部固定使用轻玻璃层呈现路由位置、本机服务器确认数量与主题/语言/帮助操作。标题、工具和工作区留白依据任务调整，控件、表头与记录使用更小步骤。实际间距集中在 CSS 的组件规则中，frontmatter 不假定这些值已经是独立 CSS spacing 变量。
 
-工作台先以单行概况显示连接总数、运行中、待应用和异常数，全部从当前连接快照直接汇总；下方仍由独立服务器卡片承载名称、地址、版本、传输、进程/登录状态和错误。卡片宽屏四列、中等两列、最窄单列，间距 14px、内边距 16px、圆角 12px，按内容对齐，减少操作区上方的空白；空状态占满网格且不显示零值概况。隧道登记表仅在隧道页显示，搜索、筛选、选择和批量动作紧邻记录。表头和行保持紧凑、稳定。
+画布使用 COHESION 正式 `canvasAtmosphere` 的主题对应光晕和细网格，纹理保持在内容后方，不承担数据或操作意义。工作台以玻璃表面概况条呈现连接总数、运行中、待应用和异常数，均从当前快照汇总；下方按节点目录分组，以独立服务器卡片承载名称、地址、版本、传输、进程/登录状态与错误。卡片宽屏四列、中等两列、最窄单列，使用 COHESION 14px Card 半径、清楚边界和细微状态边缘线。隧道登记表只出现在隧道页，搜索、筛选、选择和批量动作紧邻表格；其他连接/版本/日志使用相同的稳定数据登记表语言和局部水平滚动。
 
 宽视口对齐内容留白，中等视口收窄侧栏并重排连接卡片，820px 以下使用图标栏，700px 以下改为可横向滚动的顶部导航。对话框宽度随视口收缩、内容在自身内部滚动，标题区保持可见。表单通常两列，在 560px 以下折叠为单列；日志消息在窄屏独占下一行。配置交换的字段、说明、预览与操作共享统一的水平边界，不因 fieldset 包裹改变内距。设置正文、迁移预览与列表项保持独立段落间距，长技术值允许断行。
 
@@ -382,27 +397,27 @@ Sidecar 的 tonal ramps 是由当前颜色衍生的预览色阶；它们不是�
 
 ## Elevation & Depth
 
-界面以色调分层为主。工作底、记录表面与次级底色提供结构，细边界保持密集记录可分。对话框的投影与遮罩表示临时编辑层，下拉菜单使用更轻的浮层投影；主按钮悬停光晕、输入焦点环与选中记录内侧标记只反馈动作或状态。具体投影与运动值由 sidecar 扩展层记录。
+界面以色调分层为主，玻璃仅用于导航等应用外壳；信息表面保持易读。工作底、记录表面与次级底色提供结构，细边界保持密集记录可分。对话框的投影和背景模糊表示临时编辑层，下拉菜单使用更轻的浮层层级；主按钮的轻微光晕、输入焦点环与选中记录内侧标记只反馈动作或状态。
 
-连接卡片、表格和设置区域依靠背景色与边界建立层次。投影用于对话框与选择浮层，主按钮悬停仅有轻微反馈；工作台卡片不承担隧道筛选范围选择。
+连接卡片、表格和设置区块依靠实色表面与边界建立层次，并使用 COHESION 的品牌主色做克制的局部高光。悬停反馈使用 160–180ms 短过渡且仅对精确指针启用；不连续闪烁、不滚动编排、不为卡片逐项错峰。减少动态效果时保留静态最终状态并关闭位移、过渡和循环反馈。
 
 ## Shapes
 
-形状沿用 shadcn/ui New York / Neutral 的紧凑圆角语言。基础半径为 10px，输入与按钮为 8px，连接卡片为 12px、编辑弹窗为 14px。服务器卡片有独立边框，登记表行用分隔线连接；状态点为小圆点，协议和角色为紧凑矩形。
+形状沿用 shadcn/ui New York / Neutral 的圆角层级。基础半径为 10px，按钮与输入为 8px，Card（包括连接记录、登记表、设置区块和工作台概况）为 14px，编辑弹窗为 14px。Badge 使用完整胶囊形；协议与角色标签保持 4px 紧凑矩形，复选框保持 4px 圆角。服务器卡片有独立边框，登记表行用分隔线连接；状态点为小圆点。
 
-**The 紧凑圆角 Rule.** 常用按钮、输入和面板共享中等圆角；徽标与复选框更紧，提示区域和对话框采用各自已实现的圆角角色。小标记保持方中带圆，不改成胶囊外观。
+**The 分层形状 Rule.** 按钮和输入使用 control 半径；Card、Badge、选择菜单和小标签各自沿用 COHESION 对应的形状，不把状态 Badge 改成矩形标签，也不把协议和角色标签改成胶囊。
 
 ## Components
 
 ### Buttons
 
-按钮紧凑、语义明确，由 `Button` 的 primary、outline、ghost、danger 变体与 default、sm、icon 尺寸组成。常规边界按钮是默认变体，主按钮承载页面关键动作，ghost 用于记录内辅助动作，danger 用于明确的破坏性确认。
+按钮紧凑、语义明确，由 `Button` 的 primary、outline、ghost、danger 变体与 default、sm、icon、icon-sm 尺寸组成。default 为 36px、sm 为 32px、icon 为 36px、表格专用 icon-sm 为 32px；默认 Button 使用 COHESION 8px control 圆角，卡片边界按钮使用语义 surface。常规边界按钮是默认变体，主按钮承载页面关键动作，ghost 用于记录内辅助动作，danger 用于明确的破坏性确认。
 
-颜色、尺寸与内边距见 frontmatter。悬停加强底色或边界；按下时轻微下移；禁用降低不透明度并停止位移；焦点沿用 COHESION 主色环。图标按钮必须保留对象明确的可访问名称。
+颜色、尺寸与内边距见 frontmatter。悬停、按下分别使用 COHESION hover／active Token；按下时轻微下移；禁用降低不透明度并停止位移；焦点沿用 COHESION 主色环。图标按钮必须保留对象明确的可访问名称。
 
 ### Inputs and selection
 
-`Input` 与受控的 Radix `Select` 共用次级底色、边界和圆角。正式界面的筛选、设置、连接与隧道编辑、配置交换和旧数据迁移复用同一选择组件。悬停加强边界，键盘焦点与展开状态显示主题色边界与柔和环，错误以红色边界和附近的文字说明表达。搜索框给图标预留左侧空间；标签由 Radix Label 关联到可见触发器，帮助和错误通过 aria-describedby 关联。
+`Input` 与受控的 Radix `Select` 共用次级底色、边界、36px 高度与 8px control 圆角。正式界面的筛选、设置、连接与隧道编辑、配置交换和旧数据迁移复用同一选择组件。悬停加强边界，键盘焦点与展开状态显示主题色边界与柔和环，错误以红色边界和附近的文字说明表达。搜索框给图标预留左侧空间；标签由 Radix Label 关联到可见触发器，帮助和错误通过 aria-describedby 关联。
 
 选择菜单由 Radix Portal 呈现，popper 定位随视口避让，可在编辑对话框上方操作。方向键、输入字符定位、Enter 确认与 Escape 关闭使用 Radix 行为；选中项同时显示勾选标记和颜色，禁用项保持不可选。触发器箭头在展开时旋转，菜单依实际弹出方向淡入并轻移，关闭时淡出。空字符串选项通过内部非空值映射保留清空选择语义，无可用项时禁用。
 
@@ -416,7 +431,7 @@ Sidecar 的 tonal ramps 是由当前颜色衍生的预览色阶；它们不是�
 
 ### Chips and status
 
-`Badge` 支持 neutral、success、warning、danger，状态点或加载图标与短文字一起出现。协议与角色标记使用相近的紧凑小矩形，但保持各自语义；状态不可仅靠色点表达。success 和 danger 的文字 token 与操作按钮分开，确保两套主题中的可读性。
+`Badge` 支持 neutral、success、warning、danger，并遵循完整胶囊形。状态点或加载图标与短文字一起出现。协议与角色标记使用独立的紧凑矩形，但保持各自语义；状态不可仅靠色点表达。success 和 danger 的文字 token 与操作按钮分开，确保两套主题中的可读性。
 
 ### Connection records and register
 

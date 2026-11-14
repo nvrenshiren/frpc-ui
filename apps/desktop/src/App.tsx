@@ -210,6 +210,9 @@ export default function App() {
   const failed = store.profiles.filter(
     (p) => p.connection === "failed" || p.process === "failed",
   ).length;
+  const confirmed = store.profiles.filter(
+    (profile) => profile.connection === "confirmed",
+  ).length;
   const newProfile = () => {
     setProfileEdit(
       makeProfile({
@@ -355,6 +358,27 @@ export default function App() {
             <ChevronRight size={14} aria-hidden="true" />
             <span className="topbar-context-current">
               {t(...pageNames[store.page])}
+            </span>
+          </div>
+          <div
+            className={`workspace-signal${failed > 0 ? " is-attention" : confirmed > 0 ? " is-live" : ""}`}
+            aria-label={t(
+              `${confirmed} 个连接已由服务端确认，共 ${store.profiles.length} 个连接。${failed > 0 ? `${failed} 个连接异常。` : ""}`,
+              `${confirmed} of ${store.profiles.length} connections are confirmed by the server.${failed > 0 ? ` ${failed} need attention.` : ""}`,
+            )}
+          >
+            <span className="workspace-signal-indicator" aria-hidden="true" />
+            <span className="workspace-signal-copy">
+              <strong>
+                {failed > 0
+                  ? t("需要关注", "NEEDS ATTENTION")
+                  : t("FRPC 状态", "FRPC STATE")}
+              </strong>
+              <small>{t("服务端确认", "SERVER CONFIRMED")}</small>
+            </span>
+            <span className="workspace-signal-count mono">
+              {String(confirmed).padStart(2, "0")}
+              <span>/ {String(store.profiles.length).padStart(2, "0")}</span>
             </span>
           </div>
           <div className="topbar-tools">
@@ -630,9 +654,17 @@ function ConnectionOverview() {
   return (
     <section className="overview-summary" aria-labelledby="overview-summary-heading">
       <div className="overview-summary-heading">
-        <h2 id="overview-summary-heading">
-          {t("连接概况", "Connection overview")}
-        </h2>
+        <div>
+          <span className="section-kicker">{t("实时快照", "LIVE SNAPSHOT")}</span>
+          <h2 id="overview-summary-heading">
+            {t("连接概况", "Connection overview")}
+          </h2>
+        </div>
+        <span className="overview-summary-caption">
+          {desktopHost
+            ? t("基于本机状态", "LOCAL RUNTIME")
+            : t("演示数据", "SAMPLE DATA")}
+        </span>
       </div>
       <div className="overview-summary-items">
         {metrics.map(({ label, value, icon: Icon, tone }) => (
@@ -654,24 +686,34 @@ function ConnectionCards({ onEdit }: { onEdit: (profile: Profile) => void }) {
   const { t } = useI18n();
   const { busy, execute } = useBatchAction();
   return (
-    <div className="connection-plates" aria-label={t("服务器连接", "Server connections")}>
-      {store.profiles.length === 0 && (
-        <div className="empty-state">
-          <p>
-            {t(
-              "还没有连接。先在版本库安装或导入 frpc，再添加服务器连接。",
-              "No connections yet. Install or import frpc in Versions, then add a server connection.",
-            )}
-          </p>
-          <Button onClick={() => store.setPage("versions")}>
-            {t("打开版本库", "Open versions")}
-          </Button>
+    <section className="connection-section" aria-labelledby="connection-section-heading">
+      <div className="connection-section-heading">
+        <div>
+          <span className="section-kicker">{t("FRPC / 节点目录", "FRPC / ENDPOINTS")}</span>
+          <h2 id="connection-section-heading">{t("服务器节点", "Server nodes")}</h2>
         </div>
-      )}
-      {store.profiles.map((profile) => (
+        <Badge>{t(`${store.profiles.length} 个连接`, `${store.profiles.length} connections`)}</Badge>
+      </div>
+      <div className="connection-plates" aria-label={t("服务器连接", "Server connections")}>
+        {store.profiles.length === 0 && (
+          <div className="empty-state">
+            <p>
+              {t(
+                "还没有连接。先在版本库安装或导入 frpc，再添加服务器连接。",
+                "No connections yet. Install or import frpc in Versions, then add a server connection.",
+              )}
+            </p>
+            <Button onClick={() => store.setPage("versions")}>
+              {t("打开版本库", "Open versions")}
+            </Button>
+          </div>
+        )}
+        {store.profiles.map((profile) => (
         <article
           key={profile.id}
           className="connection-plate"
+          data-process={profile.process}
+          data-connection={profile.connection}
           aria-label={profile.name}
         >
           <div className="plate-top">
@@ -745,8 +787,9 @@ function ConnectionCards({ onEdit }: { onEdit: (profile: Profile) => void }) {
             </div>
           </div>
         </article>
-      ))}
-    </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -902,7 +945,7 @@ function TunnelRegister({
               {t("删除", "Delete")}
             </Button>
             <Button
-              size="icon"
+              size="icon-sm"
               variant="ghost"
               aria-label={t("取消选择", "Clear selection")}
               onClick={() => setSelected([])}
@@ -1059,7 +1102,7 @@ function TunnelRegister({
                   <td className="align-right">
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="icon-sm"
                       aria-label={t(
                         `编辑隧道 ${tunnel.name}`,
                         `Edit tunnel ${tunnel.name}`,
@@ -1381,7 +1424,7 @@ function ConnectionTable({
                   <div className="row-actions">
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="icon-sm"
                       aria-label={t(
                         `启动或重试 ${p.name}`,
                         `Start or retry ${p.name}`,
@@ -1397,7 +1440,7 @@ function ConnectionTable({
                     </Button>
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="icon-sm"
                       aria-label={t(
                         `停止连接 ${p.name}`,
                         `Stop connection ${p.name}`,
@@ -1409,7 +1452,7 @@ function ConnectionTable({
                     </Button>
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="icon-sm"
                       aria-label={t(
                         `编辑连接 ${p.name}`,
                         `Edit connection ${p.name}`,
@@ -1420,7 +1463,7 @@ function ConnectionTable({
                     </Button>
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="icon-sm"
                       aria-label={t(
                         `导入导出 ${p.name}`,
                         `Import or export ${p.name}`,
@@ -1431,7 +1474,7 @@ function ConnectionTable({
                     </Button>
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="icon-sm"
                       aria-label={t(
                         `删除连接 ${p.name}`,
                         `Delete connection ${p.name}`,

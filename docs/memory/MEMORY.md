@@ -7,6 +7,7 @@
 - 前端技术栈和早期组件基础参考 `D:\Work\dawi\scoopUI`：React 19、strict TypeScript、Vite 8、Tailwind 4、Radix/shadcn、Zustand 5、Sonner/Lucide，npm/package-lock。2026-11-13 用户要求将视觉规范改为 `D:\Work\dawi\design` 的 COHESION 2.0.0 / shadcn New York / Neutral；浅深色品牌 token 适配在正式 `index.css`，Logo 裁切副本位于 `apps/desktop/src/assets/`。
 - 后续 UI 设计配合 `ui-ux-pro-max` 检索和审视产品匹配、响应式及无障碍；其建议须先核对适用性，不替代 COHESION 品牌与项目正式 token。
 - 工作台在连接卡片上方显示由当前快照派生的总数、运行中、待应用和异常概况；连接卡片保留基本信息、版本、传输、进程/登录状态与错误，隧道表格集中在隧道页。
+- COHESION shadcn 组件映射：Button default/icon 36px、sm/icon-sm 32px，Input/Select 36px；Card 14px，Badge 胶囊，协议/角色标签用 4px 矩形，表格图标动作明确使用紧凑 icon-sm。危险动作、hover/active 和 focus 使用主题语义 token。
 - 功能参考只读项目 `D:\Work\frpc-desktop`，HEAD 1d244e0，版本1.2.2；前端技术与组件基线参考 scoopUI HEAD 5818fde，版本0.1.11。参考项目没有修改。
 
 ## 架构与约束
@@ -35,7 +36,7 @@ exec TokenSource、外部includes、官方Store、VirtualNet/featureGates、全�
 
 ## UI与验证状态
 
-2026-11-13：按用户要求采用 COHESION 设计系统，工作区改为持久桌面侧栏（中等窗口收为图标栏、窄窗口改为横向导航），加入正式品牌 Logo，并把按钮、卡片、登记表、设置和弹窗统一到浅深色语义 token。视觉依据为设计系统 `theme/shadcn-tokens.json` 和 `dist/tokens/cohesion-tokens.css`；页面切换后焦点移到标题，异常连接计数用单一上下文状态区域通知读屏器。设计选择记录在根目录 `DESIGN.md` 与 `PRODUCT.md`。`apps/desktop` 的 `npm run build`（TypeScript 检查与 Vite 生产构建）通过；未运行测试。
+2026-11-14：用户要求结合 `ui-ux-pro-max` 与 COHESION 全面重设计，目标为科技感、高级感和高密度桌面运维体验。采用 network operations landing、Glassmorphism chrome、density 8 / motion 3 的匹配方向；品牌颜色、字体、基础控件、状态与形状继续以 COHESION 2.0.0 / shadcn New York / Neutral 正式 token 为准。画布氛围从 `canvasAtmosphere` 映射，玻璃只用于侧栏/顶栏，信息卡片与表格保持实色表面；新增服务器状态条只用当前确认快照。工作台、连接/隧道/版本/日志/设置、导航、输入、状态和弹窗共享视觉层已统一升级。深浅主题、所有主页面、高级连接表单与 Radix Select 已在生产浏览器预览中核对。`npm run build`、`git diff --check` 与 release EXE 冒烟均通过。原 `target/release/frpc-ui-desktop.exe` 正被运行中的应用占用，因此保留该进程，并通过 `CARGO_TARGET_DIR=target/redesign-preview` 生成并验证新的本地 EXE。浏览器预览恢复到深色工作台，使用演示数据。实现记录在根目录 `DESIGN.md`，产品范围不变。
 
 生产Select统一Radix，170ms入场/110ms退场/160ms箭头，尊重reduced-motion；各滚动区采用主题token。配置文件控件为共享按钮+隐藏文件输入，文件名/大小自然换行，超限保留文本并禁止导入，同文件可重选。高级字典保留连续换行草稿和非法输入，保存失败留表单；中英/深浅、1280/860/390检查无根/对话框溢出，密集表格局部滚动。最终干净预览无warning/error，恢复中文深色/默认视口并清除演示测试记录。
 

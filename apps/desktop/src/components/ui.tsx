@@ -23,7 +23,12 @@ const buttonVariants = cva("button", {
       ghost: "button-ghost",
       danger: "button-danger",
     },
-    size: { default: "", sm: "button-sm", icon: "button-icon" },
+    size: {
+      default: "",
+      sm: "button-sm",
+      icon: "button-icon",
+      "icon-sm": "button-icon-sm",
+    },
   },
   defaultVariants: { variant: "outline", size: "default" },
 });
@@ -36,7 +41,7 @@ export function Button({
   ...props
 }: ComponentProps<"button"> & {
   variant?: "primary" | "outline" | "ghost" | "danger";
-  size?: "default" | "sm" | "icon";
+  size?: "default" | "sm" | "icon" | "icon-sm";
   asChild?: boolean;
 }) {
   const Comp = asChild ? Slot : "button";
