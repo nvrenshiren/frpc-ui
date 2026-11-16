@@ -1,10 +1,10 @@
 # Desktop IPC contract
 
-2026-10-08：用户授权正式开发。生产前端位于 `apps/desktop`，原型保留在 `prototypes/frpc-ui`。Windows 优先，使用 Tauri 2 与官方 frpc。本地配置采用 schemaVersion JSON 与原子保存；核心领域独立于 Tauri。
+生产前端位于 `apps/desktop`，原型保留在 `prototypes/frpc-ui`。Windows 优先，使用 Tauri 2 与官方 frpc。本地配置采用带 schema 版本的 JSON 与原子保存；核心领域独立于 Tauri。本文记录当前生产命令及其 DTO 边界。
 
 DTO 沿用原型 model.ts 的 camelCase 字段。`DesktopSnapshot` 为 `{profiles, tunnels, logs, settings, versions, dataDir}`。`versions` 沿用原型 Version，可增加来源与校验信息；其路径只由后端管理。空安装首次启动不写演示配置。
 
-所有命令在错误时 reject 字符串；普通配置与版本命令成功返回完整 DesktopSnapshot，前端以返回值更新，禁止将模拟运行状态写入后端。`run_profiles` 返回 `{results: BatchResult[], snapshot: DesktopSnapshot}`，`preview_legacy` 返回下文的预览结构。运行状态由后端权威提供，前端每秒刷新 snapshot；不依赖 UI 声称连接成功。
+命令错误以字符串 reject。除 `get_snapshot` 外，普通配置与版本命令成功返回完整 `DesktopSnapshot`，前端以返回值更新，禁止将模拟运行状态写入后端。`run_profiles` 返回 `{results: BatchResult[], snapshot: DesktopSnapshot}`；单项运行失败放在 `results` 中，不等同于整个 IPC 调用失败。`preview_legacy` 返回下文的预览结构。运行状态由后端权威提供，前端每秒刷新 snapshot；不依赖 UI 声称连接成功。
 
 | Command | camelCase arguments |
 | --- | --- |

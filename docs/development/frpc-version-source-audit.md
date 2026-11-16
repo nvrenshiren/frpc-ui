@@ -2,7 +2,7 @@
 
 已复核清单中的 **32 个官方 stable tag、20 个 minor（0.52–0.71）**。审核对象是本应用支持的配置能力，不是官方全部功能或全部版本的端到端测试。[版本索引](../../apps/desktop/src/reviewedFrpcReleases.ts)与[字段清单](../../apps/desktop/src/configCapabilities.ts)是展示入口，Rust 在生成配置前执行相同门槛，随后仍运行所选二进制的 `frpc verify -c`。
 
-截至 2026-11-15，上游已发布 [frpc v0.72.0](https://github.com/fatedier/frp/releases/tag/v0.72.0)，但本应用尚未审核其配置变更；当前代码按既定规则拒绝未审核 minor。启用前需要比较新增能力与默认行为，更新 TS/Rust 门槛、逐版本清单及验证。
+截至 2026-11-16，上游已发布 [frpc v0.72.0](https://github.com/fatedier/frp/releases/tag/v0.72.0)，但本应用尚未审核其配置变更；当前代码按既定规则拒绝未审核 minor。启用前需要比较新增能力与默认行为，更新 TS/Rust 门槛、逐版本清单及验证。
 
 ## 方法与基线
 

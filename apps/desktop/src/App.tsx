@@ -7,10 +7,8 @@ import {
   ChevronRight,
   CircleHelp,
   FileSliders,
-  LayoutDashboard,
   ListFilter,
   LoaderCircle,
-  Monitor,
   Moon,
   Network,
   Package,
@@ -19,13 +17,11 @@ import {
   Plus,
   RotateCw,
   Search,
-  ScrollText,
   Settings2,
   Square,
   Sun,
   Trash2,
   X,
-  type LucideIcon,
 } from "lucide-react";
 import { Toaster, toast } from "sonner";
 import { useAppStore } from "./store";
@@ -52,8 +48,6 @@ import {
   SettingsView,
 } from "./components/UtilityViews";
 import { desktopHost, errorMessage } from "./desktop";
-import cohesionLogoColor from "./assets/cohesion-logo-color.png";
-import cohesionLogoWhite from "./assets/cohesion-logo-white.png";
 
 const ProfileEditor = lazy(() => import("./components/Editors").then((module) => ({ default: module.ProfileEditor })));
 const TunnelEditor = lazy(() => import("./components/Editors").then((module) => ({ default: module.TunnelEditor })));
@@ -74,27 +68,13 @@ async function completeMutation(
 }
 
 const pageNames: Record<Page, [string, string]> = {
-  overview: ["工作台", "Workspace"],
+  overview: ["运行总览", "Overview"],
   connections: ["连接", "Connections"],
   tunnels: ["隧道", "Tunnels"],
   versions: ["版本库", "Versions"],
-  logs: ["日志", "Logs"],
-  settings: ["设置", "Settings"],
+  logs: ["事件日志", "Event log"],
+  settings: ["应用设置", "Settings"],
 };
-
-const pageIcons: Record<Page, LucideIcon> = {
-  overview: LayoutDashboard,
-  connections: Network,
-  tunnels: ListFilter,
-  versions: Package,
-  logs: ScrollText,
-  settings: Settings2,
-};
-
-const pageGroups: Page[][] = [
-  ["overview", "connections", "tunnels", "versions", "logs"],
-  ["settings"],
-];
 
 function useBatchAction() {
   const [localBusy, setBusy] = useState(false);
@@ -265,254 +245,146 @@ export default function App() {
   return (
     <div className="app-shell">
       <a href="#main" className="skip-link">
-        {t("跳转到工作区", "Skip to workspace")}
+        {t("跳到主要内容", "Skip to main content")}
       </a>
-      <aside className="app-sidebar">
-        <div className="brand">
-          <img
-            className="cohesion-logo"
-            src={dark ? cohesionLogoWhite : cohesionLogoColor}
-            alt="COHESION 逐科"
-          />
-          <span className="brand-divider" />
-          <div className="product-brand">
-            <span className="brand-mark">
-              <Network size={18} />
-            </span>
-            <div>
-              <strong>
-                frpc<span className="brand-suffix">/ ui</span>
-              </strong>
-              <span className="brand-description">
-                {t("连接管理工作台", "Connection workspace")}
-              </span>
-            </div>
-          </div>
+      <header className="app-topbar">
+        <div className="topbar-brand">
+          <span className="topbar-brand-mark"><Network size={18} aria-hidden="true" /></span>
+          <span className="topbar-brand-copy">
+            <strong>frpc<span>/ ui</span></strong>
+            <small>{t("连接控制台", "Connection control")}</small>
+          </span>
         </div>
-        <nav className="section-nav" aria-label={t("主导航", "Main navigation")}>
-          {pageGroups.map((group, groupIndex) => (
-            <div className="nav-group" key={groupIndex}>
-              <span className="nav-caption">
-                {groupIndex === 0
-                  ? t("运维工作区", "OPERATIONS")
-                  : t("应用偏好", "PREFERENCES")}
-              </span>
-              {group.map((page) => {
-                const Icon = pageIcons[page];
-                return (
-                  <button
-                    key={page}
-                    className={store.page === page ? "nav-item active" : "nav-item"}
-                    aria-label={t(...pageNames[page])}
-                    aria-current={store.page === page ? "page" : undefined}
-                    title={t(...pageNames[page])}
-                    onClick={() => store.setPage(page)}
-                  >
-                    <Icon size={17} aria-hidden="true" />
-                    <span className="nav-label">{t(...pageNames[page])}</span>
-                    {page === "logs" && failed > 0 && (
-                      <span
-                        className="nav-alert"
-                        aria-hidden="true"
-                        title={t(`${failed} 个异常连接`, `${failed} failed connections`)}
-                      >
-                        {failed > 9 ? "9+" : failed}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          ))}
+        <nav className="primary-nav" aria-label={t("主导航", "Main navigation")}>
+          <button
+            className={store.page === "overview" ? "primary-nav-item active" : "primary-nav-item"}
+            aria-current={store.page === "overview" ? "page" : undefined}
+            onClick={() => store.setPage("overview")}
+          >{t("总览", "Overview")}</button>
+          <button
+            className={store.page === "connections" || store.page === "tunnels" ? "primary-nav-item active" : "primary-nav-item"}
+            aria-current={store.page === "connections" || store.page === "tunnels" ? "page" : undefined}
+            onClick={() => store.setPage("connections")}
+          >
+            {t("资源", "Resources")}
+            <span className="primary-nav-count">{store.profiles.length + store.tunnels.length}</span>
+          </button>
+          <button
+            className={store.page === "logs" ? "primary-nav-item active" : "primary-nav-item"}
+            aria-current={store.page === "logs" ? "page" : undefined}
+            onClick={() => store.setPage("logs")}
+          >
+            {t("诊断", "Diagnostics")}
+            {failed > 0 && <span className="primary-nav-alert">{failed > 9 ? "9+" : failed}</span>}
+          </button>
+          <button
+            className={store.page === "versions" ? "primary-nav-item active" : "primary-nav-item"}
+            aria-current={store.page === "versions" ? "page" : undefined}
+            onClick={() => store.setPage("versions")}
+          >{t("版本", "Versions")}</button>
         </nav>
-        <span className="sr-only" role="status" aria-live="polite" aria-atomic="true">
-          {failed > 0
-            ? t(
-                `${failed} 个连接异常，请查看日志。`,
-                `${failed} ${failed === 1 ? "connection" : "connections"} need attention. Open Logs for details.`,
-              )
-            : ""}
-        </span>
-        <div className="sidebar-environment">
-          <span className="sidebar-environment-icon">
-            <Monitor size={15} aria-hidden="true" />
-          </span>
-          <span>
-            <strong>
-              {desktopHost
-                ? t("本机桌面实例", "Local desktop")
-                : t("浏览器演示模式", "Browser demo")}
-            </strong>
-            <small>
-              {desktopHost
-                ? t("实时进程与登录状态", "Live process and login state")
-                : t("使用演示数据", "Using sample data")}
-            </small>
-          </span>
-        </div>
-      </aside>
-      <div className="app-content">
-        <header className="topbar">
-          <div className="topbar-context">
-            <span className="topbar-context-label">FRPC / CONTROL</span>
-            <ChevronRight size={14} aria-hidden="true" />
-            <span className="topbar-context-current">
-              {t(...pageNames[store.page])}
-            </span>
-          </div>
+        <div className="topbar-right">
           <div
-            className={`workspace-signal${failed > 0 ? " is-attention" : confirmed > 0 ? " is-live" : ""}`}
+            className={`runtime-summary${failed > 0 ? " has-errors" : confirmed > 0 ? " is-live" : ""}`}
             aria-label={t(
               `${confirmed} 个连接已由服务端确认，共 ${store.profiles.length} 个连接。${failed > 0 ? `${failed} 个连接异常。` : ""}`,
               `${confirmed} of ${store.profiles.length} connections are confirmed by the server.${failed > 0 ? ` ${failed} need attention.` : ""}`,
             )}
           >
-            <span className="workspace-signal-indicator" aria-hidden="true" />
-            <span className="workspace-signal-copy">
-              <strong>
-                {failed > 0
-                  ? t("需要关注", "NEEDS ATTENTION")
-                  : t("FRPC 状态", "FRPC STATE")}
-              </strong>
-              <small>{t("服务端确认", "SERVER CONFIRMED")}</small>
-            </span>
-            <span className="workspace-signal-count mono">
-              {String(confirmed).padStart(2, "0")}
-              <span>/ {String(store.profiles.length).padStart(2, "0")}</span>
-            </span>
+            <span className="runtime-summary-dot" aria-hidden="true" />
+            <span className="runtime-summary-count mono">{confirmed}<small> / {store.profiles.length}</small></span>
+            <span className="runtime-summary-label">{failed > 0 ? t("需关注", "Attention") : t("已确认", "Confirmed")}</span>
           </div>
           <div className="topbar-tools">
             <Button
               variant="ghost"
               size="icon"
+              aria-label={t("应用设置", "Application settings")}
+              aria-current={store.page === "settings" ? "page" : undefined}
+              onClick={() => store.setPage("settings")}
+            ><Settings2 size={17} aria-hidden="true" /></Button>
+            <Button
+              variant="ghost"
+              size="icon"
               disabled={store.busy}
-              aria-label={
-                dark
-                  ? t("切换亮色", "Switch to light theme")
-                  : t("切换暗色", "Switch to dark theme")
-              }
-              onClick={() =>
-                completeMutation(() =>
-                  store.updateSettings({ theme: dark ? "light" : "dark" }),
-                )
-              }
-            >
-              {dark ? <Sun size={17} /> : <Moon size={17} />}
-            </Button>
+              aria-label={dark ? t("切换亮色", "Switch to light theme") : t("切换暗色", "Switch to dark theme")}
+              onClick={() => completeMutation(() => store.updateSettings({ theme: dark ? "light" : "dark" }))}
+            >{dark ? <Sun size={17} aria-hidden="true" /> : <Moon size={17} aria-hidden="true" />}</Button>
             <Button
               variant="ghost"
               size="sm"
               disabled={store.busy}
               aria-label={t("切换英文", "Switch to Chinese")}
-              onClick={() =>
-                completeMutation(() =>
-                  store.updateSettings({
-                    language: language === "zh" ? "en" : "zh",
-                  }),
-                )
-              }
-            >
-              {language === "zh" ? "EN" : "中文"}
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label={t("使用说明", "User guide")}
-              onClick={() => setHelp(true)}
-            >
-              <CircleHelp size={17} />
+              onClick={() => completeMutation(() => store.updateSettings({ language: language === "zh" ? "en" : "zh" }))}
+            >{language === "zh" ? "EN" : "中文"}</Button>
+            <Button variant="ghost" size="icon" aria-label={t("使用说明", "User guide")} onClick={() => setHelp(true)}>
+              <CircleHelp size={17} aria-hidden="true" />
             </Button>
           </div>
-        </header>
+        </div>
+      </header>
+      <div className="app-content">
         <main id="main" className="workspace">
           {store.loadError && (
             <div className="prototype-note" role="alert">
-              <p>
-                {t("状态刷新失败：", "Status refresh failed: ")}
-                {store.loadError}
-              </p>
-              <Button size="sm" onClick={() => void store.retryLoading()}>
-                {t("重试", "Retry")}
-              </Button>
+              <p>{t("状态刷新失败：", "Status refresh failed: ")}{store.loadError}</p>
+              <Button size="sm" onClick={() => void store.retryLoading()}>{t("重试", "Retry")}</Button>
             </div>
           )}
           <div className="page-heading">
             <div>
               <h1 ref={pageHeadingRef} tabIndex={-1}>
                 {store.page === "overview"
-                  ? t("连接工作台", "Connection workspace")
-                  : t(...pageNames[store.page])}
+                  ? t("连接运行态", "Connection operations")
+                  : store.page === "connections" || store.page === "tunnels"
+                    ? t("资源中心", "Resources")
+                    : t(...pageNames[store.page])}
               </h1>
               <p>
                 {store.page === "overview"
-                  ? t(
-                      "查看服务器连接的基本信息、运行状态与待应用修改。",
-                      "Review server details, connection status and pending changes.",
-                    )
-                  : store.page === "connections"
-                    ? t(
-                        "独立配置、独立运行。选择连接后执行批量操作。",
-                        "Independent configuration and runtime. Select connections for batch actions.",
-                      )
-                    : store.page === "tunnels"
-                      ? t(
-                          "所有映射统一检索。保存配置后，在所属连接应用。",
-                          "Search every mapping. Apply saved changes to their connection.",
-                        )
-                      : store.page === "versions"
-                        ? t(
-                            "每个连接使用明确版本，下载与运行状态分别管理。",
-                            "Assign a version to each connection; manage downloads separately from runtime.",
-                          )
-                        : store.page === "logs"
-                          ? t(
-                              "按连接定位事件，日志与进程状态一起判断。",
-                              "Trace events by connection and assess them alongside runtime state.",
-                            )
-                          : t(
-                              "工作台偏好与桌面行为。",
-                              "Workspace preferences and desktop behavior.",
-                            )}
+                  ? t("查看服务端确认、进程状态和待应用变更。", "Review server confirmation, process state and pending changes.")
+                  : store.page === "connections" || store.page === "tunnels"
+                    ? t("连接与隧道共用一个资源空间，批量操作范围始终明确。", "Manage connections and tunnels in one space with a clear batch scope.")
+                    : store.page === "versions"
+                      ? t("管理本机 frpc 版本及其连接分配。", "Manage local frpc versions and their connection assignments.")
+                      : store.page === "logs"
+                        ? t("按连接和级别筛选事件，定位进程与注册问题。", "Filter events by connection and level to trace process and registration issues.")
+                        : t("桌面行为、语言与显示偏好。", "Desktop behavior, language and display preferences.")}
               </p>
             </div>
             <div className="heading-actions">
-              {store.page === "tunnels" && (
-                <Button
-                  variant="primary"
-                  onClick={newTunnel}
-                  disabled={store.profiles.length === 0}
-                >
-                  <Plus size={16} />
-                  {t("新建隧道", "New tunnel")}
-                </Button>
-              )}
-              {(store.page === "connections" || store.page === "overview") && (
+              {(store.page === "overview" || store.page === "connections") && (
                 <Button onClick={importConfiguration}>
-                  <ArrowDownToLine size={16} />
-                  {t("导入配置", "Import configuration")}
+                  <ArrowDownToLine size={16} aria-hidden="true" />
+                  {t("导入配置", "Import config")}
                 </Button>
               )}
-              {(store.page === "connections" || store.page === "overview") && (
+              {(store.page === "overview" || store.page === "connections") && (
                 <Button variant="primary" onClick={newProfile}>
-                  <Plus size={16} />
-                  {t("新建连接", "New connection")}
+                  <Plus size={16} aria-hidden="true" />
+                  {t("添加连接", "Add connection")}
+                </Button>
+              )}
+              {store.page === "tunnels" && (
+                <Button variant="primary" onClick={newTunnel} disabled={store.profiles.length === 0}>
+                  <Plus size={16} aria-hidden="true" />
+                  {t("添加隧道", "Add tunnel")}
                 </Button>
               )}
             </div>
           </div>
-          {store.page === "overview" && (
-            <>
-              <ConnectionOverview />
-              <ConnectionCards onEdit={setProfileEdit} />
-            </>
+          {(store.page === "connections" || store.page === "tunnels") && (
+            <nav className="resource-tabs" aria-label={t("资源类型", "Resource type")}>
+              <button className={store.page === "connections" ? "resource-tab active" : "resource-tab"} aria-current={store.page === "connections" ? "page" : undefined} onClick={() => store.setPage("connections")}>
+                <Network size={15} aria-hidden="true" /> {t("连接", "Connections")} <span>{store.profiles.length}</span>
+              </button>
+              <button className={store.page === "tunnels" ? "resource-tab active" : "resource-tab"} aria-current={store.page === "tunnels" ? "page" : undefined} onClick={() => store.setPage("tunnels")}>
+                <ListFilter size={15} aria-hidden="true" /> {t("隧道", "Tunnels")} <span>{store.tunnels.length}</span>
+              </button>
+            </nav>
           )}
-          {store.page === "tunnels" && (
-            <TunnelRegister
-              key={store.page}
-              onEdit={setTunnelEdit}
-              onAdd={newTunnel}
-            />
-          )}
+          {store.page === "overview" && <OperationsOverview onEdit={setProfileEdit} />}
+          {store.page === "tunnels" && <TunnelRegister key={store.page} onEdit={setTunnelEdit} onAdd={newTunnel} />}
           {store.page === "connections" && (
             <ConnectionTable
               profiles={scopedProfiles}
@@ -528,19 +400,15 @@ export default function App() {
           {store.page === "settings" && <SettingsView />}
           <BatchResults />
           <footer className="workspace-footer">
-            <span>
-              {t(
-                desktopHost
-                  ? "进程、登录确认与配置状态由本机 frpc 提供。"
-                  : "浏览器仅演示交互；真实连接和持久配置请使用桌面应用。",
-                desktopHost
-                  ? "Runtime, login confirmation and configuration status come from local frpc."
-                  : "The browser demonstrates interactions. Use the desktop app for live connections and persistent configuration.",
-              )}
-            </span>
-            <span className="mono">
-              {desktopHost ? "TAURI / RUST" : "BROWSER / DEMO"}
-            </span>
+            <span>{t(
+              desktopHost
+                ? "运行状态来自本机 frpc；保存的修改需要应用后才会生效。"
+                : "浏览器为演示模式；真实连接和持久配置请使用桌面应用。",
+              desktopHost
+                ? "Runtime state comes from local frpc. Saved changes take effect after apply."
+                : "The browser is in demo mode. Use the desktop app for live connections and persistent configuration.",
+            )}</span>
+            <span className="mono">{desktopHost ? "LOCAL / TAURI" : "DEMO / BROWSER"}</span>
           </footer>
         </main>
       </div>
@@ -614,182 +482,166 @@ export default function App() {
   );
 }
 
-function ConnectionOverview() {
-  const profiles = useAppStore((state) => state.profiles);
+function ProcessState({ profile }: { profile: Profile }) {
   const { t } = useI18n();
-  if (profiles.length === 0) return null;
-
-  const running = profiles.filter((profile) => profile.process === "running").length;
-  const pending = profiles.filter((profile) => profile.pending).length;
-  const failed = profiles.filter(
-    (profile) => profile.connection === "failed" || profile.process === "failed",
-  ).length;
-  const metrics = [
-    {
-      label: t("全部连接", "Connections"),
-      value: profiles.length,
-      icon: Network,
-      tone: "neutral",
-    },
-    {
-      label: t("运行中", "Running"),
-      value: running,
-      icon: Activity,
-      tone: "success",
-    },
-    {
-      label: t("待应用", "Pending"),
-      value: pending,
-      icon: RotateCw,
-      tone: "warning",
-    },
-    {
-      label: t("异常", "Failed"),
-      value: failed,
-      icon: CircleAlert,
-      tone: "danger",
-    },
-  ];
-
-  return (
-    <section className="overview-summary" aria-labelledby="overview-summary-heading">
-      <div className="overview-summary-heading">
-        <div>
-          <span className="section-kicker">{t("实时快照", "LIVE SNAPSHOT")}</span>
-          <h2 id="overview-summary-heading">
-            {t("连接概况", "Connection overview")}
-          </h2>
-        </div>
-        <span className="overview-summary-caption">
-          {desktopHost
-            ? t("基于本机状态", "LOCAL RUNTIME")
-            : t("演示数据", "SAMPLE DATA")}
-        </span>
-      </div>
-      <div className="overview-summary-items">
-        {metrics.map(({ label, value, icon: Icon, tone }) => (
-          <div className={`overview-summary-item ${tone}`} key={label}>
-            <span className="overview-metric-icon" aria-hidden="true">
-              <Icon size={14} />
-            </span>
-            <strong className="mono">{value}</strong>
-            <span>{label}</span>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
+  if (profile.process === "starting" || profile.process === "stopping") {
+    return <Badge><LoaderCircle size={12} className="spin" />{profile.process === "starting" ? t("启动中", "Starting") : t("停止中", "Stopping")}</Badge>;
+  }
+  if (profile.process === "failed") return <Badge tone="danger"><span className="status-dot" />{t("进程异常", "Process failed")}</Badge>;
+  return <Badge tone={profile.process === "running" ? "success" : "neutral"}><span className="status-dot" />{profile.process === "running" ? t("进程运行中", "Process running") : t("进程已停止", "Process stopped")}</Badge>;
 }
 
-function ConnectionCards({ onEdit }: { onEdit: (profile: Profile) => void }) {
+function ServerState({ profile }: { profile: Profile }) {
+  const { t } = useI18n();
+  if (profile.connection === "confirmed") return <Badge tone="success"><span className="status-dot" />{t("服务端已确认", "Server confirmed")}</Badge>;
+  if (profile.connection === "failed") return <Badge tone="danger"><span className="status-dot" />{t("登录失败", "Login failed")}</Badge>;
+  if (profile.process === "running") return <Badge tone="warning"><span className="status-dot" />{t("等待服务端确认", "Awaiting server")}</Badge>;
+  return <Badge><span className="status-dot" />{t("尚未连接", "Not connected")}</Badge>;
+}
+
+function OperationsOverview({ onEdit }: { onEdit: (profile: Profile) => void }) {
   const store = useAppStore();
   const { t } = useI18n();
   const { busy, execute } = useBatchAction();
+  const running = store.profiles.filter((profile) => profile.process === "running").length;
+  const confirmed = store.profiles.filter((profile) => profile.connection === "confirmed").length;
+  const pending = store.profiles.filter((profile) => profile.pending).length;
+  const failed = store.profiles.filter((profile) => profile.connection === "failed" || profile.process === "failed").length;
+  const metrics = [
+    { label: t("连接实例", "Connections"), value: store.profiles.length, icon: Network, tone: "neutral" },
+    { label: t("进程运行", "Running processes"), value: running, icon: Activity, tone: "success" },
+    { label: t("待应用", "Pending changes"), value: pending, icon: RotateCw, tone: "warning" },
+    { label: t("异常", "Needs attention"), value: failed, icon: CircleAlert, tone: "danger" },
+  ];
+  const recentLogs = [...store.logs].slice(-5).reverse();
+  const recentTunnels = store.tunnels.slice(0, 6);
+  const profileName = (id: string) => store.profiles.find((profile) => profile.id === id)?.name ?? t("未知连接", "Unknown connection");
+  const tunnelEndpoint = (tunnel: Tunnel) => {
+    if (tunnel.type === "tcp" || tunnel.type === "udp") return tunnel.remotePort === 0 ? t("自动分配", "Automatic port") : `:${tunnel.remotePort}`;
+    return tunnel.domain || tunnel.serverName || t("私有访问", "Private");
+  };
+
   return (
-    <section className="connection-section" aria-labelledby="connection-section-heading">
-      <div className="connection-section-heading">
-        <div>
-          <span className="section-kicker">{t("FRPC / 节点目录", "FRPC / ENDPOINTS")}</span>
-          <h2 id="connection-section-heading">{t("服务器节点", "Server nodes")}</h2>
+    <div className="operations-overview">
+      <section className="overview-summary" aria-label={t("连接运行概况", "Connection runtime summary")}>
+        <div className="overview-summary-heading">
+          <div>
+            <span className="section-kicker">{desktopHost ? t("本机运行快照", "LOCAL RUNTIME SNAPSHOT") : t("演示快照", "DEMO SNAPSHOT")}</span>
+            <h2>{t("运行概况", "Runtime overview")}</h2>
+          </div>
+          <span className="overview-summary-caption">{t(`${confirmed} 个服务端确认`, `${confirmed} server-confirmed`)}</span>
         </div>
-        <Badge>{t(`${store.profiles.length} 个连接`, `${store.profiles.length} connections`)}</Badge>
-      </div>
-      <div className="connection-plates" aria-label={t("服务器连接", "Server connections")}>
-        {store.profiles.length === 0 && (
-          <div className="empty-state">
-            <p>
-              {t(
-                "还没有连接。先在版本库安装或导入 frpc，再添加服务器连接。",
-                "No connections yet. Install or import frpc in Versions, then add a server connection.",
-              )}
-            </p>
-            <Button onClick={() => store.setPage("versions")}>
-              {t("打开版本库", "Open versions")}
-            </Button>
-          </div>
-        )}
-        {store.profiles.map((profile) => (
-        <article
-          key={profile.id}
-          className="connection-plate"
-          data-process={profile.process}
-          data-connection={profile.connection}
-          aria-label={profile.name}
-        >
-          <div className="plate-top">
-            <h2 className="plate-title">{profile.name}</h2>
-            <Status profile={profile} />
-          </div>
-          <div className="plate-identity">
-            <p className="plate-address mono" title={`${profile.serverAddr}:${profile.serverPort}`}>
-              {profile.serverAddr.includes(":") ? `[${profile.serverAddr}]` : profile.serverAddr}:{profile.serverPort}
-            </p>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label={t(
-                `编辑连接 ${profile.name}`,
-                `Edit connection ${profile.name}`,
-              )}
-              onClick={() => onEdit(profile)}
-            >
-              <Pencil size={14} />
-            </Button>
-          </div>
-          <dl className="plate-details">
-            <div><dt>{t("客户端版本", "Client version")}</dt><dd className="mono">v{profile.version}</dd></div>
-            <div><dt>{t("传输方式", "Transport")}</dt><dd>{profile.transport.toUpperCase()}{profile.tls ? " · TLS" : ""}</dd></div>
-            <div><dt>{t("进程状态", "Process")}</dt><dd>{t(
-              profile.process === "running" ? "运行中" : profile.process === "starting" ? "启动中" : profile.process === "stopping" ? "停止中" : profile.process === "failed" ? "异常退出" : "已停止",
-              profile.process === "running" ? "Running" : profile.process === "starting" ? "Starting" : profile.process === "stopping" ? "Stopping" : profile.process === "failed" ? "Failed" : "Stopped",
-            )}</dd></div>
-            <div><dt>{t("配置状态", "Configuration")}</dt><dd className={profile.pending ? "pending-label" : ""}>{profile.pending ? t("待应用", "Pending") : t("已应用", "Applied")}</dd></div>
-          </dl>
-          {profile.lastError && <p className="plate-error" title={profile.lastError}>{profile.lastError}</p>}
-          <div className="plate-footer">
-            <span className="muted">
-              {profile.process === "running" ? profile.uptime : t("进程未运行", "Process stopped")}
-            </span>
-            <div className="plate-actions">
-            {profile.pending && <Button
-              variant="ghost"
-              size="sm"
-              disabled={busy || profile.process === "starting" || profile.process === "stopping"}
-              onClick={() => execute(() => store.applyProfiles([profile.id]))}
-            ><RotateCw size={12} />{profile.process === "running" ? t("重启并应用", "Restart & apply") : t("验证配置", "Verify config")}</Button>}
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled={
-                busy ||
-                profile.process === "starting" ||
-                profile.process === "stopping"
-              }
-              onClick={() =>
-                execute(() =>
-                  profile.process === "running"
-                    ? store.stopProfiles([profile.id])
-                    : store.startProfiles([profile.id]),
-                )
-              }
-            >
-              {profile.process === "running" ? (
-                <Square size={12} />
-              ) : (
-                <Play size={12} />
-              )}{" "}
-              {profile.process === "running"
-                ? t("停止", "Stop")
-                : profile.connection === "failed"
-                  ? t("重试", "Retry")
-                  : t("启动", "Start")}
-            </Button>
+        <div className="overview-summary-items">
+          {metrics.map(({ label, value, icon: Icon, tone }) => (
+            <div className={`overview-summary-item ${tone}`} key={label}>
+              <span className="overview-metric-icon" aria-hidden="true"><Icon size={15} /></span>
+              <strong className="mono">{value}</strong>
+              <span>{label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className="operations-grid">
+        <section className="ops-panel ops-fleet" aria-labelledby="ops-fleet-heading">
+          <div className="ops-panel-heading">
+            <div><span className="section-kicker">{t("服务端连接", "SERVER CONNECTIONS")}</span><h2 id="ops-fleet-heading">{t("连接实例", "Connection instances")}</h2></div>
+            <div className="ops-panel-tools">
+              <Badge>{t(`${store.profiles.length} 个`, `${store.profiles.length} total`)}</Badge>
+              <Button size="sm" variant="ghost" onClick={() => store.setPage("connections")}>{t("管理连接", "Manage")}</Button>
             </div>
           </div>
-        </article>
-        ))}
+          {store.profiles.length === 0 ? (
+            <div className="ops-empty">
+              <span className="ops-empty-icon"><Network size={19} aria-hidden="true" /></span>
+              <div><strong>{t("还没有连接实例", "No connection instances")}</strong><p>{t("添加服务器连接，并为它选择已安装的 frpc 版本。", "Add a server connection and assign an installed frpc version.")}</p></div>
+              <Button variant="primary" size="sm" onClick={() => store.setPage("versions")}><Package size={14} aria-hidden="true" />{t("管理版本", "Manage versions")}</Button>
+            </div>
+          ) : (
+            <div className="ops-connection-list">
+              {store.profiles.map((profile) => {
+                const tunnelCount = store.tunnels.filter((tunnel) => tunnel.profileId === profile.id).length;
+                const busyState = profile.process === "starting" || profile.process === "stopping";
+                return (
+                  <article className="ops-connection-row" key={profile.id}>
+                    <div className="ops-connection-main">
+                      <button className="ops-connection-name" onClick={() => onEdit(profile)}>{profile.name}</button>
+                      <span className="ops-connection-address mono" title={`${profile.serverAddr}:${profile.serverPort}`}>{profile.serverAddr.includes(":") ? `[${profile.serverAddr}]` : profile.serverAddr}:{profile.serverPort}</span>
+                      {profile.lastError && <span className="ops-connection-error" title={profile.lastError}>{profile.lastError}</span>}
+                    </div>
+                    <div className="ops-connection-state">
+                      <ProcessState profile={profile} />
+                      <ServerState profile={profile} />
+                      {profile.pending && <Badge tone="warning">{t("待应用", "Pending")}</Badge>}
+                    </div>
+                    <div className="ops-connection-meta">
+                      <span><small>{t("版本", "Version")}</small><code>v{profile.version || "—"}</code></span>
+                      <span><small>{t("隧道", "Tunnels")}</small><strong className="mono">{tunnelCount}</strong></span>
+                      <span><small>{t("运行时长", "Uptime")}</small><strong className="mono">{profile.process === "running" ? profile.uptime : "—"}</strong></span>
+                    </div>
+                    <div className="ops-row-actions">
+                      {profile.pending && (
+                        <Button size="sm" variant="ghost" disabled={busy || busyState} onClick={() => execute(() => store.applyProfiles([profile.id]))}>
+                          <RotateCw size={13} aria-hidden="true" />{profile.process === "running" ? t("重启并应用", "Restart & apply") : t("验证配置", "Verify")}
+                        </Button>
+                      )}
+                      <Button size="sm" variant={profile.process === "running" ? "outline" : "primary"} disabled={busy || busyState} onClick={() => execute(() => profile.process === "running" ? store.stopProfiles([profile.id]) : store.startProfiles([profile.id]))}>
+                        {profile.process === "running" ? <Square size={13} aria-hidden="true" /> : <Play size={13} aria-hidden="true" />}
+                        {profile.process === "running" ? t("停止", "Stop") : profile.connection === "failed" ? t("重试", "Retry") : t("启动", "Start")}
+                      </Button>
+                      <Button size="icon-sm" variant="ghost" aria-label={t(`编辑连接 ${profile.name}`, `Edit connection ${profile.name}`)} onClick={() => onEdit(profile)}><Pencil size={14} aria-hidden="true" /></Button>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </section>
+
+        <div className="ops-side-column">
+          <section className="ops-panel ops-events" aria-labelledby="ops-events-heading">
+            <div className="ops-panel-heading">
+              <div><span className="section-kicker">{t("最近记录", "LATEST ACTIVITY")}</span><h2 id="ops-events-heading">{t("运行事件", "Runtime events")}</h2></div>
+              <Button size="sm" variant="ghost" onClick={() => store.setPage("logs")}>{t("全部日志", "All logs")}</Button>
+            </div>
+            {recentLogs.length === 0 ? (
+              <p className="ops-quiet-empty">{t("暂无运行事件。启动连接后，frpc 回执会显示在这里。", "No runtime events yet. frpc responses appear here after a connection starts.")}</p>
+            ) : (
+              <div className="ops-event-list">
+                {recentLogs.map((entry) => (
+                  <div className={`ops-event-row level-${entry.level}`} key={entry.id}>
+                    <span className="ops-event-level">{entry.level.toUpperCase()}</span>
+                    <span className="ops-event-copy"><strong>{profileName(entry.profileId)}</strong><span>{entry.message}</span></span>
+                    <time className="mono">{entry.time}</time>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <section className="ops-panel ops-tunnel-summary" aria-labelledby="ops-tunnel-heading">
+            <div className="ops-panel-heading">
+              <div><span className="section-kicker">{t("隧道映射", "TUNNEL MAPPINGS")}</span><h2 id="ops-tunnel-heading">{t("隧道摘要", "Tunnel summary")}</h2></div>
+              <Button size="sm" variant="ghost" onClick={() => store.setPage("tunnels")}>{t("查看全部", "View all")}</Button>
+            </div>
+            {recentTunnels.length === 0 ? (
+              <p className="ops-quiet-empty">{t("还没有隧道映射。", "No tunnel mappings yet.")}</p>
+            ) : (
+              <div className="ops-tunnel-list">
+                {recentTunnels.map((tunnel) => (
+                  <button className="ops-tunnel-row" key={tunnel.id} onClick={() => { store.setScope(tunnel.profileId); store.setPage("tunnels"); }}>
+                    <span className="ops-tunnel-type mono">{tunnel.type.toUpperCase()}</span>
+                    <span className="ops-tunnel-copy"><strong>{tunnel.name}</strong><small>{profileName(tunnel.profileId)} · {tunnelEndpoint(tunnel)}</small></span>
+                    <span className="ops-tunnel-state-label">{tunnel.apply === "failed" ? t("应用失败", "Apply failed") : tunnel.apply === "pending" ? t("待应用", "Pending") : tunnel.enabled ? t("已启用", "Enabled") : t("已停用", "Disabled")}</span>
+                    <span className={`ops-tunnel-indicator ${tunnel.apply === "failed" ? "failed" : tunnel.apply === "pending" ? "pending" : tunnel.enabled ? "enabled" : "disabled"}`} aria-hidden="true" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }
 

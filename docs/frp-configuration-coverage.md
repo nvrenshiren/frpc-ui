@@ -1,8 +1,8 @@
 # frpc 配置覆盖清单
 
-配置能力审核覆盖 2026-10-08 核验的 0.52–0.71 官方标签。连接、隧道、访问者与九种适用的 provider 插件高级参数已贯通模型、表单、保存、TOML 导入导出、分享和旧项目迁移。界面依据所选版本、协议、角色、认证方式与插件类型显示参数。逐字段和逐版本清单见 [已审核版本的配置清单](frpc-version-configuration.md)，源码核验见 [版本源码审计](development/frpc-version-source-audit.md)。
+配置字段按 32 个固定官方 stable 标签审核，范围为 0.52.0–0.71.0（审核日期：2026-10-08）。同 minor 的合法补丁版本继承字段能力清单，并由所选二进制执行 `frpc verify`；默认值则按完整补丁版本和配置上下文单独核验。连接、隧道、访问者与九种适用的 provider 插件高级参数已贯通模型、表单、保存、TOML 导入导出、分享和旧项目迁移。界面依据所选版本、协议、角色、认证方式与插件类型显示参数。逐字段和逐版本清单见 [已审核版本的配置清单](frpc-version-configuration.md)，源码核验见 [版本源码审计](development/frpc-version-source-audit.md)。
 
-未经审核的新 minor/major 不会被推定兼容；当前明确边界见[逐版本配置清单](frpc-version-configuration.md)。
+截至 2026-11-16，上游已发布 [frpc v0.72.0](https://github.com/fatedier/frp/releases/tag/v0.72.0)，本应用尚未审核该 minor，因此拒绝其配置能力。其他未审核的 minor/major 同样不会被推定兼容；详见[逐版本配置清单](frpc-version-configuration.md)。
 
 ## 基线与状态
 
@@ -55,7 +55,7 @@
 | TCPMUX | multiplexer=httpconnect、customDomains/subdomain、HTTP 鉴权和 routeByHTTPUser，以及适用通用 provider 配置。 |
 | 启用状态 | 应用 enabled 管理；导入可消费单条 enabled，生成和 TOML 导出剔除停用项；不会向旧二进制写入其不认识的 enabled。分享保留启用状态。 |
 
-工作台只显示服务器连接卡片与基本状态。隧道表格集中在隧道页，并正确显示自动远端端口、不监听 visitor、多域名和插件目标。
+运行总览呈现连接运行状态、操作清单、最近事件和隧道摘要；资源页在连接与隧道登记表之间切换。隧道表格支持自动远端端口、不监听 visitor、多域名和插件目标的展示。
 
 ## Provider 插件
 

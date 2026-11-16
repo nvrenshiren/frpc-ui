@@ -2,7 +2,7 @@
 
 [简体中文](README.md)
 
-A multi-connection frpc desktop workspace built with **Tauri 2, Rust and React**. Its visual system follows COHESION, the 逐科 design system; it uses the React stack validated by scoopUI and focuses on dense tunnel lists and batch maintenance.
+A multi-connection frpc desktop workspace built with **Tauri 2, Rust and React**. Its visual system follows the 逐科 / whzhuke design system and its internal COHESION theme configuration; it uses the React stack validated by scoopUI and focuses on dense tunnel lists and batch maintenance.
 
 The real desktop implementation lives in `apps/desktop`; `prototypes/frpc-ui` is retained only as a historical design prototype. The app manages official frpc binaries rather than implementing the frp protocol. Windows x64 builds, verified scope and remaining checks are documented in the [verification record](docs/development/verification.md).
 
@@ -42,9 +42,9 @@ TOML import and legacy migration add stopped connections without overwriting exi
 
 ## Implemented features and stack
 
-- Multiple connections and eight protocols including TCPMUX. Workspace shows server cards; tunnel maintenance stays in Tunnels.
+- Multiple connections and eight tunnel protocols: TCP, UDP, HTTP, HTTPS, STCP, SUDP, XTCP and TCPMUX. The overview shows connection status, an action list, recent events and a tunnel summary; Resources switches between connection and tunnel registers; Diagnostics opens the event log, and Settings is in the top toolbar.
 - Advanced authentication/OIDC/file tokens, networking/TLS/QUIC, HTTP domains and routing, XTCP fallback, bandwidth limits, load balancing, health checks and nine provider plugins.
-- Configuration checklists for 32 reviewed official stable tags from 0.52 to 0.71; version and protocol conditions drive editor availability. Unreviewed releases are not assumed compatible.
+- Configuration fields were reviewed against 32 fixed official stable tags (0.52.0–0.71.0). Patches in a reviewed minor inherit its capability list and are checked by the selected binary's `verify` command. Defaults are audited by full patch version and context. Editors follow version and protocol conditions; incompatible values survive downgrades with an explanation. Unreviewed minors and majors are not assumed compatible.
 - Controls display audited defaults for the precise release and current context. Explicit edits create advanced overrides; reset removes them. Checklists include defaults and provenance, with patch changes reviewed separately.
 - Batch start/stop, controlled apply, real frpc validation and supervised processes, partial failures and retries.
 - Official GitHub releases, SHA-256 verified downloads, safe extraction, atomic installation, local import, integrity checks before each launch and assigned-version removal protection.
@@ -78,7 +78,7 @@ npm test
 npm run build
 
 # repository root
-cargo test --workspace
+cargo +stable test --locked --workspace
 ```
 
 Network downloads and official frpc/frps integration tests are opt-in ignored tests. Default tests do not access the public network. The [verification record](docs/development/verification.md) lists the latest reproducible checks and the scope of completed official-binary verification. Before publishing a Windows release, run the packaged executable's WebView startup/IPC/shutdown smoke; debug survival or MockRuntime cannot replace release validation. The first executable's stack overflow and fix are documented in the [Windows startup notes](docs/development/windows-startup.md).

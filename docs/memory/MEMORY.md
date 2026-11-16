@@ -3,7 +3,7 @@
 ## 权威入口
 
 - 项目约定和验证门禁：[AGENTS.md](../../AGENTS.md)、[CONTRIBUTING.md](../../CONTRIBUTING.md)。
-- 当前产品范围与视觉规范：[PRODUCT.md](../../PRODUCT.md)、[DESIGN.md](../../DESIGN.md)。前端技术栈参考 scoopUI；当前品牌与组件规则以 COHESION 逐科设计系统为准。
+- 当前产品范围与视觉规范：[PRODUCT.md](../../PRODUCT.md)、[DESIGN.md](../../DESIGN.md)。前端技术栈参考 scoopUI；当前品牌与组件规则以逐科 / whzhuke 设计系统为准，COHESION 是其共享主题配置的内部标识。
 - 当前架构和 IPC：[架构说明](../development/architecture.md)、[IPC 契约](../development/ipc-contract.md)。初始重写评估只记录历史分析，不代表现状。
 - 配置能力、源码依据和默认值：[覆盖清单](../frp-configuration-coverage.md)、[逐版本清单](../frpc-version-configuration.md)、[源码审计](../development/frpc-version-source-audit.md)、[默认值审计](../development/frpc-defaults-source-audit.md)。
 - 可复现检查和未覆盖范围：[验证记录](../development/verification.md)；发布流程：[releases.md](../development/releases.md)。

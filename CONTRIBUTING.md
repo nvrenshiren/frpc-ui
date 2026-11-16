@@ -22,7 +22,7 @@ cargo +stable clippy --locked --workspace --all-targets -- -D warnings
 
 最低 Rust 版本为 1.90.0；改动依赖或 MSRV 声明时，另用该工具链执行 `cargo +1.90.0 check --locked --workspace` 与 `cargo +1.90.0 test --locked --workspace`。配置和运行状态改动围绕真实行为测试；官方版本下载与 loopback 隧道测试须显式运行，不能用模拟结果替代。
 
-配置能力或默认值发生变化时，在 `apps/desktop` 执行 `node scripts/generate-frpc-config-docs.mjs` 更新逐版本清单。凭据、个人配置、运行目录和下载的二进制不入库。错误报告提供脱敏的错误信息和复现步骤，不附带原始 token、secretKey、NeDB 或 state.json。PR 描述聚焦改动和验证，界面遵循 COHESION 逐科设计系统与 `DESIGN.md`。
+配置能力或默认值发生变化时，在 `apps/desktop` 执行 `node scripts/generate-frpc-config-docs.mjs` 更新逐版本清单。凭据、个人配置、运行目录和下载的二进制不入库。错误报告提供脱敏的错误信息和复现步骤，不附带原始 token、secretKey、NeDB 或 state.json。PR 描述聚焦改动和验证，界面遵循逐科 / whzhuke 设计系统与 `DESIGN.md`。
 
 项目许可证尚未选定；提交前请确认对贡献代码拥有相应权利。
 

@@ -6,11 +6,11 @@
 
 ## 已确认的 UI 技术栈
 
-用户指定以 `D:\Work\dawi\scoopUI` 的技术栈与组件实现作为前端参考：React 19、TypeScript 严格模式、Vite 8、Tailwind CSS 4、shadcn/ui 与 Radix UI、Zustand 5、Sonner、Lucide。当前品牌、配色和组件规范采用 `D:\Work\dawi\design` 的 COHESION 逐科设计系统；正式界面 token 集中在 `apps/desktop/src/index.css` 的 CSS 变量与 Tailwind `@theme` 中维护。使用 npm 和 `package-lock.json`。桌面宿主为 Tauri 2，Rust 后端管理官方 frpc 二进制。
+用户指定以 `D:\Work\dawi\scoopUI` 的技术栈与组件实现作为前端参考：React 19、TypeScript 严格模式、Vite 8、Tailwind CSS 4、shadcn/ui 与 Radix UI、Zustand 5、Sonner、Lucide。当前品牌、配色和组件规范采用 `D:\Work\dawi\design` 的逐科 / whzhuke 设计系统；COHESION 是共享主题配置的内部标识。正式界面 token 集中在 `apps/desktop/src/index.css` 的 CSS 变量与 Tailwind `@theme` 中维护。使用 npm 和 `package-lock.json`。桌面宿主为 Tauri 2，Rust 后端管理官方 frpc 二进制。
 
 ## 当前范围
 
-正式桌面实现位于 `apps/desktop`，共享业务与版本模块位于 `crates/frpc-core` 和 `crates/frpc-versions`。`prototypes/frpc-ui` 保留为历史设计原型，不把生产逻辑回填到原型。功能参考 `D:\Work\frpc-desktop`；初始评估入口为 `docs/rust-rewrite-assessment.md`。产品面向多连接与批量维护，强调信息密度；正式界面遵循 COHESION 与 `DESIGN.md`，不沿用旧项目布局。
+正式桌面实现位于 `apps/desktop`，共享业务与版本模块位于 `crates/frpc-core` 和 `crates/frpc-versions`。`prototypes/frpc-ui` 保留为历史设计原型，不把生产逻辑回填到原型。功能参考 `D:\Work\frpc-desktop`；初始评估入口为 `docs/rust-rewrite-assessment.md`。产品面向多连接与批量维护，强调信息密度；正式界面遵循逐科 / whzhuke 设计系统与 `DESIGN.md`，不沿用旧项目布局。
 
 `PRODUCT.md` 记录产品范围，`DESIGN.md` 记录已实现的设计系统。`docs/development/` 记录架构、IPC 和验证边界。桌面版从空数据启动，状态以 Rust 快照为准；生产前端的浏览器模式与旧原型都使用演示数据，不能当作真实 frpc 验证。初版面向 Windows x64；参考项目只读使用。
 

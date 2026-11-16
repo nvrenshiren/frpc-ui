@@ -10,7 +10,7 @@ desktop（Tauri 2 WebView）
 
 ## Stack
 
-用户指定以前端技术栈和组件基础参考 scoopUI：React 19、TypeScript 严格模式、Vite 8、Tailwind CSS 4、shadcn/ui 与 Radix UI、Zustand 5、Sonner、Lucide、npm。2026-11-13 起视觉规范采用 `D:\Work\dawi\design` 的 COHESION 2.0.0，使用 shadcn New York / Neutral 品牌 token 与正式 Logo；其余页面信息架构围绕多连接运维设计。后端使用 Tauri 2 与 Rust，Tokio 管理进程，原子 JSON 保存本地配置，穿透能力使用官方 frpc 二进制。
+用户指定以前端技术栈和组件基础参考 scoopUI：React 19、TypeScript 严格模式、Vite 8、Tailwind CSS 4、shadcn/ui 与 Radix UI、Zustand 5、Sonner、Lucide、npm。2026-11-13 起视觉规范采用 `D:\Work\dawi\design` 的逐科 / whzhuke 设计系统 2.0.0，使用 shadcn New York / Neutral 品牌 token 与正式 Logo；COHESION 是共享主题配置的内部标识。页面信息架构围绕多连接运维设计。后端使用 Tauri 2 与 Rust，Tokio 管理进程，原子 JSON 保存本地配置，穿透能力使用官方 frpc 二进制。
 
 ## Users
 
@@ -22,20 +22,21 @@ desktop（Tauri 2 WebView）
 
 ## Operating Context
 
-旧功能基线为 D:\Work\frpc-desktop；前端技术栈和早期组件基础参考 D:\Work\dawi\scoopUI。视觉基线现为 D:\Work\dawi\design 的 COHESION 主题，优先于早期 scoopUI 配色。新界面整体重新设计，不保留旧项目页面布局或导航组织。
+旧功能基线为 D:\Work\frpc-desktop；前端技术栈和早期组件基础参考 D:\Work\dawi\scoopUI。视觉基线现为 D:\Work\dawi\design 的逐科 / whzhuke 设计系统及其 COHESION 主题配置，优先于早期 scoopUI 配色。新界面整体重新设计，不保留旧项目页面布局或导航组织。
 
 ## Capabilities and Constraints
 
 - 多连接配置管理；隧道搜索、筛选、创建、编辑及批量启停。
-- TCP、UDP、HTTP、HTTPS、STCP、SUDP、XTCP 与相应提供者、访客配置。
+- TCP、UDP、HTTP、HTTPS、STCP、SUDP、XTCP、TCPMUX，以及相应 provider、visitor 配置。
 - frpc 版本下载、导入、校验、选择与删除；连接配置、TOML 导入导出、分享与重置。
 - 日志、运行状态、自启动、静默启动、自动连接、托盘、单实例与中英双语。
 - `prototypes/frpc-ui` 保留用于设计追溯；生产实现只位于 `apps/desktop`。
 - 桌面启动和注册状态来自真实 frpc 日志；浏览器中的连接状态和下载进度是模拟反馈，不展示虚构流量、带宽或延迟。
-- 配置能力审核覆盖 frpc 0.52–0.71；新的 minor/major 先审核能力，同 minor 补丁继承清单并由实际二进制 verify。连接/隧道常用高级字段、八种协议与九种 provider 插件已贯通交换与迁移。未知字段明确拒绝；旧 NeDB 只读预览和指纹校验后新增导入。
+- 配置字段按 32 个固定官方 stable 标签（0.52.0–0.71.0）审核；同 minor 补丁继承能力清单，并由所选二进制执行 verify。默认值按完整补丁版本和上下文单独核验；未审核的 minor/major 不推定兼容。高级字段、八种协议与九种 provider 插件已贯通配置交换和旧数据迁移，未知字段明确拒绝。
 - 官方默认值直接显示在输入/选择控件中，按精确补丁与当前配置联动；未修改的高级值保持省略。已有覆盖保留并可恢复默认，环境/必填值不编造。版本清单同时提供默认值和来源。
-- 工作台只显示服务器连接卡片；隧道列表集中到隧道页。
-- 桌面导航使用 COHESION 品牌侧栏（1080px 以下收为图标栏，700px 以下改为横向导航）；顶部状态条仅展示快照中的服务端确认连接数量。主题 token 与正式 `canvasAtmosphere` 氛围适配保存在 `apps/desktop/src/index.css`，Logo 裁切副本保存在 `apps/desktop/src/assets/`。
+- 桌面使用顶部横向导航进入运行总览、资源、事件日志和版本；设置从工具区打开。资源页在连接与隧道登记表之间切换。运行总览呈现连接运行概况、连接操作清单、最近事件和隧道摘要；进程状态与服务端确认状态分开表达，顶部计数只使用 Rust 快照中的服务端确认连接。主题 token 与正式 `canvasAtmosphere` 适配保存在 `apps/desktop/src/index.css`。
+- 桌面进程状态由 Rust 监督；服务端登录和隧道注册状态依据真实 frpc 日志回执。浏览器模式使用演示数据，不展示虚构流量、带宽或延迟。
+- 旧 NeDB 迁移只读预览并检查源指纹，确认后新增停止状态的连接，不覆盖现有配置。
 - macOS/Linux 打包、旧 INI、系统服务、应用自动更新、exec TokenSource、外部 includes/Store/VirtualNet 尚未实现。HTTPS 插件实际 TLS 和全协议流量联调仍待扩展。
 
 ## Evidence on Hand

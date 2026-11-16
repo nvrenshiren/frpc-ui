@@ -2,7 +2,7 @@
 
 [English](README.en.md)
 
-使用 **Tauri 2 + Rust + React** 的多连接 frpc 桌面管理工作台。界面遵循 COHESION 逐科设计系统，面向高密度隧道检索与批量维护；技术栈采用 scoopUI 项目验证过的 React 生态。
+使用 **Tauri 2 + Rust + React** 的多连接 frpc 桌面管理工作台。界面遵循逐科 / whzhuke 设计系统及其 COHESION 内部主题配置，面向高密度隧道检索与批量维护；技术栈采用 scoopUI 项目验证过的 React 生态。
 
 真实桌面实现位于 `apps/desktop`；`prototypes/frpc-ui` 仅作历史设计原型。应用管理官方 frpc 二进制，不重写 frp 协议。Windows x64 发布、验证范围与未覆盖的验收见[验证记录](docs/development/verification.md)。
 
@@ -42,9 +42,9 @@ TOML 导入和旧客户端迁移都新增停止的连接，不覆盖现有连接
 
 ## 已实现能力与技术栈
 
-- 多连接与八种隧道协议：TCP、UDP、HTTP、HTTPS、STCP、SUDP、XTCP、TCPMUX；工作台仅展示服务器连接卡片，隧道集中维护。
+- 多连接与八种隧道协议：TCP、UDP、HTTP、HTTPS、STCP、SUDP、XTCP、TCPMUX。运行总览提供连接状态、操作清单、最近事件和隧道摘要；资源页在连接与隧道登记表间切换；主导航的“诊断”进入事件日志，设置从顶部工具区进入。
 - 高级认证/OIDC/文件 Token、网络/TLS/QUIC、HTTP 多域名与路由、XTCP 回退、限流、负载均衡、健康检查及九种 provider 插件；可选值沿用对应版本默认。
-- 版本库提供 0.52–0.71 共 32 个已审核官方稳定标签的配置清单；连接和隧道编辑器按版本及协议条件显示可用选项，降级保留并提示不兼容参数。未审核版本不会推定兼容。
+- 配置字段按 32 个固定官方 stable 标签（0.52.0–0.71.0）审核；同 minor 补丁继承能力清单，并由所选二进制执行 verify。默认值按完整补丁版本和上下文核验。连接和隧道编辑器按版本及协议条件显示选项，降级保留并提示不兼容参数；未审核的 minor/major 不推定兼容。
 - 有官方默认值的控件直接显示对应版本默认值，TCP 复用等联动项同步更新；明确修改才保存高级覆盖，可恢复默认。清单列出默认值及来源，补丁差异单独核验。
 - 批量启停、受控应用配置、真实 frpc 验证与进程监督、部分失败与原动作重试。
 - 官方 GitHub 版本查询、SHA-256 校验下载、安全解压、原子安装、本地导入、每次启动前二进制校验及引用版本删除保护。
@@ -78,7 +78,7 @@ npm test
 npm run build
 
 # 仓库根目录
-cargo test --workspace
+cargo +stable test --locked --workspace
 ```
 
 网络下载与官方 frpc/frps 联调为显式执行的 ignored 测试，普通测试不访问公网。最近一次可复现的代码检查及已完成的官方二进制验证范围见[验证记录](docs/development/verification.md)。Windows 发布前仍须对最终 release EXE 执行真实 WebView 启动/IPC/退出 smoke；debug 存活或 MockRuntime 通过不能代替。首次 EXE 闪退的原因与修复见[Windows 启动说明](docs/development/windows-startup.md)。
